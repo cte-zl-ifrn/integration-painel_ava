@@ -282,6 +282,7 @@ def get_atualizacoes_counts(username: str) -> dict:
             ava = params["ava"]
 
             counts = get_json_api(ava, "get_atualizacoes_counts", username=params["username"])
+            print("counts AVA:", counts)
 
         except Exception as e:
             logging.error(e)
