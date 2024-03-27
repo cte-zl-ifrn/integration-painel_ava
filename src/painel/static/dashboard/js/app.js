@@ -38,9 +38,14 @@ export default {
             screenWidth: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
             isPopupOpen: false,
             isIconUp: false,
+            valueSelectSemestre: null,
+            valueSelectDisciplina: null,
+            valueSelectCurso: null,
+            valueSelectAmbiente: null,
+            
         };
     },
-
+    
     async mounted() {
         if (localStorage.contentClosed == "true") {
             $(".filter-wrapper").addClass("closed");
@@ -58,6 +63,10 @@ export default {
 
         // Adiciona um ouvinte de evento para verificar a largura da tela quando a janela é redimensionada
         window.addEventListener("resize", this.handleResize);
+        this.valueSelectSemestre = document.getElementById("semestre");
+        this.valueSelectDisciplina = document.getElementById("disciplina");
+        this.valueSelectCurso = document.getElementById("curso");
+        this.valueSelectAmbiente = document.getElementById("ambiente");
     },
     beforeDestroy() {
         window.removeEventListener("resize", this.handleResize);
@@ -68,7 +77,34 @@ export default {
     destroyed() {
         window.removeEventListener("resize", this.handleResize);
     },
+    computed: {      
+        filteredSemestre() {
+            if (!this.valueSelectSemestre) return []; // Retorna uma lista vazia se não houver valor selecionado
+
+            // Filtra os ambientes com base no valor selecionado
+            return this.semestres.filter(row => row.id == this.valueSelectSemestre.value);
+        },  
+        filteredDisciplina() {
+            if (!this.valueSelectAmbiente) return []; // Retorna uma lista vazia se não houver valor selecionado
+
+            // Filtra os ambientes com base no valor selecionado
+            return this.ambientes.filter(row => row.id == this.valueSelectAmbiente.value);
+        },
+        filteredCurso() {
+            if (!this.valueSelectAmbiente) return []; // Retorna uma lista vazia se não houver valor selecionado
+
+            // Filtra os ambientes com base no valor selecionado
+            return this.ambientes.filter(row => row.id == this.valueSelectAmbiente.value);
+        },
+        filteredAmbientes() {
+            if (!this.valueSelectAmbiente) return []; // Retorna uma lista vazia se não houver valor selecionado
+
+            // Filtra os ambientes com base no valor selecionado
+            return this.ambientes.filter(row => row.id == this.valueSelectAmbiente.value);
+        },
+    },
     methods: {
+
         toggleNavBar(e) {
             if (e) {
                 e.preventDefault();
