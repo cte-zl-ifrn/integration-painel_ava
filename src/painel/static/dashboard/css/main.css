@@ -1206,20 +1206,18 @@ main #sidebar .selectedFilters {
 }
 
 main #sidebar .selectedFilters div {
-  padding: 4px 12px;
+  padding: 4px 10px;
   background-color: var(--verde-terciario);
   border-radius: 5px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 600;
   color: var(--cinza-secundario);
   cursor: pointer;
-}
 
-main #sidebar .selectedFilters div::before {
-  content: 'X';
-  font-weight: bold;
-  margin-right: 8px;
-}
+} 
+
 
 main #maincontent {
   background: var(--branco-primario) 0% 0% no-repeat padding-box;

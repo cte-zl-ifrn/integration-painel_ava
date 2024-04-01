@@ -54,11 +54,6 @@
             font-weight: 600;
             color: var(--cinza-secundario);
             cursor: pointer;
-            &::before {
-                content: 'X';
-                font-weight: bold;
-                margin-right: 8px;
-            }
         }
     }
 }

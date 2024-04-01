@@ -85,16 +85,16 @@ export default {
             return this.semestres.filter(row => row.id == this.valueSelectSemestre.value);
         },  
         filteredDisciplina() {
-            if (!this.valueSelectAmbiente) return []; // Retorna uma lista vazia se não houver valor selecionado
+            if (!this.valueSelectDisciplina) return []; // Retorna uma lista vazia se não houver valor selecionado
 
             // Filtra os ambientes com base no valor selecionado
-            return this.ambientes.filter(row => row.id == this.valueSelectAmbiente.value);
+            return this.disciplinas.filter(row => row.id == this.valueSelectDisciplina.value);
         },
         filteredCurso() {
-            if (!this.valueSelectAmbiente) return []; // Retorna uma lista vazia se não houver valor selecionado
+            if (!this.valueSelectCurso) return []; // Retorna uma lista vazia se não houver valor selecionado
 
             // Filtra os ambientes com base no valor selecionado
-            return this.ambientes.filter(row => row.id == this.valueSelectAmbiente.value);
+            return this.cursos.filter(row => row.id == this.valueSelectCurso.value);
         },
         filteredAmbientes() {
             if (!this.valueSelectAmbiente) return []; // Retorna uma lista vazia se não houver valor selecionado
