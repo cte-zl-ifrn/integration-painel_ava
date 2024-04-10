@@ -37,12 +37,7 @@ export default {
             selectedBar: null,
             screenWidth: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
             isPopupOpen: false,
-            isIconUp: false,
-            valueSelectSemestre: null,
-            valueSelectDisciplina: null,
-            valueSelectCurso: null,
-            valueSelectAmbiente: null,
-            
+            isIconUp: false,            
         };
     },
     
@@ -63,10 +58,7 @@ export default {
 
         // Adiciona um ouvinte de evento para verificar a largura da tela quando a janela é redimensionada
         window.addEventListener("resize", this.handleResize);
-        this.valueSelectSemestre = document.getElementById("semestre");
-        this.valueSelectDisciplina = document.getElementById("disciplina");
-        this.valueSelectCurso = document.getElementById("curso");
-        this.valueSelectAmbiente = document.getElementById("ambiente");
+
     },
     beforeDestroy() {
         window.removeEventListener("resize", this.handleResize);
@@ -78,32 +70,57 @@ export default {
         window.removeEventListener("resize", this.handleResize);
     },
     computed: {      
-        filteredSemestre() {
-            if (!this.valueSelectSemestre) return []; // Retorna uma lista vazia se não houver valor selecionado
-
-            // Filtra os ambientes com base no valor selecionado
-            return this.semestres.filter(row => row.id == this.valueSelectSemestre.value);
+        filteredSemestre() {            
+            console.log("teste: ");
+            if (this.semestre && this.semestres.length > 0) {
+                let semestreObj = this.semestres.find(semestre => semestre.id == this.semestre);
+                return semestreObj ? semestreObj.label : ''; // Supondo que "nome" seja a propriedade que contém o nome do semestre
+            }
+            return '';
+            // let filteredSemestre = this.semestres.find(semestre => semestre.id == this.semestre)
+            // console.log(filteredSemestre);
         },  
-        filteredDisciplina() {
-            if (!this.valueSelectDisciplina) return []; // Retorna uma lista vazia se não houver valor selecionado
+        // filteredDisciplina() {
+        //     // if (!this.valueSelectDisciplina) return []; // Retorna uma lista vazia se não houver valor selecionado
 
-            // Filtra os ambientes com base no valor selecionado
-            return this.disciplinas.filter(row => row.id == this.valueSelectDisciplina.value);
-        },
-        filteredCurso() {
-            if (!this.valueSelectCurso) return []; // Retorna uma lista vazia se não houver valor selecionado
+        //     // Filtra os ambientes com base no valor selecionado
+        //     console.log("filteredDisciplina: ",this.disciplinas.filter(row => row.id == this.valueSelectDisciplina.value))
+        //     return this.disciplinas.filter(row => row.id == this.valueSelectDisciplina.value);
+        // },
+        // filteredCurso() {
+        //     // if (!this.valueSelectCurso) return []; // Retorna uma lista vazia se não houver valor selecionado
 
-            // Filtra os ambientes com base no valor selecionado
-            return this.cursos.filter(row => row.id == this.valueSelectCurso.value);
-        },
+        //     // Filtra os ambientes com base no valor selecionado
+        //     console.log("filteredCurso: ",this.cursos.filter(row => row.id == this.valueSelectCurso.value))
+        //     return this.cursos.filter(row => row.id == this.valueSelectCurso.value);
+        // },
         filteredAmbientes() {
-            if (!this.valueSelectAmbiente) return []; // Retorna uma lista vazia se não houver valor selecionado
+            if (!this.ambiente) return []; // Retorna uma lista vazia se não houver valor selecionado
 
             // Filtra os ambientes com base no valor selecionado
-            return this.ambientes.filter(row => row.id == this.valueSelectAmbiente.value);
+            console.log("filteredAmbientes: ",this.ambientes.filter(row => row.id == this.ambiente))
+            return this.ambientes.filter(row => row.id == this.ambiente);
         },
     },
     methods: {
+
+        getSemestreName(semestreId) {
+            const semestreObj = this.semestres.find(semestre => semestre.id === semestreId);
+            if (semestreObj) {
+                // Se o semestre for encontrado, retornar o nome
+                return semestreObj.label;
+            } else {
+                // Se o semestre não for encontrado, limpar o valor correspondente no localStorage
+                localStorage.semestre = '';
+                // Se necessário, atualizar algum elemento no DOM
+                $("#semestre").val("").trigger("change");
+                // Não é necessário retornar nada aqui, pois queremos evitar a mensagem "Semestre não encontrado"
+            }
+        },
+        getAmbienteName(ambienteId) {
+            let ambienteObj = this.ambientes.find(ambiente => ambiente.id === ambienteId);
+            return ambienteObj.label;
+        },
 
         toggleNavBar(e) {
             if (e) {
@@ -494,6 +511,7 @@ export default {
                     .then((response) => {
                         Object.assign(this, response.data);
                         this.filtered();
+                        
                     })
                     .catch((error) => {
                         this.has_error = true;

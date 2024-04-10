@@ -1918,20 +1918,18 @@ main #popupFilter .selectedFilters {
 }
 
 main #popupFilter .selectedFilters div {
-  padding: 4px 12px;
+  padding: 4px 10px;
   background-color: var(--verde-terciario);
   border-radius: 5px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 600;
   color: var(--cinza-secundario);
   cursor: pointer;
 }
 
-main #popupFilter .selectedFilters div::before {
-  content: 'X';
-  font-weight: bold;
-  margin-right: 8px;
-}
+
 
 .open .divBackdop-filter {
   position: absolute;

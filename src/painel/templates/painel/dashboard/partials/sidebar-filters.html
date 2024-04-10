@@ -57,25 +57,20 @@
             </div>
 
             <div class="selectedFilters">
-                <div v-if="semestre" v-on:click="clearOneValue('semestre')">
-                    <div  v-for="row in filteredSemestre">Semestre: [[row.label]]</div><span>✕</span>
+                <div v-if="semestre && getSemestreName(semestre)" v-on:click="clearOneValue('semestre')">
+                    Semestre: [[getSemestreName(semestre)]] <span>✕</span>
                 </div>
-                <div v-if="disciplina" v-on:click="clearOneValue('disciplina')">
+
+                {% comment %} {% comment %} <div v-if="disciplina" v-on:click="clearOneValue('disciplina')">
                     <div  v-for="row in filteredDisciplina">Disciplina: [[row.label]] </div><span>✕</span>
                 </div>
                 <div v-if="curso" v-on:click="clearOneValue('curso')">
                     <div  v-for="row in filteredCurso">Curso: [[row.label]] </div><span>✕</span>
-                </div>
+                </div>{% endcomment %}
                 <div v-if="ambiente" v-on:click="clearOneValue('ambiente')" >
-                    <div  v-for="row in filteredAmbientes">Ambiente: [[ row.label ]] </div><span>✕</span>
-                </div>
-
-
-                {% comment %} <div v-if="disciplina" v-on:click="clearOneValue('disciplina')" v-for="row in filteredDisciplina">Disciplina: [[row.label]]<span>x</span> </div> {% endcomment %}
-                {% comment %} <div v-if="curso" v-on:click="clearOneValue('curso')" v-for="row in filteredCurso">Curso: [[row.label]] <span>x</span></div> {% endcomment %}
-                {% comment %} <div v-if="ambiente" v-on:click="clearOneValue('ambiente')" v-for="row in filteredAmbientes">           
-                    Ambiente: [[ row.label ]] <span>x</span>
-                </div> {% endcomment %}
+                    Ambiente: [[getAmbienteName(ambiente)]]<span>✕</span>
+                </div>  
+                
             </div>
     </div>
 </div> 
