@@ -43,5 +43,4 @@ class SuapOAuth2(BaseOAuth2):
             "email": response["email"],
             "scholar_email": response["email_google_classroom"],
             "academic_email": response["email_academico"],
-            "campus": response["campus"],
         }

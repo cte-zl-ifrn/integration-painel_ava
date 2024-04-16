@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        {% include 'painel/layouts/partials/head.html' %}
+        <style>
+            main, header {
+                display: block;
+                width: 75%;
+                max-width: 600px;
+                padding: 30px;
+                margin: 0 auto;
+            }
+            h1 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .buttons {
+                border-top: 2px solid #ddd;
+                margin-top: 30px;
+                padding-top: 15px;
+                text-align: center;
+            }
+            .title {
+                font-size: 2em;
+                font-weight: bold;
+                margin-left: 10px;
+                display: inline;
+                height: 40px;
+                vertical-align: middle;
+                float: right;
+            }
+        </style>
+    </head> 
+    <body> 
+        <header>
+            <img alt="Logo do IFRN" src="{% static 'dashboard/img/logo_ifrn_zl.png' %}" width="132" height="40" />
+            <div class="title">Painel AVA</div>
+        </header>
+        <main>
+            <h1>Erro de configuração!</h1>
+            <p>
+                O administrador do sistema configurou errado o <b>'Redirect uris'</b> no <b>SUAP-Login</b> ou no <b>OAUTH_REDIRECT_URI</b>.
+            </p>
+        </main>
+    </body>
+</html>

@@ -30,7 +30,7 @@ class BaseChangeList(ChangeList):
 
 
 class BaseModelAdmin(ImportExportMixin, ExportActionMixin, SafeDeleteAdmin, SimpleHistoryAdmin):
-    list_filter = [SafeDeleteAdminFilter] + list(SafeDeleteAdmin.list_filter)
+    list_filter = []
 
     def get_changelist(self, request, **kwargs):
         return BaseChangeList

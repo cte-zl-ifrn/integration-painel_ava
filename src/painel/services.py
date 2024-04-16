@@ -11,7 +11,6 @@ from django.conf import settings
 import requests
 from http.client import HTTPException
 from .models import Ambiente, Curso
-from middleware.models import Solicitacao
 
 
 CODIGO_DIARIO_REGEX = re.compile("^(\d\d\d\d\d)\.(\d*)\.(\d*)\.(.*)\.(\w*\.\d*)(#\d*)?$")
@@ -79,7 +78,6 @@ def get_diarios(
     situacao: str = None,
     disciplina: str = None,
     curso: str = None,
-    arquetipo: str = None,
     ambiente: str = None,
     q: str = None,
     page: int = 1,
@@ -131,29 +129,30 @@ def get_diarios(
                     diario["checkgradesurl"] = reverse(
                         "painel:checkgrades", kwargs={"id_ambiente": ava["ambiente"]["id"], "id_diario": id_diario}
                     )
-                    diario["can_view_syncsurl"] = True
-                    diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
-                    diario["mensagemurl"] = f"{settings.SUAP_OAUTH_BASE_URL}/edu/enviar_mensagem/?diario={id_diario}"
+                    # diario["can_view_syncsurl"] = True
+                    # diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
+
+                    diario["mensagemurl"] = f"{settings.OAUTH["BASE_URL"]}/edu/enviar_mensagem/?diario={id_diario}"
 
                 print("id_diario:", id_diario)
                 if id_diario:
-                    diario["suapsurl"] = f"{settings.SUAP_OAUTH_BASE_URL}/edu/meu_diario/{id_diario}/1/"
+                    diario["suapsurl"] = f"{settings.OAUTH["BASE_URL"]}/edu/meu_diario/{id_diario}/1/"
                     if diario.get("can_set_visibility"):
                         diario["gradesurl"] = re.sub("/course/view", "/grade/report/grader/index", diario["viewurl"])
                     else:
                         diario["gradesurl"] = re.sub("/course/view", "/grade/report/overview/index", diario["viewurl"])
 
-                    try:
-                        # TODO: Melhor a performance aqui
-                        ultima = Solicitacao.objects.ultima_do_diario(id_diario)
+                    # try:
+                    #     # TODO: Melhor a performance aqui
+                    #     ultima = Solicitacao.objects.ultima_do_diario(id_diario)
 
-                        if ultima is not None:
-                            diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
-                            print("ultima:", ultima.respondido)
-                            diario["coordenacaourl"] = ultima.respondido.get("url_sala_coordenacao")
-                    except Exception as e:
-                        logging.error(e)
-                        sentry_sdk.capture_exception(e)
+                    #     if ultima is not None:
+                    #         diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
+                    #         print("ultima:", ultima.respondido)
+                    #         diario["coordenacaourl"] = ultima.respondido.get("url_sala_coordenacao")
+                    # except Exception as e:
+                    #     logging.error(e)
+                    #     sentry_sdk.capture_exception(e)
 
             def _merge_aluno(diario: dict, diario_re: re.Match):
                 if diario_re and len(diario_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
@@ -185,8 +184,6 @@ def get_diarios(
                     "id": ambiente.id,
                     "titulo": ambiente.nome,
                     "cor_mestra": ambiente.cor_mestra,
-                    "cor_degrade": ambiente.cor_degrade,
-                    "cor_progresso": ambiente.cor_progresso,
                 }
             }
 
@@ -239,7 +236,6 @@ def get_diarios(
             "situacao": situacao,
             "disciplina": disciplina,
             "curso": curso,
-            "arquetipo": arquetipo,
             "q": q,
             "page": page,
             "page_size": page_size,

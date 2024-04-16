@@ -2,8 +2,6 @@
 
 O Painel AVA é um middleware integrador entre SUAP e Moodle, além disso, também tem um dashboard com todos os cursos e inscrições que integrou, desta forma cada usuário tem acesso aos cursos/diários em que está inscrito sem precisar procurar em vários Moodles.
 
-Neste projeto, além do Painel AVA, foi colocado um Fake SUAP, para emular o funcionado da integraçãod o SUAP ou outro sistema acadêmico, e um par de Moodles (ZL e Presencial), para emular o cenário de ter mais um Moodle a integrar.
-
 > Neste projeto usamos o [Docker](https://docs.docker.com/engine/install/) e o [Docker Compose Plugin](https://docs.docker.com/compose/install/compose-plugin/#:~:text=%20Install%20the%20plugin%20manually%20%F0%9F%94%97%20%201,of%20Compose%20you%20want%20to%20use.%20More%20) (não o [docker-compose](https://docs.docker.com/compose/install/) 😎). O setup foi todo testado usando o Linux e Mac OS.
 
 > Os containeres terão o prefixo `ism-`, que é um acrônimo para "Integrador Suap Moodle".
@@ -31,80 +29,82 @@ Na mesma pasta, crie um arquivo `docker-compose.yml` parecido com o que se segue
 
 ```yaml
 services:
+    cache:
+        image: redis:7.2-alpine
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 3s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
 
-  cache:
-    image: redis:7.2-alpine
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 3s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
+    db:
+        image: postgres:16-alpine
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=changeme
+        volumes:
+            - "./volumes/db_data:/var/lib/postgresql/data"
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+            interval: 3s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
 
-  db:
-    image: postgres:16-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=changeme
-    volumes:
-      - "./volumes/db_data:/var/lib/postgresql/data"
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "postgres" ]
-      interval: 3s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
+    painel:
+        image: ctezlifrn/avapainel:1.0.64
+        ports:
+            - 80:8000
+        environment:
+            - POSTGRES_HOST=db
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=changeme
 
-  painel:
-    image: ctezlifrn/avapainel:1.0.64
-    ports:
-      - 80:8000
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=changeme
+            - DJANGO_DEBUG=False
+            - DJANGO_ALLOWED_HOSTS=ava.yourhost.edu.br
 
-      - DJANGO_DEBUG=False
-      - DJANGO_ALLOWED_HOSTS=ava.yourhost.edu.br
+            # 1. Crie uma chave, em qualquer ferramenta, de no mímino 50 caracteres
+            - DJANGO_SECRET_KEY=changeme
 
-      # 1. Crie uma chave, em qualquer ferramenta, de no mímino 50 caracteres
-      - DJANGO_SECRET_KEY=changeme
+            # 2. Crie um project no Sentr.io e pegue a DNS
+            # SENTRY_DNS=https://key@id.ingest.sentry.io/id
 
-      # 2. Crie um project no Sentr.io e pegue a DNS
-      # SENTRY_DNS=https://key@id.ingest.sentry.io/id
+            # 3. Crie uma "Aplicações OAUTH2" no SUAP e pegue o client_id e o client_secret
+            - OAUTH_CLIENT_ID=changeme
+            - OAUTH_CLIENT_SECRET=changeme
+            - OAUTH_BASE_URL=https://suap.yourhost.edu.br
+            - OAUTH_REDIRECT_URI=https://ava.yourhost.edu.br/painel/authenticate/
 
-      # 3. Crie uma "Aplicações OAUTH2" no SUAP e pegue o client_id e o client_secret
-      - SUAP_OAUTH_CLIENT_ID=changeme
-      - SUAP_OAUTH_CLIENT_SECRET=changeme
-      - SUAP_OAUTH_BASE_URL=https://suap.yourhost.edu.br
-      - SUAP_OAUTH_REDIRECT_URI=https://ava.yourhost.edu.br/painel/authenticate/
+            # 4. Atribua o token de integração do SUAP
+            - SUAP_INTEGRADOR_KEY=changeme
 
-      # 4. Atribua o token de integração do SUAP
-      - SUAP_INTEGRADOR_KEY=changeme
+            # 5. Se cadastre no https://userway.org/ e registre o token da conta
+            - SHOW_USERWAY=True
+            - USERWAY_ACCOUNT=changeme
 
-      # 5. Se cadastre no https://userway.org/ e registre o token da conta
-      - SHOW_USERWAY=True
-      - USERWAY_ACCOUNT=changeme
-
-      - SHOW_VLIBRAS=True
-    volumes:
-      - './volumes/painel_media:/var/media'
-      - './volumes/painel_static:/var/static'
-    depends_on:
-      cache:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    healthcheck:
-    test: ["CMD-SHELL", "curl --silent --fail https://ava.yourhost.edu.br/painel/health/ | grep 'Database: OK' || exit 1"]
-    interval: 3s
-    timeout: 1s
-    start_period: 1s
-    retries: 30
+            - SHOW_VLIBRAS=True
+        volumes:
+            - "./volumes/painel_media:/var/media"
+            - "./volumes/painel_static:/var/static"
+        depends_on:
+            cache:
+                condition: service_healthy
+            db:
+                condition: service_healthy
+        healthcheck:
+        test:
+            [
+                "CMD-SHELL",
+                "curl --silent --fail https://ava.yourhost.edu.br/painel/health/ | grep 'Database: OK' || exit 1",
+            ]
+        interval: 3s
+        timeout: 1s
+        start_period: 1s
+        retries: 30
 ```
 
 > O acesso ao administrativo usará o SUAP, o primeiro usuário a acessar será tornado superuser.
-
 
 Suba os serviços.
 
@@ -113,8 +113,6 @@ docker compose up
 ```
 
 Acesse o https://ava.yourhost.edu.br/painel/admin/, cadastre os AVA em **Ambientes**, o token que você gerar para cada ambiente deverá ser utilizado no plugin do local_suap que você instalar em cada AVA.
-
-
 
 ## Como iniciar o desenvolvimento
 

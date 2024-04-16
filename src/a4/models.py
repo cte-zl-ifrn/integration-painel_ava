@@ -62,27 +62,6 @@ class Usuario(SafeDeleteModel, AbstractUser):
     email_corporativo = EmailField(_("e-Mail corporativo"), null=True, blank=True)
     email_google_classroom = EmailField(_("e-Mail Gogole Classroom"), null=True, blank=True)
     email_academico = EmailField(_("e-Mail academico"), null=True, blank=True)
-    campus = ForeignKey(
-        "painel.Campus",
-        on_delete=PROTECT,
-        verbose_name=_("campus do aluno"),
-        null=True,
-        blank=True,
-    )
-    curso = ForeignKey(
-        "painel.Curso",
-        on_delete=PROTECT,
-        verbose_name=_("curso do aluno"),
-        null=True,
-        blank=True,
-    )
-    polo = ForeignKey(
-        "painel.Polo",
-        on_delete=PROTECT,
-        verbose_name=_("pólo do aluno"),
-        null=True,
-        blank=True,
-    )
     first_login = DateTimeField(_("first login"), null=True, blank=True)
     last_json = TextField(_("último JSON"), null=True, blank=True)
 
@@ -107,10 +86,10 @@ class Usuario(SafeDeleteModel, AbstractUser):
 
     @property
     def foto_url(self):
+        if self.foto.startswith("http"):
+            return self.foto
         return (
-            f"{settings.SUAP_OAUTH_BASE_URL}{self.foto}"
-            if self.foto
-            else f"{settings.STATIC_URL}dashboard/img/user.png"
+            f"{settings.OAUTH['BASE_URL']}{self.foto}" if self.foto else f"{settings.STATIC_URL}dashboard/img/user.png"
         )
 
 
@@ -131,9 +110,6 @@ class UsuarioAnonimo:
     email_corporativo = None
     email_google_classroom = None
     email_academico = None
-    campus = None
-    curso = None
-    polo = None
     first_login = None
     is_authenticated = False
     is_active = False

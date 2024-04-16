@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from middleware.models import Solicitacao
 from a4.models import logged_user
 from painel.models import Ambiente, Situacao
 from painel.services import get_json_api
@@ -14,10 +13,10 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     return render(request, "painel/dashboard/index.html")
 
 
-@login_required
-def syncs(request: HttpRequest, id_diario: int) -> HttpResponse:
-    solicitacoes = Solicitacao.objects.by_diario_id(id_diario)
-    return render(request, "painel/diario/syncs.html", context={"solicitacoes": solicitacoes})
+# @login_required
+# def syncs(request: HttpRequest, id_diario: int) -> HttpResponse:
+#     solicitacoes = Solicitacao.objects.by_diario_id(id_diario)
+#     return render(request, "painel/diario/syncs.html", context={"solicitacoes": solicitacoes})
 
 
 @login_required

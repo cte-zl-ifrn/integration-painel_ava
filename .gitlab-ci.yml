@@ -1,0 +1,44 @@
+stages:
+    - build
+    - publish
+    - deploy
+
+build-job:
+    stage: build
+    image: docker:latest
+    services:
+        - docker:dind
+    only:
+        - main
+        - dev
+    script:
+        - echo "Building the code..."
+        - echo "APP_VERSION = '$CI_PIPELINE_ID.$CI_COMMIT_SHORT_SHA'" >> src/settings/apps.py
+        - cat src/settings/apps.py
+        - docker build -t ctezlifrn/avapainel:$CI_COMMIT_REF_NAME .
+        - echo "Build complete."
+
+publish-job:
+    stage: publish
+    only:
+        - main
+        - dev
+    script:
+        - echo "Deploying image..."
+        - docker login -u $DOCKERHUB_REGISTRY_USER -p $DOCKERHUB_REGISTRY_PASSWORD
+        - docker push ctezlifrn/avapainel:$CI_COMMIT_REF_NAME
+        - echo "Image successfully deployed."
+
+deploy-teste-job:
+    stage: deploy
+    only:
+        - dev
+    script:
+        - echo "Deploying service in test..."
+        - mkdir -p ~/.ssh
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh/id_rsa
+        - ssh -o StrictHostKeyChecking=no root@10.126.0.204 "/var/dockers/vai deploy app"
+        - sleep 60
+        - ssh -o StrictHostKeyChecking=no root@10.126.0.204 "/var/dockers/vai logs -n 1000"
+        - echo "Service successfully deployed in test."
