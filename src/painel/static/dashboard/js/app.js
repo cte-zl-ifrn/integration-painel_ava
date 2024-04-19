@@ -41,14 +41,26 @@ export default {
         };
     },
     
-    async mounted() {
+    mounted() {
         if (localStorage.contentClosed == "true") {
             $(".filter-wrapper").addClass("closed");
         }
         $(document).ready(this.customizeAmbiente);
         this.restoreState();
 
-        await this.clearFilter();
+        $('#ambiente').on('change', function() {
+            var ambienteValue = $(this).val();
+            console.log(ambienteValue);
+        
+            if (ambienteValue !== null && ambienteValue !== '8' && ambienteValue !== '9') {
+                $('#semestre, #disciplina, #curso').prop('disabled', true).addClass('disabled-background');
+            } else {
+                $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
+            }
+
+        });
+
+        //await this.clearFilter();
 
         this.filterCards();
         $("#app").css("display", "block");
@@ -69,57 +81,82 @@ export default {
     destroyed() {
         window.removeEventListener("resize", this.handleResize);
     },
-    computed: {      
-        filteredSemestre() {            
-            console.log("teste: ");
-            if (this.semestre && this.semestres.length > 0) {
-                let semestreObj = this.semestres.find(semestre => semestre.id == this.semestre);
-                return semestreObj ? semestreObj.label : ''; // Supondo que "nome" seja a propriedade que contém o nome do semestre
-            }
-            return '';
-            // let filteredSemestre = this.semestres.find(semestre => semestre.id == this.semestre)
-            // console.log(filteredSemestre);
-        },  
-        // filteredDisciplina() {
-        //     // if (!this.valueSelectDisciplina) return []; // Retorna uma lista vazia se não houver valor selecionado
 
-        //     // Filtra os ambientes com base no valor selecionado
-        //     console.log("filteredDisciplina: ",this.disciplinas.filter(row => row.id == this.valueSelectDisciplina.value))
-        //     return this.disciplinas.filter(row => row.id == this.valueSelectDisciplina.value);
-        // },
-        // filteredCurso() {
-        //     // if (!this.valueSelectCurso) return []; // Retorna uma lista vazia se não houver valor selecionado
 
-        //     // Filtra os ambientes com base no valor selecionado
-        //     console.log("filteredCurso: ",this.cursos.filter(row => row.id == this.valueSelectCurso.value))
-        //     return this.cursos.filter(row => row.id == this.valueSelectCurso.value);
-        // },
-        filteredAmbientes() {
-            if (!this.ambiente) return []; // Retorna uma lista vazia se não houver valor selecionado
-
-            // Filtra os ambientes com base no valor selecionado
-            console.log("filteredAmbientes: ",this.ambientes.filter(row => row.id == this.ambiente))
-            return this.ambientes.filter(row => row.id == this.ambiente);
-        },
-    },
     methods: {
-
         getSemestreName(semestreId) {
-            const semestreObj = this.semestres.find(semestre => semestre.id === semestreId);
-            if (semestreObj) {
+            //console.log("semestre id:",semestreId)
+            let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
+            //console.log(semestreObj.label);
+            //return semestreObj.label;
+            if (semestreSelect) {
                 // Se o semestre for encontrado, retornar o nome
-                return semestreObj.label;
-            } else {
-                // Se o semestre não for encontrado, limpar o valor correspondente no localStorage
+                return semestreSelect.label;
+            } else{
+                //clearOneValue('ambiente')
+                // console.log("semestre select:",semestreSelect)
+                // console.log("this.semestreS:", this.semestres)
+                // console.log("this.semestre:",this.semestre);
+
+
                 localStorage.semestre = '';
-                // Se necessário, atualizar algum elemento no DOM
                 $("#semestre").val("").trigger("change");
-                // Não é necessário retornar nada aqui, pois queremos evitar a mensagem "Semestre não encontrado"
+                $("#semestreValue").hide();
+                
             }
+        },
+
+        getCursoName(cursoId) {
+            let cursoSelect = this.cursos.find(curso => curso.id === cursoId);
+            //console.log(semestreObj.label);
+            //return semestreObj.label;
+            if (cursoSelect) {
+                // Se o semestre for encontrado, retornar o nome
+                return cursoSelect.label;
+            }  else{
+                
+                localStorage.curso = '';
+                $("#curso").val("").trigger("change");
+                $("#cursoValue").hide();
+                
+            }
+            
+        },
+        getDisciplinaName(disciplinaId) {
+            //console.log(disciplinaId)
+            //console.log(this.disciplinas)
+            let disciplinaSelect = this.disciplinas.find(disciplina => disciplina.id.toString() === disciplinaId.toString());
+
+            if (disciplinaSelect) {
+                // Se o semestre for encontrado, retornar o nome
+                return disciplinaSelect.label;
+            } else{
+                
+                localStorage.disciplina = '';
+                $("#disciplina").val("").trigger("change");
+                $("#disciplinaValue").hide();
+                
+            }
+            //     // Se o semestre não for encontrado, limpar o valor correspondente no localStorage
+            //     localStorage.disciplina = '';
+            //     // Se necessário, atualizar algum elemento no DOM
+            //     $("#disciplina").val("").trigger("change");
+            //     // Não é necessário retornar nada aqui, pois queremos evitar a mensagem "Semestre não encontrado"
+            // }
+            // console.log(teste)
+            //return teste.label;
         },
         getAmbienteName(ambienteId) {
-            let ambienteObj = this.ambientes.find(ambiente => ambiente.id === ambienteId);
-            return ambienteObj.label;
+            //console.log(ambienteId)
+            //console.log(this.ambientes)
+            let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
+            //console.log(ambienteLabel.label)
+            //return ambienteLabel.label;
+
+            if (ambienteSelect) {
+                // Se o semestre for encontrado, retornar o nome
+                return ambienteSelect.label;
+            } 
         },
 
         toggleNavBar(e) {
@@ -440,12 +477,7 @@ export default {
             this.filterCards();
         },
 
-        async clearFilterSeeAll() {
-            //console.log(this.$watch);
-            await this.updateFilterValues("allincludinghidden");
 
-            this.filterCards();
-        },
 
         async updateFilterValues(situacao) {
             //resetar os valores tanto visualmente como no localStorage
@@ -457,12 +489,14 @@ export default {
             $("#ambiente").val("").trigger("change");
 
             $(".select2-selection").removeClass("bgcolor-select2");
+            $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
+
 
             this["q"] = "";
             this["situacao"] = situacao;
             this["semestre"] = "";
             this["disciplina"] = "";
-            this["curso"] = "";
+            this["curso"] = ""; 
             this["ambiente"] = "";
         },
 
@@ -490,7 +524,8 @@ export default {
                 localStorage.ambiente = '';
                 $("#ambiente").val("").trigger("change");
             }
-            
+            $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
+
             this.filterCards();
         },
 

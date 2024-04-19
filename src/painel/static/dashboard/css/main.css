@@ -260,6 +260,8 @@ a {
   background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
 }
 
+
+
 .select2-container--default .select2-selection--single .select2-selection__arrow {
   height: 100% !important;
 }
@@ -287,6 +289,11 @@ a {
 
 .closed span.select2-selection.select2-selection--single {
   background: #dbdbdb !important;
+}
+
+.disabled-background span.select2-selection.select2-selection--single {
+  background-image: none;
+  background-color: #ecdafa;
 }
 
 .mobile-only {
