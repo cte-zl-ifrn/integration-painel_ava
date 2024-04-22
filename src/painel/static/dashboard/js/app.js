@@ -45,7 +45,10 @@ export default {
         if (localStorage.contentClosed == "true") {
             $(".filter-wrapper").addClass("closed");
         }
-        $(document).ready(this.customizeAmbiente);
+        //$(document).ready(this.customizeAmbiente);
+        $(document).ready(() => {
+            this.customizeAmbiente();
+        });
         this.restoreState();
 
         $('#ambiente').on('change', function() {
@@ -53,7 +56,8 @@ export default {
             console.log(ambienteValue);
         
             if (ambienteValue !== null && ambienteValue !== '8' && ambienteValue !== '9') {
-                $('#semestre, #disciplina, #curso').prop('disabled', true).addClass('disabled-background');
+                $('#semestre, #disciplina, #curso').prop('disabled', true);
+                $('#semestre, #disciplina, #curso').addClass('disabled-background');
             } else {
                 $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
             }
@@ -159,6 +163,137 @@ export default {
             } 
         },
 
+    customizeAmbiente() {
+        $("#semestre").select2({
+            placeholder: "Semestres...",
+            templateSelection: function (data) {
+                const style = 'style="color: #7D848B; "';
+                const semestreName = data.text ? data.text : getSemestreName(semestre);
+
+                return $(
+                    "<span " +
+                        style +
+                        ">" +
+                        "<i class='icon icon-calendario-semestre'></i> " +
+                        semestreName  +
+                        "</span> "
+                );
+            },
+        });
+        $("#disciplina").select2({
+            placeholder: "Disciplinas...",
+            templateSelection: function (data) {
+                let style = 'style="color: #7D848B; "';
+                let disciplinaName = data.text ? data.text : this.disciplina;
+
+                console.log(disciplinaName)
+                return $(
+                    "<span " + style + ">" + "<i class='icon icon-disciplina' ></i> " + data.text + "</span> "
+                );
+            },
+        });
+        $("#curso").select2({
+            placeholder: " Cursos...",
+            templateSelection: function (data) {
+                const style = 'style="color: #7D848B; "';
+
+                return $("<span " + style + ">" + "<i class='icon icon-icone-ava'></i> " + data.text + "</span> ");
+            },
+        });
+        $("#ambiente").select2({
+            placeholder: "Ambientes...",
+            templateSelection: function(data) {
+                let style = 'style="color: #7D848B; "';
+                console.log("get ambiente",getAmbienteName(data.id))
+                let ambienteName = this.ambiente == '9' ? getAmbienteName(data.id) : data.text ;
+                console.log("ambiente name ", ambienteName);
+
+                return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + ambienteName + "</span>");
+            }.bind(this), // Garante que 'this' dentro da função se refira ao contexto do componente Vue
+        });
+        $("#situacao").select2({
+            templateSelection: function (data) {
+                const style = 'style="padding: 0 5px 0 0px; color: #7D848B; "';
+                return $("<span " + style + ">" + data.text + "</span> ");
+            },
+        });
+
+        setTimeout(function () {
+            $("#ambiente").val($("#ambiente option:eq(0)").val()).trigger("change");
+            $("#curso").val($("#curso option:eq(0)").val()).trigger("change");
+            $("#disciplina").val($("#disciplina option:eq(0)").val()).trigger("change");
+            $("#semestre").val($("#semestre option:eq(0)").val()).trigger("change");
+
+            // Código usado para adicionar o filtro verde no select2.
+
+            $("#semestre").on("change", function () {
+                // Se o texto selecionado for diferente de 'Semestres...'
+                if ($("#semestre :selected").text() !== "Semestres...") {
+                    // Adicione a classe ao elemento desejado
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
+                    ).addClass("filter-active");
+                } else {
+                    // Caso contrário, remova a classe
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
+                    ).removeClass("filter-active");
+                }
+            });
+            $("#disciplina").on("change", function () {
+                // Se o texto selecionado for diferente de 'Semestres...'
+                if ($("#disciplina :selected").text() !== "Disciplinas...") {
+                    // Adicione a classe ao elemento desejado
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
+                    ).addClass("filter-active");
+                } else {
+                    // Caso contrário, remova a classe
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
+                    ).removeClass("filter-active");
+                }
+            });
+            $("#curso").on("change", function () {
+                // Se o texto selecionado for diferente de 'Semestres...'
+                if ($("#curso :selected").text() !== "Cursos...") {
+                    // Adicione a classe ao elemento desejado
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
+                    ).addClass("filter-active");
+                } else {
+                    // Caso contrário, remova a classe
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
+                    ).removeClass("filter-active");
+                }
+            });
+            $("#ambiente").on("change", function () {
+                // Se o texto selecionado for diferente de 'Semestres...'
+                if ($("#ambiente :selected").text() !== "Ambientes...") {
+                    // Adicione a classe ao elemento desejado
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
+                    ).addClass("filter-active");
+                } else {
+                    // Caso contrário, remova a classe
+                    $(
+                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
+                    ).removeClass("filter-active");
+                }
+            });
+        }, 100);
+
+        function adicionarClasseAoSpan(select2Id, classe) {
+            $(select2Id).on("select2:select", function () {
+                var spanElement = $(this).next(".select2-container").find(".select2-selection");
+                spanElement.addClass(classe);
+            });
+        }
+        adicionarClasseAoSpan("#ambiente", "bgcolor-select2");
+        adicionarClasseAoSpan("#curso", "bgcolor-select2");
+    },
+
         toggleNavBar(e) {
             if (e) {
                 e.preventDefault();
@@ -213,130 +348,7 @@ export default {
             //console.log(localStorage.situacao);
         },
 
-        customizeAmbiente() {
-            $("#semestre").select2({
-                placeholder: "Semestres...",
-                templateSelection: function (data) {
-                    const style = 'style="color: #7D848B; "';
 
-                    return $(
-                        "<span " +
-                            style +
-                            ">" +
-                            "<i class='icon icon-calendario-semestre'></i> " +
-                            data.text +
-                            "</span> "
-                    );
-                },
-            });
-            $("#disciplina").select2({
-                placeholder: "Disciplinas...",
-                templateSelection: function (data) {
-                    const style = 'style="color: #7D848B; "';
-
-                    return $(
-                        "<span " + style + ">" + "<i class='icon icon-disciplina' ></i> " + data.text + "</span> "
-                    );
-                },
-            });
-            $("#curso").select2({
-                placeholder: " Cursos...",
-                templateSelection: function (data) {
-                    const style = 'style="color: #7D848B; "';
-
-                    return $("<span " + style + ">" + "<i class='icon icon-icone-ava'></i> " + data.text + "</span> ");
-                },
-            });
-            $("#ambiente").select2({
-                placeholder: "Ambientes...",
-                templateSelection: function (data) {
-                    const style = 'style="color: #7D848B; "';
-
-                    return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + data.text + "</span> ");
-                },
-            });
-            $("#situacao").select2({
-                templateSelection: function (data) {
-                    const style = 'style="padding: 0 5px 0 0px; color: #7D848B; "';
-                    return $("<span " + style + ">" + data.text + "</span> ");
-                },
-            });
-
-            setTimeout(function () {
-                $("#ambiente").val($("#ambiente option:eq(0)").val()).trigger("change");
-                $("#curso").val($("#curso option:eq(0)").val()).trigger("change");
-                $("#disciplina").val($("#disciplina option:eq(0)").val()).trigger("change");
-                $("#semestre").val($("#semestre option:eq(0)").val()).trigger("change");
-
-                // Código usado para adicionar o filtro verde no select2.
-
-                $("#semestre").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#semestre :selected").text() !== "Semestres...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-                $("#disciplina").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#disciplina :selected").text() !== "Disciplinas...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-                $("#curso").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#curso :selected").text() !== "Cursos...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-                $("#ambiente").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#ambiente :selected").text() !== "Ambientes...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-            }, 100);
-
-            function adicionarClasseAoSpan(select2Id, classe) {
-                $(select2Id).on("select2:select", function () {
-                    var spanElement = $(this).next(".select2-container").find(".select2-selection");
-                    spanElement.addClass(classe);
-                });
-            }
-            adicionarClasseAoSpan("#ambiente", "bgcolor-select2");
-            adicionarClasseAoSpan("#curso", "bgcolor-select2");
-        },
 
         startTour001() {
             const geral = this;
