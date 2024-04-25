@@ -45,125 +45,15 @@ export default {
         if (localStorage.contentClosed == "true") {
             $(".filter-wrapper").addClass("closed");
         }
+        //console.log(this.ambientes)
         //$(document).ready(this.customizeAmbiente);
         $(document).ready(() => {
             this.customizeAmbiente();
         });
         this.restoreState();
 
-        $('#ambiente').on('change', function() {
-            var ambienteValue = $(this).val();
-            console.log(ambienteValue);
-        
-            if (ambienteValue !== null && ambienteValue !== '8' && ambienteValue !== '9') {
-                $('#semestre, #disciplina, #curso').prop('disabled', true);
-                $('#semestre, #disciplina, #curso').addClass('disabled-background');
-            } else {
-                $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
-            }
-
-        });
-
-        //await this.clearFilter();
-
-        this.filterCards();
-        $("#app").css("display", "block");
-        $("#pre-loading").css("display", "none");
-        // this.startTour001();
-        this.popup();
-
-        // Adiciona um ouvinte de evento para verificar a largura da tela quando a janela é redimensionada
-        window.addEventListener("resize", this.handleResize);
-
-    },
-    beforeDestroy() {
-        window.removeEventListener("resize", this.handleResize);
-    },
-    created() {
-        window.addEventListener("resize", this.handleResize);
-    },
-    destroyed() {
-        window.removeEventListener("resize", this.handleResize);
-    },
-
-
-    methods: {
-        getSemestreName(semestreId) {
-            //console.log("semestre id:",semestreId)
-            let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
-            //console.log(semestreObj.label);
-            //return semestreObj.label;
-            if (semestreSelect) {
-                // Se o semestre for encontrado, retornar o nome
-                return semestreSelect.label;
-            } else{
-                //clearOneValue('ambiente')
-                // console.log("semestre select:",semestreSelect)
-                // console.log("this.semestreS:", this.semestres)
-                // console.log("this.semestre:",this.semestre);
-
-
-                localStorage.semestre = '';
-                $("#semestre").val("").trigger("change");
-                $("#semestreValue").hide();
-                
-            }
-        },
-
-        getCursoName(cursoId) {
-            let cursoSelect = this.cursos.find(curso => curso.id === cursoId);
-            //console.log(semestreObj.label);
-            //return semestreObj.label;
-            if (cursoSelect) {
-                // Se o semestre for encontrado, retornar o nome
-                return cursoSelect.label;
-            }  else{
-                
-                localStorage.curso = '';
-                $("#curso").val("").trigger("change");
-                $("#cursoValue").hide();
-                
-            }
-            
-        },
-        getDisciplinaName(disciplinaId) {
-            //console.log(disciplinaId)
-            //console.log(this.disciplinas)
-            let disciplinaSelect = this.disciplinas.find(disciplina => disciplina.id.toString() === disciplinaId.toString());
-
-            if (disciplinaSelect) {
-                // Se o semestre for encontrado, retornar o nome
-                return disciplinaSelect.label;
-            } else{
-                
-                localStorage.disciplina = '';
-                $("#disciplina").val("").trigger("change");
-                $("#disciplinaValue").hide();
-                
-            }
-            //     // Se o semestre não for encontrado, limpar o valor correspondente no localStorage
-            //     localStorage.disciplina = '';
-            //     // Se necessário, atualizar algum elemento no DOM
-            //     $("#disciplina").val("").trigger("change");
-            //     // Não é necessário retornar nada aqui, pois queremos evitar a mensagem "Semestre não encontrado"
-            // }
-            // console.log(teste)
-            //return teste.label;
-        },
-        getAmbienteName(ambienteId) {
-            //console.log(ambienteId)
-            //console.log(this.ambientes)
-            let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
-            //console.log(ambienteLabel.label)
-            //return ambienteLabel.label;
-
-            if (ambienteSelect) {
-                // Se o semestre for encontrado, retornar o nome
-                return ambienteSelect.label;
-            } 
-        },
-
-    customizeAmbiente() {
+        let teste = this.getAmbienteName(this.ambiente) ? this.getAmbienteName(this.ambiente) : "Ambientes...";
+        console.log(this.ambientes)
         $("#semestre").select2({
             placeholder: "Semestres...",
             templateSelection: function (data) {
@@ -201,15 +91,13 @@ export default {
             },
         });
         $("#ambiente").select2({
-            placeholder: "Ambientes...",
+            placeholder: teste,
             templateSelection: function(data) {
                 let style = 'style="color: #7D848B; "';
-                console.log("get ambiente",getAmbienteName(data.id))
-                let ambienteName = this.ambiente == '9' ? getAmbienteName(data.id) : data.text ;
-                console.log("ambiente name ", ambienteName);
+            
 
-                return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + ambienteName + "</span>");
-            }.bind(this), // Garante que 'this' dentro da função se refira ao contexto do componente Vue
+                return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + data.text + "</span>");
+            }, // Garante que 'this' dentro da função se refira ao contexto do componente Vue
         });
         $("#situacao").select2({
             templateSelection: function (data) {
@@ -218,81 +106,165 @@ export default {
             },
         });
 
-        setTimeout(function () {
-            $("#ambiente").val($("#ambiente option:eq(0)").val()).trigger("change");
-            $("#curso").val($("#curso option:eq(0)").val()).trigger("change");
-            $("#disciplina").val($("#disciplina option:eq(0)").val()).trigger("change");
-            $("#semestre").val($("#semestre option:eq(0)").val()).trigger("change");
+        $('#ambiente').on('change', function() {
+            var ambienteValue = $(this).val();
+            console.log(ambienteValue);
+        
+            if (ambienteValue !== null && ambienteValue !== '8' && ambienteValue !== '9') {
+                $('#semestre, #disciplina, #curso').prop('disabled', true);
+                $('#semestre, #disciplina, #curso').addClass('disabled-background');
+            } else {
+                $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
+            }
 
-            // Código usado para adicionar o filtro verde no select2.
+        });
 
-            $("#semestre").on("change", function () {
-                // Se o texto selecionado for diferente de 'Semestres...'
-                if ($("#semestre :selected").text() !== "Semestres...") {
-                    // Adicione a classe ao elemento desejado
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
-                    ).addClass("filter-active");
-                } else {
-                    // Caso contrário, remova a classe
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
-                    ).removeClass("filter-active");
-                }
-            });
-            $("#disciplina").on("change", function () {
-                // Se o texto selecionado for diferente de 'Semestres...'
-                if ($("#disciplina :selected").text() !== "Disciplinas...") {
-                    // Adicione a classe ao elemento desejado
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
-                    ).addClass("filter-active");
-                } else {
-                    // Caso contrário, remova a classe
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
-                    ).removeClass("filter-active");
-                }
-            });
-            $("#curso").on("change", function () {
-                // Se o texto selecionado for diferente de 'Semestres...'
-                if ($("#curso :selected").text() !== "Cursos...") {
-                    // Adicione a classe ao elemento desejado
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
-                    ).addClass("filter-active");
-                } else {
-                    // Caso contrário, remova a classe
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
-                    ).removeClass("filter-active");
-                }
-            });
-            $("#ambiente").on("change", function () {
-                // Se o texto selecionado for diferente de 'Semestres...'
-                if ($("#ambiente :selected").text() !== "Ambientes...") {
-                    // Adicione a classe ao elemento desejado
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
-                    ).addClass("filter-active");
-                } else {
-                    // Caso contrário, remova a classe
-                    $(
-                        'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
-                    ).removeClass("filter-active");
-                }
-            });
-        }, 100);
 
-        function adicionarClasseAoSpan(select2Id, classe) {
-            $(select2Id).on("select2:select", function () {
-                var spanElement = $(this).next(".select2-container").find(".select2-selection");
-                spanElement.addClass(classe);
-            });
-        }
-        adicionarClasseAoSpan("#ambiente", "bgcolor-select2");
-        adicionarClasseAoSpan("#curso", "bgcolor-select2");
+        this.filterCards();
+        $("#app").css("display", "block");
+        $("#pre-loading").css("display", "none");
+        // this.startTour001();
+        this.popup();
+
+        // Adiciona um ouvinte de evento para verificar a largura da tela quando a janela é redimensionada
+        window.addEventListener("resize", this.handleResize);
+
+
     },
+    beforeDestroy() {
+        window.removeEventListener("resize", this.handleResize);
+    },
+    created() {
+        window.addEventListener("resize", this.handleResize);
+    },
+    destroyed() {
+        window.removeEventListener("resize", this.handleResize);
+    },
+
+
+    methods: {
+        getSemestreName(semestreId) {
+            //console.log("semestre id:",semestreId)
+            let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
+            //console.log(semestreObj.label);
+            //return semestreObj.label;
+            if (semestreSelect) {
+                // Se o semestre for encontrado, retornar o nome
+                return semestreSelect.label;
+            } 
+        },
+
+        getCursoName(cursoId) {
+            let cursoSelect = this.cursos.find(curso => curso.id === cursoId);
+            //console.log(semestreObj.label);
+            //return semestreObj.label;
+            if (cursoSelect) {
+                // Se o semestre for encontrado, retornar o nome
+                return cursoSelect.label;
+            } 
+            
+        },
+        getDisciplinaName(disciplinaId) {
+            //console.log(disciplinaId)
+            //console.log(this.disciplinas)
+            let disciplinaSelect = this.disciplinas.find(disciplina => disciplina.id.toString() === disciplinaId.toString());
+
+            if (disciplinaSelect) {
+                // Se o semestre for encontrado, retornar o nome
+                return disciplinaSelect.label;
+            }
+        },
+        getAmbienteName(ambienteId) {
+            //console.log(ambienteId)
+            console.log("getname ",this.ambientes)
+            let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
+            //console.log(ambienteLabel.label)
+            //return ambienteLabel.label;
+
+            if (ambienteSelect) {
+                // Se o semestre for encontrado, retornar o nome
+                return ambienteSelect.label;
+            } 
+        },
+
+        customizeAmbiente() {
+
+
+            setTimeout(function () {
+                $("#ambiente").val($("#ambiente option:eq(0)").val()).trigger("change");
+                $("#curso").val($("#curso option:eq(0)").val()).trigger("change");
+                $("#disciplina").val($("#disciplina option:eq(0)").val()).trigger("change");
+                $("#semestre").val($("#semestre option:eq(0)").val()).trigger("change");
+
+                // Código usado para adicionar o filtro verde no select2.
+
+                $("#semestre").on("change", function () {
+                    // Se o texto selecionado for diferente de 'Semestres...'
+                    if ($("#semestre :selected").text() !== "Semestres...") {
+                        // Adicione a classe ao elemento desejado
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
+                        ).addClass("filter-active");
+                    } else {
+                        // Caso contrário, remova a classe
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
+                        ).removeClass("filter-active");
+                    }
+                });
+                $("#disciplina").on("change", function () {
+                    // Se o texto selecionado for diferente de 'Semestres...'
+                    if ($("#disciplina :selected").text() !== "Disciplinas...") {
+                        // Adicione a classe ao elemento desejado
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
+                        ).addClass("filter-active");
+                    } else {
+                        // Caso contrário, remova a classe
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
+                        ).removeClass("filter-active");
+                    }
+                });
+                $("#curso").on("change", function () {
+                    // Se o texto selecionado for diferente de 'Semestres...'
+                    if ($("#curso :selected").text() !== "Cursos...") {
+                        // Adicione a classe ao elemento desejado
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
+                        ).addClass("filter-active");
+                    } else {
+                        // Caso contrário, remova a classe
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
+                        ).removeClass("filter-active");
+                    }
+                });
+                $("#ambiente").on("change", function () {
+                    // Se o texto selecionado for diferente de 'Semestres...'
+                    if ($("#ambiente :selected").text() !== "Ambientes...") {
+                        // Adicione a classe ao elemento desejado
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
+                        ).addClass("filter-active");
+                    } else {
+                        // Caso contrário, remova a classe
+                        $(
+                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
+                        ).removeClass("filter-active");
+                    }
+                });
+            }, 100);
+
+            function adicionarClasseAoSpan(select2Id, classe) {
+                $(select2Id).on("select2:select", function () {
+                    var spanElement = $(this).next(".select2-container").find(".select2-selection");
+                    spanElement.addClass(classe);
+                });
+            }
+            adicionarClasseAoSpan("#ambiente", "bgcolor-select2");
+            adicionarClasseAoSpan("#curso", "bgcolor-select2");
+        },
 
         toggleNavBar(e) {
             if (e) {
