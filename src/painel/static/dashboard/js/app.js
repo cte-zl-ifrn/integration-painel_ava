@@ -29,12 +29,11 @@ export default {
             activeParagraph: null,
             q: localStorage.q || "",
             situacao: localStorage.situacao || "inprogress",
-            semestre: localStorage.semestre || "",
+            semestre: localStorage.getItem('semestre') || "",
             disciplina: localStorage.disciplina || "",
             curso: localStorage.curso || "",
             ambiente: localStorage.ambiente || "",
             contentClosed: localStorage.contentClosed || "true",
-            selectedBar: null,
             screenWidth: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
             isPopupOpen: false,
             isIconUp: false,            
@@ -45,85 +44,13 @@ export default {
         if (localStorage.contentClosed == "true") {
             $(".filter-wrapper").addClass("closed");
         }
-        //console.log(this.ambientes)
-        //$(document).ready(this.customizeAmbiente);
         $(document).ready(() => {
             this.customizeAmbiente();
         });
-        this.restoreState();
-
-        let teste = this.getAmbienteName(this.ambiente) ? this.getAmbienteName(this.ambiente) : "Ambientes...";
-        console.log(this.ambientes)
-        $("#semestre").select2({
-            placeholder: "Semestres...",
-            templateSelection: function (data) {
-                const style = 'style="color: #7D848B; "';
-                const semestreName = data.text ? data.text : getSemestreName(semestre);
-
-                return $(
-                    "<span " +
-                        style +
-                        ">" +
-                        "<i class='icon icon-calendario-semestre'></i> " +
-                        semestreName  +
-                        "</span> "
-                );
-            },
-        });
-        $("#disciplina").select2({
-            placeholder: "Disciplinas...",
-            templateSelection: function (data) {
-                let style = 'style="color: #7D848B; "';
-                let disciplinaName = data.text ? data.text : this.disciplina;
-
-                console.log(disciplinaName)
-                return $(
-                    "<span " + style + ">" + "<i class='icon icon-disciplina' ></i> " + data.text + "</span> "
-                );
-            },
-        });
-        $("#curso").select2({
-            placeholder: " Cursos...",
-            templateSelection: function (data) {
-                const style = 'style="color: #7D848B; "';
-
-                return $("<span " + style + ">" + "<i class='icon icon-icone-ava'></i> " + data.text + "</span> ");
-            },
-        });
-        $("#ambiente").select2({
-            placeholder: teste,
-            templateSelection: function(data) {
-                let style = 'style="color: #7D848B; "';
-            
-
-                return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + data.text + "</span>");
-            }, // Garante que 'this' dentro da função se refira ao contexto do componente Vue
-        });
-        $("#situacao").select2({
-            templateSelection: function (data) {
-                const style = 'style="padding: 0 5px 0 0px; color: #7D848B; "';
-                return $("<span " + style + ">" + data.text + "</span> ");
-            },
-        });
-
-        $('#ambiente').on('change', function() {
-            var ambienteValue = $(this).val();
-            console.log(ambienteValue);
-        
-            if (ambienteValue !== null && ambienteValue !== '8' && ambienteValue !== '9') {
-                $('#semestre, #disciplina, #curso').prop('disabled', true);
-                $('#semestre, #disciplina, #curso').addClass('disabled-background');
-            } else {
-                $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
-            }
-
-        });
-
 
         this.filterCards();
         $("#app").css("display", "block");
         $("#pre-loading").css("display", "none");
-        // this.startTour001();
         this.popup();
 
         // Adiciona um ouvinte de evento para verificar a largura da tela quando a janela é redimensionada
@@ -131,153 +58,86 @@ export default {
 
 
     },
-    beforeDestroy() {
-        window.removeEventListener("resize", this.handleResize);
+    updated() {
+        $("#semestre").select2("val", localStorage.getItem('semestre'));
+        $("#disciplina").select2("val", localStorage.getItem('disciplina'));
+        $("#curso").select2("val", localStorage.getItem('curso'));
+        $("#ambiente").select2("val", localStorage.getItem('ambiente'));
     },
-    created() {
-        window.addEventListener("resize", this.handleResize);
-    },
-    destroyed() {
-        window.removeEventListener("resize", this.handleResize);
-    },
-
 
     methods: {
         getSemestreName(semestreId) {
-            //console.log("semestre id:",semestreId)
             let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
-            //console.log(semestreObj.label);
-            //return semestreObj.label;
             if (semestreSelect) {
-                // Se o semestre for encontrado, retornar o nome
                 return semestreSelect.label;
             } 
         },
 
         getCursoName(cursoId) {
             let cursoSelect = this.cursos.find(curso => curso.id === cursoId);
-            //console.log(semestreObj.label);
-            //return semestreObj.label;
             if (cursoSelect) {
-                // Se o semestre for encontrado, retornar o nome
                 return cursoSelect.label;
-            } 
-            
+            }         
         },
         getDisciplinaName(disciplinaId) {
-            //console.log(disciplinaId)
-            //console.log(this.disciplinas)
             let disciplinaSelect = this.disciplinas.find(disciplina => disciplina.id.toString() === disciplinaId.toString());
-
             if (disciplinaSelect) {
-                // Se o semestre for encontrado, retornar o nome
                 return disciplinaSelect.label;
             }
         },
         getAmbienteName(ambienteId) {
-            //console.log(ambienteId)
-            console.log("getname ",this.ambientes)
             let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
-            //console.log(ambienteLabel.label)
-            //return ambienteLabel.label;
-
             if (ambienteSelect) {
-                // Se o semestre for encontrado, retornar o nome
                 return ambienteSelect.label;
             } 
         },
 
         customizeAmbiente() {
+            $("#semestre").select2({
+                placeholder: "Semestres...",
+                templateSelection: function (data) {
+                    const style = 'style="color: #7D848B; "';
 
-
-            setTimeout(function () {
-                $("#ambiente").val($("#ambiente option:eq(0)").val()).trigger("change");
-                $("#curso").val($("#curso option:eq(0)").val()).trigger("change");
-                $("#disciplina").val($("#disciplina option:eq(0)").val()).trigger("change");
-                $("#semestre").val($("#semestre option:eq(0)").val()).trigger("change");
-
-                // Código usado para adicionar o filtro verde no select2.
-
-                $("#semestre").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#semestre :selected").text() !== "Semestres...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-semestre-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-                $("#disciplina").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#disciplina :selected").text() !== "Disciplinas...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-disciplina-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-                $("#curso").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#curso :selected").text() !== "Cursos...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-curso-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-                $("#ambiente").on("change", function () {
-                    // Se o texto selecionado for diferente de 'Semestres...'
-                    if ($("#ambiente :selected").text() !== "Ambientes...") {
-                        // Adicione a classe ao elemento desejado
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
-                        ).addClass("filter-active");
-                    } else {
-                        // Caso contrário, remova a classe
-                        $(
-                            'span.select2-selection.select2-selection--single[aria-labelledby="select2-ambiente-container"]'
-                        ).removeClass("filter-active");
-                    }
-                });
-            }, 100);
-
-            function adicionarClasseAoSpan(select2Id, classe) {
-                $(select2Id).on("select2:select", function () {
-                    var spanElement = $(this).next(".select2-container").find(".select2-selection");
-                    spanElement.addClass(classe);
-                });
-            }
-            adicionarClasseAoSpan("#ambiente", "bgcolor-select2");
-            adicionarClasseAoSpan("#curso", "bgcolor-select2");
+                    return $(
+                        "<span " +
+                            style +
+                            ">" +
+                            "<i class='icon icon-calendario-semestre'></i> " + data.text  +"</span> "
+                    );
+                },
+            });
+            $("#disciplina").select2({
+                placeholder: "Disciplinas...",
+                templateSelection: function (data) {
+                    let style = 'style="color: #7D848B; "';
+                    return $(
+                        "<span " + style + ">" + "<i class='icon icon-disciplina' ></i> " + data.text + "</span> "
+                    );
+                },
+            });
+            $("#curso").select2({
+                placeholder: "Cursos...",
+                templateSelection: function (data) {
+                    const style = 'style="color: #7D848B; "';
+                    return $("<span " + style + ">" + "<i class='icon icon-icone-ava'></i> " + data.text + "</span> ");
+                },
+            });
+            $("#ambiente").select2({
+                placeholder: "Ambientes...",
+                templateSelection: function(data) {
+                    let style = 'style="color: #7D848B; "';
+                    return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + data.text + "</span>");
+                },
+            });
+            $("#situacao").select2({
+                templateSelection: function (data) {
+                    
+                    const style = 'style="padding: 0 5px 0 0px; color: #7D848B; "';
+                    return $("<span " + style + ">" + data.text  + "</span> ");
+                },
+            });
         },
 
-        toggleNavBar(e) {
-            if (e) {
-                e.preventDefault();
-            }
-            if (localStorage.contentClosed == "true") {
-                $(".filter-wrapper").removeClass("closed");
-                localStorage.contentClosed = "false";
-            } else {
-                $(".filter-wrapper").addClass("closed");
-                localStorage.contentClosed = "true";
-            }
-        },
         handleSelectChange(event) {
             let selectedValue = event.target.value;
             let courseList = document.getElementById("course-list");
@@ -307,56 +167,6 @@ export default {
             this.isPopupOpen = false;
             document.body.style.overflow = "auto";
             document.body.classList.remove("open");
-        },
-
-        restoreState() {
-            // console.log('semestre ' + $("#semestre").val() || localStorage.semestre || "");
-            // console.log('disciplina ' + $("#disciplina").val() || localStorage.disciplina || "");
-            // console.log('curso ' + $("#curso").val() || localStorage.curso || "");
-            let grid_filter = document.getElementById("grid-filter");
-            if (grid_filter) {
-                grid_filter.classList.remove("hide_this");
-            }
-            //console.log(localStorage.situacao);
-        },
-
-
-
-        startTour001() {
-            const geral = this;
-            if (localStorage.getItem("completouTour001") != "true") {
-                // https://github.com/votch18/webtour.js
-                // A ser analisado: https://shepherdjs.dev/
-                // Descartei: https://jrainlau.github.io/smartour/
-                // Descartei: https://codyhouse.co/demo/product-tour/index.html
-                // Não considerei: https://jsfiddle.net/eugenetrue/q465gb7L/
-                // Não considerei: https://tooltip-sequence.netlify.app/
-                // Descartei pois é pago: https://introjs.com/
-                const wt = new WebTour();
-                wt.setSteps([
-                    {
-                        element: "#dropdownMenuSuporte",
-                        title: "Precisa de ajuda?",
-                        content: "Aqui você tem um lista de canais para lhe ajudarmos.",
-                        placement: "bottom-end",
-                    },
-                    {
-                        element: "#all-notifications",
-                        title: "Avisos",
-                        content:
-                            "Aqui você verá quantas <strong>notificações</strong> e <strong>mensagens</strong> existem em cada AVA.",
-                        placement: "bottom-end",
-                    },
-                    {
-                        element: ".header-user",
-                        title: "Menu usuário",
-                        content: "Acesse seu perfil no SUAP ou saia do Painel AVA de forma segura.",
-                        placement: "left",
-                    },
-                ]);
-                wt.start();
-                localStorage.setItem("completouTour001", true);
-            }
         },
 
         popup() {
@@ -460,9 +270,6 @@ export default {
 
             this.filterCards();
         },
-
-
-
         async updateFilterValues(situacao) {
             //resetar os valores tanto visualmente como no localStorage
             $("#q").val("").trigger("change");
@@ -530,7 +337,6 @@ export default {
                     .then((response) => {
                         Object.assign(this, response.data);
                         this.filtered();
-                        
                     })
                     .catch((error) => {
                         this.has_error = true;
@@ -555,8 +361,9 @@ export default {
         },
 
         filtered() {
-            this.restoreState();
+            //this.restoreState();
             this.is_filtering = false;
+            $("#semestre").select2("val", localStorage.getItem('semestre'));
         },
 
         get_situacao_desc() {
