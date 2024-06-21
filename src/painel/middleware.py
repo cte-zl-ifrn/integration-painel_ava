@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib import auth
 from a4.models import Usuario as UsuarioA4
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -40,19 +41,30 @@ class AuthMobileUserMiddleware:
 
     def __call__(self, request):
         dont_have_session = request.session.session_key is None
-        is_valid_path = "/painel/api/v1/" in request.path # and "/authenticate/" not in request.path
+        is_valid_path = "/painel/api/v1/" in request.path
         is_not_options_method = request.method != "OPTIONS"
 
         if dont_have_session and is_valid_path and is_not_options_method:
             authorization_header = request.headers.get("Authorization")
-            if authorization_header:
-                token, username = authorization_header.split(":")
-                if token == 'token':
-                    user = UsuarioA4.objects.filter(username=username).first()
-                    if user is not None:
-                        auth.login(request, user)
-                        response = self.get_response(request)
-                        auth.logout(request)
-                        return response
+            if authorization_header is None:
+                request.META["HTTP_AUTHORIZATION"] = "None"
+                return self.get_response(request)
+
+            authorization = authorization_header.split(" ")
+            if authorization[0] != "Token" or len(authorization) != 2:
+                request.META["HTTP_AUTHORIZATION"] = "None"
+                return self.get_response(request)
+
+            response = requests.post(
+                "http://login/api/v1/verify/",
+                json={"token": authorization[1]},
+            ).json()
+
+            user = UsuarioA4.objects.filter(username=response["username"]).first()
+            if user is not None:
+                auth.login(request, user)
+                response = self.get_response(request)
+                auth.logout(request)
+                return response
         else:
             return self.get_response(request)

@@ -29,6 +29,9 @@ def diarios(
         return response
     elif request.method == "GET":
         response["Access-Control-Allow-Origin"] = "*"
+        authorization_header = request.META["HTTP_AUTHORIZATION"]
+        if authorization_header == "None":
+            return {"message": "Token inválido"}
         return get_diarios(
             username=logged_user(request).username,
             semestre=semestre,
