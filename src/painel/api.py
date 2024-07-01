@@ -29,20 +29,22 @@ def diarios(
         return response
     elif request.method == "GET":
         response["Access-Control-Allow-Origin"] = "*"
-        authorization_header = request.META["HTTP_AUTHORIZATION"]
-        if authorization_header == "None":
-            return {"message": "Token inválido"}
-        return get_diarios(
-            username=logged_user(request).username,
-            semestre=semestre,
-            situacao=situacao,
-            disciplina=disciplina,
-            curso=curso,
-            ambiente=ambiente,
-            q=q,
-            page=page,
-            page_size=page_size,
-        )
+        try:
+            authorization_header = request.META["HTTP_AUTHORIZATION"]
+            if authorization_header == "None":
+                return {"message": "Token inválido"}
+        finally:
+            return get_diarios(
+                username=logged_user(request).username,
+                semestre=semestre,
+                situacao=situacao,
+                disciplina=disciplina,
+                curso=curso,
+                ambiente=ambiente,
+                q=q,
+                page=page,
+                page_size=page_size,
+            )
 
 
 @api.get("/atualizacoes_counts/")
