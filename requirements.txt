@@ -23,7 +23,6 @@ django-safedelete==1.4.0
 # UI
 django-compressor==4.5
 django-sass-processor==1.4.1
-django-sass==1.1.0
 django-richtextfield==1.6.2
 django-theme-adminlte3==3.2.0.12
 django-import-export==4.1.0

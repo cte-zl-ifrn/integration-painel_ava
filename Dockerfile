@@ -1,16 +1,16 @@
-FROM python:3.12.1-slim-bookworm
+FROM python:3.12.4-slim-bookworm
 
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get -y install --no-install-recommends curl=7.88.1-10+deb12u5 vim=2:9.0.1378-2 \
+    && apt-get -y install --no-install-recommends curl vim \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /
 
-RUN pip install --upgrade --no-cache-dir 'pip>=24.0' && \
+RUN pip install --upgrade --no-cache-dir pip && \
     pip install --no-cache-dir -r /requirements.txt
 
 COPY requirements-dev.txt /apps/req/requirements-dev.txt

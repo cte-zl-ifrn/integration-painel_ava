@@ -29,7 +29,7 @@ THIRD_APPS = env_as_list(
         "import_export",
         "simple_history",
         "safedelete",
-        "django_sass",
+        "sass_processor",
         "djrichtextfield",
         "django_json_widget",
         # "django_admin_json_editor",

@@ -9,6 +9,7 @@ from settings.loggings import *  # noqa
 from settings.middlewares import *  # noqa
 from settings.observabilities import *  # noqa
 from settings.routings import *  # noqa
+from settings.sass import *  # noqa
 from settings.sessions import *  # noqa
 from settings.securities import *  # noqa
 from settings.templates import *  # noqa
