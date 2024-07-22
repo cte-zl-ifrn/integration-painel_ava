@@ -3,8 +3,7 @@ FROM python:3.12.4-slim-bookworm
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get -y install --no-install-recommends curl vim \
+    && apt-get -y install curl vim \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
