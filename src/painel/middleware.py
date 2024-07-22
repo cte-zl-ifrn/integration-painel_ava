@@ -1,6 +1,6 @@
 import logging
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib import auth
 from a4.models import Usuario as UsuarioA4
@@ -40,27 +40,37 @@ class AuthMobileUserMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        NOT_PRESENT = "NOT_PRESENT"
         dont_have_session = request.session.session_key is None
         is_valid_path = "/painel/api/v1/" in request.path
         is_not_options_method = request.method != "OPTIONS"
 
         if dont_have_session and is_valid_path and is_not_options_method:
-            authorization_header = request.headers.get("Authorization")
-            if authorization_header is None:
-                request.META["HTTP_AUTHORIZATION"] = "None"
-                return self.get_response(request)
+            authorization = request.headers.get("Authorization", f"Token {NOT_PRESENT}").split(" ")
+            if len(authorization) != 2 or (len(authorization) == 2 and authorization[1] == NOT_PRESENT):
+                return JsonResponse(
+                    {"error": {"message": "Invalid or not present authentication token", "code": 428}},
+                    status=428
+                )
 
-            authorization = authorization_header.split(" ")
-            if authorization[0] != "Token" or len(authorization) != 2:
-                request.META["HTTP_AUTHORIZATION"] = "None"
-                return self.get_response(request)
+            try:
+                response = requests.post(f"{settings.OAUTH['BASE_URL']}/api/v1/verify/", json={"token": authorization[1]})
+            except:
+                return JsonResponse(
+                    {"error": {"message": "O Login do SUAP retornou um erro", "code": 422}},
+                    status=422
+                )
 
-            response = requests.post(
-                "http://login/api/v1/verify/",
-                json={"token": authorization[1]},
-            ).json()
 
-            user = UsuarioA4.objects.filter(username=response["username"]).first()
+            userdata = response.json()
+
+            if "username" not in userdata:
+                return JsonResponse(
+                    {"error": {"message": "Erro ao integrar com o Login do SUAP", "code": 422}},
+                    status=422
+                )
+
+            user = UsuarioA4.objects.filter(username=userdata["username"]).first()
             if user is not None:
                 auth.login(request, user)
                 response = self.get_response(request)
