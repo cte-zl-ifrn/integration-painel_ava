@@ -24,9 +24,9 @@ django-simple-history==3.7.0
 django-safedelete==1.4.0
 
 # UI
-django-compressor==4.5
+# django-compressor==4.5.1
+# django-sass==1.1.0
 django-sass-processor==1.4.1
-django-sass==1.1.0
 django-json-widget==2.0.1
 django-richtextfield==1.6.2
 django-theme-adminlte3==3.2.0.12
@@ -41,6 +41,6 @@ psycopg[binary,pool]==3.2.1
 pillow==10.4.0
 
 # Production
-sentry-sdk[django]==2.10.0
+sentry-sdk[django]==2.11.0
 gunicorn==22.0.0
 supervisor==4.2.5
