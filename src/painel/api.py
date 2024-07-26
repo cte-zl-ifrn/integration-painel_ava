@@ -29,22 +29,17 @@ def diarios(
         return response
     elif request.method == "GET":
         response["Access-Control-Allow-Origin"] = "*"
-        try:
-            authorization_header = request.META["HTTP_AUTHORIZATION"]
-            if authorization_header == "None":
-                return {"message": "Token inválido"}
-        finally:
-            return get_diarios(
-                username=logged_user(request).username,
-                semestre=semestre,
-                situacao=situacao,
-                disciplina=disciplina,
-                curso=curso,
-                ambiente=ambiente,
-                q=q,
-                page=page,
-                page_size=page_size,
-            )
+        return get_diarios(
+            username=logged_user(request).username,
+            semestre=semestre,
+            situacao=situacao,
+            disciplina=disciplina,
+            curso=curso,
+            ambiente=ambiente,
+            q=q,
+            page=page,
+            page_size=page_size,
+        )
 
 
 @api.get("/atualizacoes_counts/")
@@ -53,9 +48,16 @@ def atualizacoes_counts(request: HttpRequest):
     return get_atualizacoes_counts(logged_user(request).username)
 
 
-@api.get("/set_favourite/")
-def set_favourite(request: HttpRequest, ava: str, courseid: int, favourite: int):
-    return set_favourite_course(logged_user(request).username, ava, courseid, favourite)
+@api.api_operation(["GET", "OPTIONS"], "/set_favourite/")
+def set_favourite(request: HttpRequest, response: HttpResponse, ava: str, courseid: int, favourite: int):
+    if request.method == "OPTIONS":
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    elif request.method == "GET":
+        response["Access-Control-Allow-Origin"] = "*"
+        return set_favourite_course(logged_user(request).username, ava, courseid, favourite)
 
 
 @api.get("/set_visible/")
