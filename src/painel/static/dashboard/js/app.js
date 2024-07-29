@@ -55,6 +55,25 @@ export default {
 
         // Adiciona um ouvinte de evento para verificar a largura da tela quando a janela é redimensionada
         window.addEventListener("resize", this.handleResize);
+
+        const options = document.querySelectorAll('#ambiente option');
+            // Itera sobre cada elemento <option>
+            options.forEach(option => {
+                // Obtém o valor do atributo de dados "data-label"
+                const label = option.getAttribute('data-label');
+                console.log(label)
+                // Obtém o ícone correspondente ao label
+                const icon = this.getIcon(label);
+                
+                // Cria um elemento <span> para o ícone
+                const iconSpan = document.createElement('span');
+                iconSpan.textContent = icon;
+                
+                // Insere o elemento <span> antes do texto do <option>
+                option.prepend(iconSpan);
+            });
+
+
     },
     updated() {
         $("#semestre").select2("val", localStorage.getItem('semestre'));
@@ -62,6 +81,9 @@ export default {
         $("#curso").select2("val", localStorage.getItem('curso'));
         $("#ambiente").select2("val", localStorage.getItem('ambiente'));
     },
+
+
+    
     methods: {
         getSemestreName(semestreId) {
             let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
@@ -187,10 +209,7 @@ export default {
             //console.log(localStorage.situacao);
         },
 
-
-
         customizeAmbiente() {
-            
             $("#semestre").select2({
                 placeholder: "Semestres...",
                 templateSelection: function (data) {
@@ -238,7 +257,6 @@ export default {
                     return $("<span " + style + ">" + data.text + "</span> ");
                 },
             });
-
 
             setTimeout(function () {
                 $("#ambiente").val($("#ambiente option:eq(0)").val()).trigger("change");
