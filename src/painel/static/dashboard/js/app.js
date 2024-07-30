@@ -86,6 +86,9 @@ export default {
     
     methods: {
         getSemestreName(semestreId) {
+            if (!semestreId || semestreId === "Semestres...") {
+                return null;
+            }
             let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
             if (semestreSelect) {
                 return semestreSelect.label;
@@ -93,18 +96,27 @@ export default {
         },
 
         getCursoName(cursoId) {
+            if (!cursoId || cursoId === "Cursos...") {
+                return null;
+            }
             let cursoSelect = this.cursos.find(curso => curso.id === cursoId);
             if (cursoSelect) {
                 return cursoSelect.label;
             }         
         },
         getDisciplinaName(disciplinaId) {
+             if (!disciplinaId || disciplinaId === "Disciplinas...") {
+                return null;
+            }
             let disciplinaSelect = this.disciplinas.find(disciplina => disciplina.id.toString() === disciplinaId.toString());
             if (disciplinaSelect) {
                 return disciplinaSelect.label;
             }
         },
         getAmbienteName(ambienteId) {
+             if (!ambienteId || ambienteId === "Ambientes...") {
+                return null;
+            }
             let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
             if (ambienteSelect) {
                 return ambienteSelect.label;

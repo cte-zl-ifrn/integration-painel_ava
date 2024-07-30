@@ -59,16 +59,16 @@
             </div>
 
             <div class="selectedFilters">
-                <div v-if="semestre" id="semestreValue" v-on:click="clearOneValue('semestre')">
+                <div v-if="getSemestreName(semestre)" id="semestreValue" v-on:click="clearOneValue('semestre')">
                     <div> Semestre: [[getSemestreName(semestre)]] </div><span>✕</span>
                 </div>
-                <div v-if="disciplina" id="disciplinaValue" v-on:click="clearOneValue('disciplina')">
+                <div v-if="getDisciplinaName(disciplina)" id="disciplinaValue" v-on:click="clearOneValue('disciplina')">
                     <div>Disciplina: [[getDisciplinaName(disciplina)]] </div><span>✕</span>
                 </div>
-                <div v-if="curso" id="cursoValue" v-on:click="clearOneValue('curso')">
+                <div v-if="getCursoName(curso)" id="cursoValue" v-on:click="clearOneValue('curso')">
                     <div>Curso: [[getCursoName(curso)]] </div><span>✕</span>
                 </div>
-                <div v-if="ambiente" id="ambienteValue" v-on:click="clearOneValue('ambiente')" >
+                <div v-if="getAmbienteName(ambiente)" id="ambienteValue" v-on:click="clearOneValue('ambiente')" >
                     <div>Ambiente: [[getAmbienteName(ambiente)]]</div><span>✕</span>
                 </div>  
             </div>
