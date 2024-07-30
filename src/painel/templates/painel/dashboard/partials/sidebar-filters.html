@@ -29,17 +29,17 @@
                 </select>
             </div>
             <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
-                <select name="semestre" id="semestre" v-model="semestre" required>
+                <select name="semestre" id="semestre" v-model="semestre" required :disabled="shouldDisableSelects">
                     <option v-for="row in semestres" v-bind:value="row.id">[[ row.label ]]</option>
                 </select>
             </div>
             <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
-                <select name="disciplina" id="disciplina" v-model="disciplina" required>
+                <select name="disciplina" id="disciplina" v-model="disciplina" required >
                     <option v-for="row in disciplinas" v-bind:value="row.id">[[ row.label ]]</option>
                 </select>
             </div>
             <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
-                <select name="curso" id="curso" v-model="curso" required>
+                <select name="curso" id="curso" v-model="curso" required >
                     <option v-for="row in cursos" v-bind:value="row.id">[[ row.label ]]</option>
                 </select>
             </div>
@@ -59,10 +59,18 @@
             </div>
 
             <div class="selectedFilters">
-                <div v-if="semestre" v-on:click="clearOneValue('semestre')">Semestre</div>
-                <div v-if="disciplina" v-on:click="clearOneValue('disciplina')">Disciplina</div>
-                <div v-if="curso" v-on:click="clearOneValue('curso')">Curso</div>
-                <div v-if="ambiente" v-on:click="clearOneValue('ambiente')">Ambiente</div>
+                <div v-if="getSemestreName(semestre)" id="semestreValue" v-on:click="clearOneValue('semestre')">
+                    <div> Semestre: [[getSemestreName(semestre)]] </div><span>✕</span>
+                </div>
+                <div v-if="getDisciplinaName(disciplina)" id="disciplinaValue" v-on:click="clearOneValue('disciplina')">
+                    <div>Disciplina: [[getDisciplinaName(disciplina)]] </div><span>✕</span>
+                </div>
+                <div v-if="getCursoName(curso)" id="cursoValue" v-on:click="clearOneValue('curso')">
+                    <div>Curso: [[getCursoName(curso)]] </div><span>✕</span>
+                </div>
+                <div v-if="getAmbienteName(ambiente)" id="ambienteValue" v-on:click="clearOneValue('ambiente')" >
+                    <div>Ambiente: [[getAmbienteName(ambiente)]]</div><span>✕</span>
+                </div>  
             </div>
     </div>
 </div> 
