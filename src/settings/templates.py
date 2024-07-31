@@ -16,7 +16,7 @@ TEMPLATES = [
                 "painel.context_processors.layout_settings",
                 "painel.context_processors.top_menu",
                 "painel.context_processors.user",
-                "adminlte3_admin.context_processors.sidebar_menu",
+                "adminlte3.admin.context_processors.sidebar_menu",
                 "painel.context_processors.messages",
                 "painel.context_processors.notifications",
             ]

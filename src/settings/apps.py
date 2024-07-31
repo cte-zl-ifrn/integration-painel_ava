@@ -34,8 +34,8 @@ THIRD_APPS = env_as_list(
         "django_json_widget",
         # "django_admin_json_editor",
         # "corsheaders",
-        # "adminlte3",
-        # "adminlte3_admin",
+        "adminlte3",
+        # "adminlte3/admin",
     ],
 )
 
