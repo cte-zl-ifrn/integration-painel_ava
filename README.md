@@ -17,6 +17,23 @@ As variáveis de ambiente no SUAP têm as seguintes definições:
 -   `MOODLE_SYNC_URL` - URL do Painel AVA
 -   `MOODLE_SYNC_TOKEN` - o token deve ser o mesmo que você vai configurar ao cadastrar o SUAP no Painel AVA, é usada para autenticação do SUAP, guarde segredo desta chave.
 
+
+## Como construir a imagem localmente
+
+```bash
+cd ~/projetos/IFRN/ava/integration/painel_ava
+
+git checkout proximo
+docker build -t ctezlifrn/avapainel:proximo .
+
+git checkout teste
+docker build -t ctezlifrn/avapainel:teste .
+
+git checkout producao
+docker build -t ctezlifrn/avapainel:producao .
+```
+
+
 ## Como implantar
 
 Crie um arquivo `.env` parecido com o que se segue:
