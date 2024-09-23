@@ -42,32 +42,28 @@ class AuthMobileUserMiddleware:
     def __call__(self, request):
         NOT_PRESENT = "NOT_PRESENT"
         dont_have_session = request.session.session_key is None
-        is_valid_path = "/painel/api/v1/" in request.path
+        is_valid_path = "/api/v1/" in request.path
         is_not_options_method = request.method != "OPTIONS"
 
         if dont_have_session and is_valid_path and is_not_options_method:
             authorization = request.headers.get("Authorization", f"Token {NOT_PRESENT}").split(" ")
             if len(authorization) != 2 or (len(authorization) == 2 and authorization[1] == NOT_PRESENT):
                 return JsonResponse(
-                    {"error": {"message": "Invalid or not present authentication token", "code": 428}},
-                    status=428
+                    {"error": {"message": "Invalid or not present authentication token", "code": 428}}, status=428
                 )
 
             try:
-                response = requests.post(f"{settings.OAUTH['BASE_URL']}/api/v1/verify/", json={"token": authorization[1]})
-            except:
-                return JsonResponse(
-                    {"error": {"message": "O Login do SUAP retornou um erro", "code": 422}},
-                    status=422
+                response = requests.post(
+                    f"{settings.OAUTH['BASE_URL']}/api/v1/verify/", json={"token": authorization[1]}
                 )
-
+            except:
+                return JsonResponse({"error": {"message": "O Login do SUAP retornou um erro", "code": 422}}, status=422)
 
             userdata = response.json()
 
             if "username" not in userdata:
                 return JsonResponse(
-                    {"error": {"message": "Erro ao integrar com o Login do SUAP", "code": 422}},
-                    status=422
+                    {"error": {"message": "Erro ao integrar com o Login do SUAP", "code": 422}}, status=422
                 )
 
             user = UsuarioA4.objects.filter(username=userdata["username"]).first()

@@ -36,10 +36,10 @@ export default {
             contentClosed: localStorage.contentClosed || "true",
             screenWidth: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
             isPopupOpen: false,
-            isIconUp: false,            
+            isIconUp: false,
         };
     },
-    
+
     mounted() {
         if (localStorage.contentClosed == "true") {
             $(".filter-wrapper").addClass("closed");
@@ -64,11 +64,11 @@ export default {
                 console.log(label)
                 // Obtém o ícone correspondente ao label
                 const icon = this.getIcon(label);
-                
+
                 // Cria um elemento <span> para o ícone
                 const iconSpan = document.createElement('span');
                 iconSpan.textContent = icon;
-                
+
                 // Insere o elemento <span> antes do texto do <option>
                 option.prepend(iconSpan);
             });
@@ -83,7 +83,7 @@ export default {
     },
 
 
-    
+
     methods: {
         getSemestreName(semestreId) {
             if (!semestreId || semestreId === "Semestres...") {
@@ -92,7 +92,7 @@ export default {
             let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
             if (semestreSelect) {
                 return semestreSelect.label;
-            } 
+            }
         },
 
         getCursoName(cursoId) {
@@ -102,7 +102,7 @@ export default {
             let cursoSelect = this.cursos.find(curso => curso.id === cursoId);
             if (cursoSelect) {
                 return cursoSelect.label;
-            }         
+            }
         },
         getDisciplinaName(disciplinaId) {
              if (!disciplinaId || disciplinaId === "Disciplinas...") {
@@ -120,7 +120,7 @@ export default {
             let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
             if (ambienteSelect) {
                 return ambienteSelect.label;
-            } 
+            }
         },
 
         customizeAmbiente() {
@@ -162,7 +162,7 @@ export default {
             });
             $("#situacao").select2({
                 templateSelection: function (data) {
-                    
+
                     const style = 'style="padding: 0 5px 0 0px; color: #7D848B; "';
                     return $("<span " + style + ">" + data.text  + "</span> ");
                 },
@@ -418,7 +418,7 @@ export default {
             const new_status = card.isfavourite ? 0 : 1;
             let situacao = ($("#situacao").val())
             axios
-                .get("/painel/api/v1/set_favourite/", {
+                .get("/api/v1/set_favourite/", {
                     params: {
                         ava: card.ambiente.titulo,
                         courseid: card.id,
@@ -426,16 +426,16 @@ export default {
                     },
                 })
                 .then((response) => {
-                    
+
                     card.isfavourite = new_status == 1;
                     setTimeout(() => {
                         if (situacao == "favourites") {
                             this.filterCards();
                         }
-                    }, 500); 
+                    }, 500);
                 })
 
-                
+
                 .catch((error) => {
                     console.debug(error);
                 });
@@ -445,7 +445,7 @@ export default {
             if (confirm("Confirma a operação?")) {
                 const new_status = parseInt(card.visible) ? 0 : 1;
                 axios
-                    .get("/painel/api/v1/set_visible/", {
+                    .get("/api/v1/set_visible/", {
                         params: {
                             ava: card.ambiente.titulo,
                             courseid: card.id,
@@ -463,11 +463,11 @@ export default {
 
         cardActionsToggler(event) {
             let item = $(event.currentTarget).parent().parent().parent();
-            
+
             let icon = $(event.currentTarget).find("i");
             let label = icon.closest("label");
             let situacao = $("#situacao").val();  // Certifique-se de que situacao está acessível aqui
-            
+
 
             // Toggle classes for changing color
             if ($(item).hasClass("showActions")) {
@@ -501,7 +501,7 @@ export default {
             this["situacao"] = situacao;
             this["semestre"] = "";
             this["disciplina"] = "";
-            this["curso"] = ""; 
+            this["curso"] = "";
             this["ambiente"] = "";
         },
 
@@ -535,10 +535,10 @@ export default {
         },
 
         filterCards() {
-            this.filtering();                                 
+            this.filtering();
             try {
                 axios
-                    .get("/painel/api/v1/diarios/", {
+                    .get("/api/v1/diarios/", {
                         params: {
                             q: $(self.q).val() || localStorage.q || "",
                             situacao: $("#situacao").val() || localStorage.situacao || "inprogress",
