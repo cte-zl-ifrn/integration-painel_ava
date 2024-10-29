@@ -15,9 +15,9 @@ export default {
     methods: {
         showAtualizacoes: function () {
             $(".icon-count").css("display", "inline-block");
-            axios.get("/painel/api/v1/atualizacoes_counts/", { params: {} }).then((response) => {
+            axios.get("/api/v1/atualizacoes_counts/", { params: {} }).then((response) => {
                 Object.assign(this, response.data);
-                console.log(this,response.data)
+                //console.log('PRINT:',response.data)
             });
         },
     },

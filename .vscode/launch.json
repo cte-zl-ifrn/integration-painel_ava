@@ -5,14 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Remote Attach",
+            "name": "Painel@5678",
             "type": "python",
             "request": "attach",
             "port": 5678,
             "host": "localhost",
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}/src/python",
+                    "localRoot": "${workspaceFolder}/src",
                     "remoteRoot": "/apps/app"
                 }
             ]

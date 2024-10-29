@@ -22,35 +22,14 @@ class GrupoAdmin(BaseModelAdmin):
 
 @register(Usuario)
 class UsuarioAdmin(BaseModelAdmin):
-    list_display = [
-        "username",
-        "photo",
-        "nome_usual",
-        "email",
-        "tipo_usuario",
-        "auth",
-        "acoes",
-    ]
-    list_filter = [
-        "tipo_usuario",
-        "is_superuser",
-        "is_active",
-        "is_staff",
-        "polo__nome",
-        "campus__sigla",
-    ]
+    list_display = ["username", "photo", "nome_usual", "email", "tipo_usuario", "auth", "acoes"]
+    list_filter = ["tipo_usuario", "is_superuser", "is_active", "is_staff"]
     search_fields = ["username", "nome_usual", "email", "email_secundario"]
     fieldsets = [
         (
             _("Identificação"),
             {
-                "fields": [
-                    "username",
-                    "nome_usual",
-                    "nome_registro",
-                    "nome_social",
-                    "foto",
-                ],
+                "fields": ["username", "nome_usual", "nome_registro", "nome_social", "foto"],
                 "description": _("Identifica o usuário."),
             },
         ),
@@ -61,13 +40,6 @@ class UsuarioAdmin(BaseModelAdmin):
                 "description": _(
                     "Controla a identidade do usuário nos sistemas, qual seu papel e quais suas autorizações."
                 ),
-            },
-        ),
-        (
-            _("Aluno"),
-            {
-                "fields": [("campus", "polo")],
-                "description": _("Estes campos só têm relevância para usuários do tipo aluno."),
             },
         ),
         (
@@ -102,9 +74,9 @@ class UsuarioAdmin(BaseModelAdmin):
     @display
     def auth(self, obj):
         result = (
-            '<img src="/painel/static/admin/img/icon-yes.svg" alt="True"> '
+            '<img src="/static/admin/img/icon-yes.svg" alt="True"> '
             if obj.is_active
-            else '<img src="/painel/static/admin/img/icon-no.svg" alt="False"> '
+            else '<img src="/static/admin/img/icon-no.svg" alt="False"> '
         )
         result += _("Colaborador") if obj.is_staff else _("Usuário")
         result += " " + _("superusuário") if obj.is_staff else ""

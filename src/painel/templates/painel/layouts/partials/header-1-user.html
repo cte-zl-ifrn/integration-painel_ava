@@ -35,7 +35,7 @@
             {% if user.is_superuser %}
                 {% if admins %}
                     {% for ava in admins  %}
-                        <li style='border-left: 8px solid {{ ava.cor_degrade }};'>
+                        <li style='border-left: 8px solid {{ ava.cor_mestra }};'>
                             <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
                         </li>
                     {% endfor %}

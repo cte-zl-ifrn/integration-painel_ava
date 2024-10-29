@@ -44,45 +44,26 @@ class UsuarioManager(SafeDeleteManager, UserManager):
 class Usuario(SafeDeleteModel, AbstractUser):
     username = CharField(
         _("IFRN-id"),
-        max_length=150,
+        max_length=2560,
         unique=True,
         validators=[AbstractUser.username_validator],
         error_messages={
             "unique": _("A user with that IFRN-id already exists."),
         },
     )
-    nome_registro = CharField(_("nome civil"), max_length=255, blank=True)
-    nome_social = CharField(_("nome social"), max_length=255, null=True, blank=True)
-    nome_usual = CharField(_("nome de apresentação"), max_length=255, null=True, blank=True)
-    nome = CharField(_("nome no SUAP"), max_length=255, null=True, blank=True)
-    tipo_usuario = CharField(_("tipo"), max_length=255, choices=TipoUsuario, null=True, blank=True)
-    foto = CharField(_("URL da foto"), max_length=255, null=True, blank=True)
-    email = EmailField(_("e-Mail preferêncial"), null=True, blank=False)
-    email_secundario = EmailField(_("e-Mail pessoal"), null=True, blank=True)
-    email_corporativo = EmailField(_("e-Mail corporativo"), null=True, blank=True)
-    email_google_classroom = EmailField(_("e-Mail Gogole Classroom"), null=True, blank=True)
-    email_academico = EmailField(_("e-Mail academico"), null=True, blank=True)
-    campus = ForeignKey(
-        "painel.Campus",
-        on_delete=PROTECT,
-        verbose_name=_("campus do aluno"),
-        null=True,
-        blank=True,
-    )
-    curso = ForeignKey(
-        "painel.Curso",
-        on_delete=PROTECT,
-        verbose_name=_("curso do aluno"),
-        null=True,
-        blank=True,
-    )
-    polo = ForeignKey(
-        "painel.Polo",
-        on_delete=PROTECT,
-        verbose_name=_("pólo do aluno"),
-        null=True,
-        blank=True,
-    )
+    first_name = CharField(_("primeiro nome"), max_length=2560, null=True, blank=True)
+    last_name = CharField(_("último nome"), max_length=2560, null=True, blank=True)
+    nome_registro = CharField(_("nome civil"), max_length=2560, null=True, blank=True)
+    nome_social = CharField(_("nome social"), max_length=2560, null=True, blank=True)
+    nome_usual = CharField(_("nome de apresentação"), max_length=2560, null=True, blank=True)
+    nome = CharField(_("nome no SUAP"), max_length=2560, null=True, blank=True)
+    tipo_usuario = CharField(_("tipo"), max_length=2560, choices=TipoUsuario, null=True, blank=True)
+    foto = CharField(_("URL da foto"), max_length=2560, null=True, blank=True)
+    email = EmailField(_("e-Mail preferêncial"), max_length=2560, null=True, blank=False)
+    email_secundario = EmailField(_("e-Mail pessoal"), max_length=2560, null=True, blank=True)
+    email_corporativo = EmailField(_("e-Mail corporativo"), max_length=2560, null=True, blank=True)
+    email_google_classroom = EmailField(_("e-Mail Gogole Classroom"), max_length=2560, null=True, blank=True)
+    email_academico = EmailField(_("e-Mail academico"), max_length=2560, null=True, blank=True)
     first_login = DateTimeField(_("first login"), null=True, blank=True)
     last_json = TextField(_("último JSON"), null=True, blank=True)
 
@@ -107,11 +88,11 @@ class Usuario(SafeDeleteModel, AbstractUser):
 
     @property
     def foto_url(self):
-        return (
-            f"{settings.SUAP_OAUTH_BASE_URL}{self.foto}"
-            if self.foto
-            else f"{settings.STATIC_URL}dashboard/img/user.png"
-        )
+        if self.foto is None:
+            return f"{settings.STATIC_URL}dashboard/img/user.png"
+        if not self.foto.lower().startswith("http"):
+            return f"{settings.OAUTH['BASE_URL']}{self.foto}"
+        return self.foto
 
 
 Usuario._meta.icon = "fa fa-user"
@@ -131,9 +112,6 @@ class UsuarioAnonimo:
     email_corporativo = None
     email_google_classroom = None
     email_academico = None
-    campus = None
-    curso = None
-    polo = None
     first_login = None
     is_authenticated = False
     is_active = False

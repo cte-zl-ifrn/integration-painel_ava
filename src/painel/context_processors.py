@@ -20,14 +20,13 @@ def layout_settings(request: HttpRequest) -> dict:
         "layout_term_of_use_url_name": "painel:term_of_use",
         "layout_site_name": "Painel AVA",
         "logged_user": logged_user(request),
-        "suap_oauth_base_url": settings.SUAP_OAUTH_BASE_URL,
         "show_vlibras": settings.SHOW_VLIBRAS,
         "show_userway": settings.SHOW_USERWAY,
         "userway_account": settings.USERWAY_ACCOUNT,
         "personificando": usuario_personificado is not None,
         "layout_has_auth_remembering": True,
         "last_startup": settings.LAST_STARTUP,
-        "painel_version": settings.PAINEL_VERSION,
+        "app_version": settings.APP_VERSION,
         "gtag": settings.GTAG_CODE if hasattr(settings, "GTAG_CODE") else False,
         "ambientes": Ambiente.objects.filter(active=True),
         "admins": Ambiente.admins(),
@@ -59,9 +58,11 @@ def top_menu(request: HttpRequest) -> dict:
 
 def user(request: HttpRequest) -> dict:
     return {
-        "user_display_name": request.user.get_short_name()
-        if hasattr(request.user, "get_short_name") and request.user.get_short_name()
-        else request.user.username,
+        "user_display_name": (
+            request.user.get_short_name()
+            if hasattr(request.user, "get_short_name") and request.user.get_short_name()
+            else request.user.username
+        ),
         "user_profile_url": "#",
         # "user_profile_thumbnail_url": f"{settings.STATIC_URL}vendors/adminlte3/img/avatar.png",
     }

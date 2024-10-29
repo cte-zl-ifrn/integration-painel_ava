@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        {% include 'painel/layouts/partials/head.html' %}
+        <style>
+            main, header {
+                display: block;
+                width: 75%;
+                max-width: 600px;
+                padding: 30px;
+                margin: 0 auto;
+            }
+            h1 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .buttons {
+                border-top: 2px solid #ddd;
+                margin-top: 30px;
+                padding-top: 15px;
+                text-align: center;
+            }
+            .title {
+                font-size: 2em;
+                font-weight: bold;
+                margin-left: 10px;
+                display: inline;
+                height: 40px;
+                vertical-align: middle;
+                float: right;
+            }
+        </style>
+    </head> 
+    <body> 
+        <header>
+            <img alt="Logo do IFRN" src="{% static 'dashboard/img/logo_ifrn_zl.png' %}" width="132" height="40" />
+            <div class="title">Painel AVA</div>
+        </header>
+        <main>
+            <h1>Você não autorizou!</h1>
+            <p>
+                Você não pôde processeguir pois não autorizou o compartilhamento de dados com o SUAP!
+            </p>
+            <div class="buttons">
+                <a class="btn btn-primary" href='{% url "painel:dashboard" %}'>Tentar novamente</a>
+            </div>
+        </main>
+    </body>
+</html>

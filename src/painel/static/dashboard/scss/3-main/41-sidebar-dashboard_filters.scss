@@ -37,7 +37,6 @@ button.btn-success {
     border-radius: 4px;
     color: var(--branco-primario);
     width: calc(50% - 2px);
-   
     
 }
 
@@ -61,17 +60,14 @@ button.btn-outline-success {
     flex-wrap: wrap;
     gap: 6px;
     div {
-        padding: 4px 12px;
+        padding: 4px 10px;
         background-color: var(--verde-terciario);
         border-radius: 5px;
-        display: inline-block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         font-weight: 600;
         color: var(--cinza-secundario);
         cursor: pointer;
-        &::before {
-            content: 'X';
-            font-weight: bold;
-            margin-right: 8px;
-        }
     }
 }

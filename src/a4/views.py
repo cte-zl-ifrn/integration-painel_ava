@@ -8,27 +8,20 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
-from .models import Usuario
-
-
-def register(request: HttpRequest) -> HttpResponse:
-    if request.user.is_authenticated:
-        raise ValidationError("Você já tem um registro")
+from a4.models import Usuario
 
 
 def login(request: HttpRequest) -> HttpResponse:
-    OAUTH = settings.OAUTH
-    next = urllib.parse.quote_plus(request.GET["next"] if "next" in request.GET else "/", safe="")
-    redirect_uri = f"{OAUTH['REDIRECT_URI']}?next={next}"
-    redirect_uri = OAUTH["REDIRECT_URI"]
-    suap_url = f"{OAUTH['BASE_URL']}/o/authorize/?response_type=code&client_id={OAUTH['CLIENTE_ID']}&redirect_uri={redirect_uri}"
+    o = settings.OAUTH
+    suap_url = f"{o["BASE_URL"]}/o/authorize/?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
     return redirect(suap_url)
 
 
 def authenticate(request: HttpRequest) -> HttpResponse:
-    from painel.models import Campus, Polo
-
     OAUTH = settings.OAUTH
+
+    if request.GET.get("error") == "access_denied":
+        return render(request, "a4/not_authorized.html")
 
     if "code" not in request.GET:
         raise Exception(_("O código de autenticação não foi informado."))
@@ -37,27 +30,27 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         "grant_type": "authorization_code",
         "code": request.GET.get("code"),
         "redirect_uri": OAUTH["REDIRECT_URI"],
-        "client_id": OAUTH["CLIENTE_ID"],
+        "client_id": OAUTH["CLIENT_ID"],
         "client_secret": OAUTH["CLIENT_SECRET"],
     }
 
-    request_data = json.loads(
-        requests.post(
-            f"{OAUTH['BASE_URL']}/o/token/",
-            data=access_token_request_data,
-            verify=OAUTH["VERIFY_SSL"],
-        ).text
-    )
+    token_str = requests.post(f"{OAUTH['BASE_URL']}/o/token/", data=access_token_request_data, verify=OAUTH["VERIFY_SSL"]).text
+    request_data = json.loads(token_str)
+
+    if request_data.get("error_description") == "Mismatching redirect URI.":
+        return render(request, "a4/mismatching_redirect_uri.html", {"error": request_data})
+
     headers = {
-        "Authorization": "Bearer {}".format(request_data.get("access_token")),
+        "Authorization": f"Bearer {request_data.get('access_token')}",
         "x-api-key": OAUTH["CLIENT_SECRET"],
     }
-    # response_data = json.loads(requests.get(f"{OAUTH['BASE_URL']}/api/eu/", data={'scope': request_data.get('scope')}, headers=headers, verify=OAUTH['VERIFY_SSL']).text )
+
     response = requests.get(
-        f"{OAUTH['BASE_URL']}/api/eu/?scope={request_data.get('scope')}",
+        f"{OAUTH['BASE_URL']}/api/v1/userinfo/?scope={request_data.get('scope')}",
         headers=headers,
         verify=OAUTH["VERIFY_SSL"],
     )
+    print(response.text)
     response_data = json.loads(response.text)
 
     username = response_data["identificacao"]
@@ -74,8 +67,6 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         "email_google_classroom": response_data.get("email_google_classroom"),
         "email_academico": response_data.get("email_academico"),
         "email_secundario": response_data.get("email_secundario"),
-        "campus": Campus.objects.filter(sigla=response_data.get("campus")).first(),
-        "polo": Polo.objects.filter(suap_id=response_data.get("polo")).first(),
         "foto": response_data.get("foto"),
         "tipo_usuario": response_data.get("tipo_usuario"),
         "last_json": response.text,
@@ -101,7 +92,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
 
 def logout(request: HttpRequest) -> HttpResponse:
     auth.logout(request)
-    return render(request, "a4/logout.html")
+    return redirect(f"{settings.LOGOUT_REDIRECT_URL}?next={urllib.parse.quote_plus(settings.LOGIN_REDIRECT_URL)}")
 
 
 def personificar(request: HttpRequest, username: str):

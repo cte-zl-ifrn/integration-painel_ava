@@ -29,31 +29,28 @@ export default {
             activeParagraph: null,
             q: localStorage.q || "",
             situacao: localStorage.situacao || "inprogress",
-            semestre: localStorage.semestre || "",
+            semestre: localStorage.getItem('semestre') || "",
             disciplina: localStorage.disciplina || "",
             curso: localStorage.curso || "",
             ambiente: localStorage.ambiente || "",
             contentClosed: localStorage.contentClosed || "true",
-            selectedBar: null,
             screenWidth: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
             isPopupOpen: false,
             isIconUp: false,
         };
     },
 
-    async mounted() {
+    mounted() {
         if (localStorage.contentClosed == "true") {
             $(".filter-wrapper").addClass("closed");
         }
-        $(document).ready(this.customizeAmbiente);
-        this.restoreState();
-
-        await this.clearFilter();
+        $(document).ready(() => {
+            this.customizeAmbiente();
+        });
 
         this.filterCards();
         $("#app").css("display", "block");
         $("#pre-loading").css("display", "none");
-        // this.startTour001();
         this.popup();
 
         // Adiciona um ouvinte de evento para verificar a largura da tela quando a janela é redimensionada
@@ -67,39 +64,111 @@ export default {
                 console.log(label)
                 // Obtém o ícone correspondente ao label
                 const icon = this.getIcon(label);
-                
+
                 // Cria um elemento <span> para o ícone
                 const iconSpan = document.createElement('span');
                 iconSpan.textContent = icon;
-                
+
                 // Insere o elemento <span> antes do texto do <option>
                 option.prepend(iconSpan);
             });
+
+
     },
-    beforeDestroy() {
-        window.removeEventListener("resize", this.handleResize);
-    },
-    created() {
-        window.addEventListener("resize", this.handleResize);
-    },
-    destroyed() {
-        window.removeEventListener("resize", this.handleResize);
+    updated() {
+        $("#semestre").select2("val", localStorage.getItem('semestre'));
+        $("#disciplina").select2("val", localStorage.getItem('disciplina'));
+        $("#curso").select2("val", localStorage.getItem('curso'));
+        $("#ambiente").select2("val", localStorage.getItem('ambiente'));
     },
 
-    
+
+
     methods: {
-        toggleNavBar(e) {
-            if (e) {
-                e.preventDefault();
+        getSemestreName(semestreId) {
+            if (!semestreId || semestreId === "Semestres...") {
+                return null;
             }
-            if (localStorage.contentClosed == "true") {
-                $(".filter-wrapper").removeClass("closed");
-                localStorage.contentClosed = "false";
-            } else {
-                $(".filter-wrapper").addClass("closed");
-                localStorage.contentClosed = "true";
+            let semestreSelect = this.semestres.find(semestre => semestre.id.toString() === semestreId.toString());
+            if (semestreSelect) {
+                return semestreSelect.label;
             }
         },
+
+        getCursoName(cursoId) {
+            if (!cursoId || cursoId === "Cursos...") {
+                return null;
+            }
+            let cursoSelect = this.cursos.find(curso => curso.id === cursoId);
+            if (cursoSelect) {
+                return cursoSelect.label;
+            }
+        },
+        getDisciplinaName(disciplinaId) {
+             if (!disciplinaId || disciplinaId === "Disciplinas...") {
+                return null;
+            }
+            let disciplinaSelect = this.disciplinas.find(disciplina => disciplina.id.toString() === disciplinaId.toString());
+            if (disciplinaSelect) {
+                return disciplinaSelect.label;
+            }
+        },
+        getAmbienteName(ambienteId) {
+             if (!ambienteId || ambienteId === "Ambientes...") {
+                return null;
+            }
+            let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
+            if (ambienteSelect) {
+                return ambienteSelect.label;
+            }
+        },
+
+        customizeAmbiente() {
+            $("#semestre").select2({
+                placeholder: "Semestres...",
+                templateSelection: function (data) {
+                    const style = 'style="color: #7D848B; "';
+
+                    return $(
+                        "<span " +
+                            style +
+                            ">" +
+                            "<i class='icon icon-calendario-semestre'></i> " + data.text  +"</span> "
+                    );
+                },
+            });
+            $("#disciplina").select2({
+                placeholder: "Disciplinas...",
+                templateSelection: function (data) {
+                    let style = 'style="color: #7D848B; "';
+                    return $(
+                        "<span " + style + ">" + "<i class='icon icon-disciplina' ></i> " + data.text + "</span> "
+                    );
+                },
+            });
+            $("#curso").select2({
+                placeholder: "Cursos...",
+                templateSelection: function (data) {
+                    const style = 'style="color: #7D848B; "';
+                    return $("<span " + style + ">" + "<i class='icon icon-icone-ava'></i> " + data.text + "</span> ");
+                },
+            });
+            $("#ambiente").select2({
+                placeholder: "Ambientes...",
+                templateSelection: function(data) {
+                    let style = 'style="color: #7D848B; "';
+                    return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + data.text + "</span>");
+                },
+            });
+            $("#situacao").select2({
+                templateSelection: function (data) {
+
+                    const style = 'style="padding: 0 5px 0 0px; color: #7D848B; "';
+                    return $("<span " + style + ">" + data.text  + "</span> ");
+                },
+            });
+        },
+
         getIcon(label) {
             const iconMapping = {
                 "Aberto": "🟧",
@@ -152,10 +221,7 @@ export default {
             //console.log(localStorage.situacao);
         },
 
-
-
         customizeAmbiente() {
-            
             $("#semestre").select2({
                 placeholder: "Semestres...",
                 templateSelection: function (data) {
@@ -203,7 +269,6 @@ export default {
                     return $("<span " + style + ">" + data.text + "</span> ");
                 },
             });
-
 
             setTimeout(function () {
                 $("#ambiente").val($("#ambiente option:eq(0)").val()).trigger("change");
@@ -353,7 +418,7 @@ export default {
             const new_status = card.isfavourite ? 0 : 1;
             let situacao = ($("#situacao").val())
             axios
-                .get("/painel/api/v1/set_favourite/", {
+                .get("/api/v1/set_favourite/", {
                     params: {
                         ava: card.ambiente.titulo,
                         courseid: card.id,
@@ -361,16 +426,16 @@ export default {
                     },
                 })
                 .then((response) => {
-                    
+
                     card.isfavourite = new_status == 1;
                     setTimeout(() => {
                         if (situacao == "favourites") {
                             this.filterCards();
                         }
-                    }, 500); 
+                    }, 500);
                 })
 
-                
+
                 .catch((error) => {
                     console.debug(error);
                 });
@@ -380,7 +445,7 @@ export default {
             if (confirm("Confirma a operação?")) {
                 const new_status = parseInt(card.visible) ? 0 : 1;
                 axios
-                    .get("/painel/api/v1/set_visible/", {
+                    .get("/api/v1/set_visible/", {
                         params: {
                             ava: card.ambiente.titulo,
                             courseid: card.id,
@@ -398,11 +463,11 @@ export default {
 
         cardActionsToggler(event) {
             let item = $(event.currentTarget).parent().parent().parent();
-            
+
             let icon = $(event.currentTarget).find("i");
             let label = icon.closest("label");
             let situacao = $("#situacao").val();  // Certifique-se de que situacao está acessível aqui
-            
+
 
             // Toggle classes for changing color
             if ($(item).hasClass("showActions")) {
@@ -419,14 +484,6 @@ export default {
 
             this.filterCards();
         },
-
-        async clearFilterSeeAll() {
-            //console.log(this.$watch);
-            await this.updateFilterValues("allincludinghidden");
-
-            this.filterCards();
-        },
-
         async updateFilterValues(situacao) {
             //resetar os valores tanto visualmente como no localStorage
             $("#q").val("").trigger("change");
@@ -437,6 +494,8 @@ export default {
             $("#ambiente").val("").trigger("change");
 
             $(".select2-selection").removeClass("bgcolor-select2");
+            $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
+
 
             this["q"] = "";
             this["situacao"] = situacao;
@@ -470,15 +529,16 @@ export default {
                 localStorage.ambiente = '';
                 $("#ambiente").val("").trigger("change");
             }
-            
+            $('#semestre, #disciplina, #curso').prop('disabled', false).removeClass('disabled-background');
+
             this.filterCards();
         },
 
         filterCards() {
-            this.filtering();                                 
+            this.filtering();
             try {
                 axios
-                    .get("/painel/api/v1/diarios/", {
+                    .get("/api/v1/diarios/", {
                         params: {
                             q: $(self.q).val() || localStorage.q || "",
                             situacao: $("#situacao").val() || localStorage.situacao || "inprogress",
@@ -515,8 +575,9 @@ export default {
         },
 
         filtered() {
-            this.restoreState();
+            //this.restoreState();
             this.is_filtering = false;
+            $("#semestre").select2("val", localStorage.getItem('semestre'));
         },
 
         get_situacao_desc() {

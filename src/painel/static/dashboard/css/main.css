@@ -260,9 +260,17 @@ a {
   background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
 }
 
+
+
 .select2-container--default .select2-selection--single .select2-selection__arrow {
   height: 100% !important;
 }
+
+.select2-container--default.select2-container--disabled .select2-selection--single  {
+  background-color: var(--cinza-terciario);
+  background-image: none;
+}
+
 
 #select2-ambiente-results .select2-results__option,
 #select2-ambiente-results .select2-selection__rendered {
@@ -287,6 +295,11 @@ a {
 
 .closed span.select2-selection.select2-selection--single {
   background: #dbdbdb !important;
+}
+
+.disabled-background span.select2-selection.select2-selection--single {
+  background-image: none;
+  background-color: #ecdafa;
 }
 
 .mobile-only {
@@ -1206,20 +1219,18 @@ main #sidebar .selectedFilters {
 }
 
 main #sidebar .selectedFilters div {
-  padding: 4px 12px;
+  padding: 4px 10px;
   background-color: var(--verde-terciario);
   border-radius: 5px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 600;
   color: var(--cinza-secundario);
   cursor: pointer;
-}
 
-main #sidebar .selectedFilters div::before {
-  content: 'X';
-  font-weight: bold;
-  margin-right: 8px;
-}
+} 
+
 
 main #maincontent {
   background: var(--branco-primario) 0% 0% no-repeat padding-box;
@@ -1302,18 +1313,14 @@ main #maincontent #course-list .course-listitem .course-body .course-info .cours
 
 main #maincontent #course-list .course-listitem .course-body .course-info .course-identification > span {
   margin-top: 3px;
-  margin-left: 10px;
 }
 
 main #maincontent #course-list .course-listitem .course-body .course-info .course-identification > span > span {
+  margin-left: 15px;
   font: var(--unnamed-font-style-normal) normal 600 var(--unnamed-font-size-16)/var(--unnamed-line-spacing-22) var(--unnamed-font-family-noto-sans);
   letter-spacing: var(--unnamed-character-spacing-0);
   color: var(--escuro-primario);
   text-align: left;
-}
-
-main #maincontent #course-list .course-listitem .course-body .course-info .course-identification .icon-moodle {
-  font-size: large;
 }
 
 main #maincontent #course-list .course-listitem .course-body .course-info .course-disciplina a,
@@ -1516,16 +1523,13 @@ main #maincontent #course-list #disable-chevron {
   }
   main #maincontent #course-list .course-listitem .course-body .course-info .course-identification > span {
     margin-top: 3px;
-    margin-left: 10px;
   }
   main #maincontent #course-list .course-listitem .course-body .course-info .course-identification > span > span {
+    margin-left: 15px;
     font: var(--unnamed-font-style-normal) normal 600 var(--unnamed-font-size-16)/var(--unnamed-line-spacing-22) var(--unnamed-font-family-noto-sans);
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--escuro-primario);
     text-align: left;
-  }
-  main #maincontent #course-list .course-listitem .course-body .course-info .course-identification .icon-moodle {
-    font-size: large;
   }
   main #maincontent #course-list .course-listitem .course-body .course-info .course-disciplina a,
 main #maincontent #course-list .course-listitem .course-body .course-info .course-disciplina a:hover,
@@ -1732,18 +1736,14 @@ main #course-list .course-listitem .course-body .course-info .course-identificat
 
 main #course-list .course-listitem .course-body .course-info .course-identification > span {
   margin-top: 3px;
-  margin-left: 10px;
 }
 
 main #course-list .course-listitem .course-body .course-info .course-identification > span > span {
+  margin-left: 15px;
   font: var(--unnamed-font-style-normal) normal 600 var(--unnamed-font-size-16)/var(--unnamed-line-spacing-22) var(--unnamed-font-family-noto-sans);
   letter-spacing: var(--unnamed-character-spacing-0);
   color: var(--escuro-primario);
   text-align: left;
-}
-
-main #course-list .course-listitem .course-body .course-info .course-identification .icon-moodle {
-  font-size: large;
 }
 
 main #course-list .course-listitem .course-body .course-info .course-disciplina a,
@@ -1931,20 +1931,18 @@ main #popupFilter .selectedFilters {
 }
 
 main #popupFilter .selectedFilters div {
-  padding: 4px 12px;
+  padding: 4px 10px;
   background-color: var(--verde-terciario);
   border-radius: 5px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 600;
   color: var(--cinza-secundario);
   cursor: pointer;
 }
 
-main #popupFilter .selectedFilters div::before {
-  content: 'X';
-  font-weight: bold;
-  margin-right: 8px;
-}
+
 
 .open .divBackdop-filter {
   position: absolute;

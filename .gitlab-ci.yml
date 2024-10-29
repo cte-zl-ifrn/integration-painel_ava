@@ -1,0 +1,56 @@
+stages:
+    - build
+    - publish
+    - deploy
+
+build-job:
+    stage: build
+    image: docker:latest
+    services:
+        - docker:dind
+    only:
+        - proximo
+        - teste
+        - producao
+    before_script:
+        - echo "Building the code for $CI_COMMIT_REF_NAME ..."
+        - echo "APP_VERSION = '$CI_PIPELINE_ID.$CI_COMMIT_SHORT_SHA'" >> src/settings/apps.py
+        - cat src/settings/apps.py
+    script:
+        - docker build -t ctezlifrn/avapainel:$CI_COMMIT_REF_NAME .
+    after_script:
+        - echo "Build complete for $CI_COMMIT_REF_NAME ."
+
+publish-job:
+    stage: publish
+    only:
+        - proximo
+        - teste
+        - producao
+    before_script:
+        - echo "Deploying image to $CI_COMMIT_REF_NAME ..."
+        - docker login -u $DOCKERHUB_REGISTRY_USER -p $DOCKERHUB_REGISTRY_PASSWORD
+    script:
+        - docker push ctezlifrn/avapainel:$CI_COMMIT_REF_NAME
+    after_script:
+        - echo "Image successfully deployed in $CI_COMMIT_REF_NAME."
+
+deploy-job:
+    stage: deploy
+    only:
+        # - proximo
+        - teste
+        - producao
+    before_script:
+        - echo "Setting SSH credentiais to $CI_COMMIT_REF_NAME ..."
+        - mkdir -p ~/.ssh
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh/id_rsa
+    script:
+        - echo "Deploying service in $CI_COMMIT_REF_NAME ..."
+        - ssh -o StrictHostKeyChecking=no $SSH_HOST_AND_USER "/var/dockers/vai deploy app"
+    after_script:
+        - echo "Checking services in $CI_COMMIT_REF_NAME ..."
+        - ssh -o StrictHostKeyChecking=no $SSH_HOST_AND_USER "timeout --foreground 5m /var/dockers/vai logs -f"
+        - echo "Service successfully deployed in $CI_COMMIT_REF_NAME."
+
