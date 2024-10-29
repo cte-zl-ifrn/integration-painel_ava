@@ -48,9 +48,8 @@ deploy-job:
         - chmod 700 ~/.ssh/id_rsa
     script:
         - echo "Deploying service in $CI_COMMIT_REF_NAME ..."
-        - ssh -o StrictHostKeyChecking=no root@$VM_IP "/var/dockers/vai deploy app"
+        - ssh -o StrictHostKeyChecking=no $SSH_HOST_AND_USER "/var/dockers/vai deploy app"
     after_script:
         - echo "Checking services in $CI_COMMIT_REF_NAME ..."
-        - sleep 60
-        - ssh -o StrictHostKeyChecking=no root@$VM_IP "/var/dockers/vai logs -n 1000"
+        - ssh -o StrictHostKeyChecking=no $SSH_HOST_AND_USER "timeout --foreground 5m /var/dockers/vai logs -f"
         - echo "Service successfully deployed in $CI_COMMIT_REF_NAME."
