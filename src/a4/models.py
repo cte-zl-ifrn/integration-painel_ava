@@ -90,7 +90,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     def foto_url(self):
         if self.foto is None:
             return f"{settings.STATIC_URL}dashboard/img/user.png"
-        if not self.foto.startswith("http"):
+        if not self.foto.lower().startswith("http"):
             return f"{settings.OAUTH['BASE_URL']}{self.foto}"
         return self.foto
 
