@@ -53,3 +53,4 @@ deploy-job:
         - echo "Checking services in $CI_COMMIT_REF_NAME ..."
         - ssh -o StrictHostKeyChecking=no $SSH_HOST_AND_USER "timeout --foreground 5m /var/dockers/vai logs -f"
         - echo "Service successfully deployed in $CI_COMMIT_REF_NAME."
+
