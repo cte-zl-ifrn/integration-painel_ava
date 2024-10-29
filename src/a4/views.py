@@ -13,7 +13,9 @@ from a4.models import Usuario
 
 def login(request: HttpRequest) -> HttpResponse:
     o = settings.OAUTH
-    suap_url = f"{o["BASE_URL"]}/o/authorize/?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
+    suap_url = (
+        f"{o["BASE_URL"]}/o/authorize/?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
+    )
     return redirect(suap_url)
 
 
@@ -34,20 +36,22 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         "client_secret": OAUTH["CLIENT_SECRET"],
     }
 
-    token_str = requests.post(f"{OAUTH['BASE_URL']}/o/token/", data=access_token_request_data, verify=OAUTH["VERIFY_SSL"]).text
+    token_str = requests.post(
+        f"{OAUTH['BASE_URL']}{OAUTH['TOKEN_SUFFIX']}",
+        data=access_token_request_data,
+        verify=OAUTH["VERIFY_SSL"],
+    ).text
     request_data = json.loads(token_str)
 
     if request_data.get("error_description") == "Mismatching redirect URI.":
         return render(request, "a4/mismatching_redirect_uri.html", {"error": request_data})
 
-    headers = {
-        "Authorization": f"Bearer {request_data.get('access_token')}",
-        "x-api-key": OAUTH["CLIENT_SECRET"],
-    }
-
     response = requests.get(
-        f"{OAUTH['BASE_URL']}/api/v1/userinfo/?scope={request_data.get('scope')}",
-        headers=headers,
+        f"{OAUTH['BASE_URL']}{OAUTH['USERINFO_SUFFIX']}?scope={request_data.get('scope')}",
+        headers={
+            "Authorization": f"Bearer {request_data.get('access_token')}",
+            "x-api-key": OAUTH["CLIENT_SECRET"],
+        },
         verify=OAUTH["VERIFY_SSL"],
     )
     print(response.text)
