@@ -11,8 +11,8 @@ from sc4py.env import env, env_as_bool, env_as_list, env_as_int
 
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "changeme")
-LOGIN_URL = env("DJANGO_LOGIN_URL", "http://painel/painel/login/")
-LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://painel/painel/")
+LOGIN_URL = env("DJANGO_LOGIN_URL", "http://painel/login/")
+LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://painel/")
 LOGOUT_REDIRECT_URL = env("DJANGO_LOGOUT_REDIRECT_URL", "http://login/logout/")
 AUTH_USER_MODEL = env("DJANGO_AUTH_USER_MODEL", "a4.Usuario")
 AUTHENTICATION_BACKENDS = env_as_list("vAUTHENTICATION_BACKENDS", ["django.contrib.auth.backends.ModelBackend"])
@@ -47,7 +47,7 @@ CSRF_TRUSTED_ORIGINS = env_as_list("DJANGO_CSRF_TRUSTED_ORIGINS", [])
 
 OAUTH = {
     "BASE_URL": env("OAUTH_BASE_URL", "http://login"),
-    "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/painel/authenticate/"),
+    "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
     "CLIENT_ID": env("OAUTH_CLIENT_ID", "changeme"),
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "changeme"),
     "VERIFY_SSL": env("OAUTH_VERIFY_SSL", False),

@@ -88,11 +88,11 @@ class Usuario(SafeDeleteModel, AbstractUser):
 
     @property
     def foto_url(self):
-        if self.foto.startswith("http"):
-            return self.foto
-        return (
-            f"{settings.OAUTH['BASE_URL']}{self.foto}" if self.foto else f"{settings.STATIC_URL}dashboard/img/user.png"
-        )
+        if self.foto is None:
+            return f"{settings.STATIC_URL}dashboard/img/user.png"
+        if not self.foto.lower().startswith("http"):
+            return f"{settings.OAUTH['BASE_URL']}{self.foto}"
+        return self.foto
 
 
 Usuario._meta.icon = "fa fa-user"
