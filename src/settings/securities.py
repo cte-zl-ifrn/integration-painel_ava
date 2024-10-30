@@ -50,9 +50,9 @@ OAUTH = {
     "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
     "CLIENT_ID": env("OAUTH_CLIENT_ID", "changeme"),
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "changeme"),
-    "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", "False"),
-    "TOKEN_SUFFIX": env("OAUTH_TOKEN_SUFFIX", "/o/token/"),
-    "USERINFO_SUFFIX": env("OAUTH_USERINFO_SUFFIX", "/api/v1/userinfo/"),
+    "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", False),
+    "TOKEN_URL": env("OAUTH_TOKEN_URL", "http://login/o/token/"),
+    "USERINFO_URL": env("OAUTH_USERINFO_URL", "http://login/api/v1/userinfo/"),
 }
 
 SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "changeme")

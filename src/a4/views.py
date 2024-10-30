@@ -36,25 +36,20 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         "client_secret": OAUTH["CLIENT_SECRET"],
     }
 
-    token_str = requests.post(
-        f"{OAUTH['BASE_URL']}{OAUTH['TOKEN_SUFFIX']}",
-        data=access_token_request_data,
-        verify=OAUTH["VERIFY_SSL"],
-    ).text
-    request_data = json.loads(token_str)
+    response = requests.post(f"{OAUTH['TOKEN_URL']}", data=access_token_request_data, verify=OAUTH["VERIFY_SSL"])
+    request_data = json.loads(response.text)
 
     if request_data.get("error_description") == "Mismatching redirect URI.":
         return render(request, "a4/mismatching_redirect_uri.html", {"error": request_data})
 
     response = requests.get(
-        f"{OAUTH['BASE_URL']}{OAUTH['USERINFO_SUFFIX']}?scope={request_data.get('scope')}",
+        f"{OAUTH['USERINFO_URL']}?scope={request_data.get('scope')}",
         headers={
             "Authorization": f"Bearer {request_data.get('access_token')}",
             "x-api-key": OAUTH["CLIENT_SECRET"],
         },
         verify=OAUTH["VERIFY_SSL"],
     )
-    print(response.text)
     response_data = json.loads(response.text)
 
     username = response_data["identificacao"]
@@ -96,7 +91,10 @@ def authenticate(request: HttpRequest) -> HttpResponse:
 
 def logout(request: HttpRequest) -> HttpResponse:
     auth.logout(request)
-    return redirect(f"{settings.LOGOUT_REDIRECT_URL}?next={urllib.parse.quote_plus(settings.LOGIN_REDIRECT_URL)}")
+
+    logout_token = request.session.get("logout_token", "")
+    next = urllib.parse.quote_plus(settings.LOGIN_REDIRECT_URL)
+    return redirect(f"{settings.LOGOUT_REDIRECT_URL}?token={logout_token}&next={next}")
 
 
 def personificar(request: HttpRequest, username: str):
