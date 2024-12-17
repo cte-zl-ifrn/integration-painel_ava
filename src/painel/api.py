@@ -44,8 +44,13 @@ def diarios(
 
 @api.get("/atualizacoes_counts/")
 def atualizacoes_counts(request: HttpRequest):
-    print("get_atualizacoes:",get_atualizacoes_counts(logged_user(request).username))
-    return get_atualizacoes_counts(logged_user(request).username)
+    # print("get_atualizacoes:",get_atualizacoes_counts(logged_user(request).username))
+    # return get_atualizacoes_counts(logged_user(request).username)
+    return {
+        "atualizacoes": [],
+        "unread_notification_total": 0,
+        "unread_conversations_total": 0,
+    }
 
 
 @api.api_operation(["GET", "OPTIONS"], "/set_favourite/")
