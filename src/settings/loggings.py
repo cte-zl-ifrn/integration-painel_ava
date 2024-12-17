@@ -26,13 +26,14 @@ logging.config.dictConfig(
         "datefmt": "[%X]",
         "formatters": {
             "longformat": {
-                # "format": f"{Color.GREEN}%(asctime)s {Color.YELLOW}%(levelname)s {Color.MAGENTA}%(name)s:%(lineno)s {Color.CYANO}pid:%(process)d {Color.NONE}%(message)s"  # noqa
-                "format": f"%(message)s"
+                "format": f"{Color.GREEN}%(asctime)s {Color.YELLOW}%(levelname)s {Color.MAGENTA}%(name)s:%(lineno)s {Color.CYANO}pid:%(process)d {Color.NONE}%(message)s"  # noqa
+                # "format": f"%(message)s"
             },
         },
         "handlers": {
             "console": {
-                "class": "rich.logging.RichHandler",
+                # "class": "rich.logging.RichHandler",
+                "class": "logging.StreamHandler",
                 "formatter": "longformat",
             },
         },
