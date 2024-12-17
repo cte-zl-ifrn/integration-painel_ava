@@ -259,37 +259,37 @@ def get_diarios(
     return results
 
 
-def get_atualizacoes_counts(username: str) -> dict:
-    def _callback(params):
-        try:
-            ava = params["ava"]
-
-            counts = get_json_api(ava, "get_atualizacoes_counts", username=params["username"])
-            print("counts AVA:", counts)
-
-        except Exception as e:
-            logging.error(e)
-            sentry_sdk.capture_exception(e)
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        results = {
-            "atualizacoes": [],
-            "unread_notification_total": 0,
-            "unread_conversations_total": 0,
-        }
-        requests = [
-            {
-                "username": username,
-                "ava": ava,
-                "results": results,
-            }
-            for ava in Ambiente.objects.filter(active=True)
-        ]
-        executor.map(_callback, requests)
-
-    results["atualizacoes"] = sorted(results["atualizacoes"], key=lambda e: e["ambiente"]["titulo"])
-    # print("counts:",counts)
-    return results
+# def get_atualizacoes_counts(username: str) -> dict:
+#     def _callback(params):
+#         try:
+#             ava = params["ava"]
+#
+#             counts = get_json_api(ava, "get_atualizacoes_counts", username=params["username"])
+#             print("counts AVA:", counts)
+#
+#         except Exception as e:
+#             logging.error(e)
+#             sentry_sdk.capture_exception(e)
+#
+#     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+#         results = {
+#             "atualizacoes": [],
+#             "unread_notification_total": 0,
+#             "unread_conversations_total": 0,
+#         }
+#         requests = [
+#             {
+#                 "username": username,
+#                 "ava": ava,
+#                 "results": results,
+#             }
+#             for ava in Ambiente.objects.filter(active=True)
+#         ]
+#         executor.map(_callback, requests)
+#
+#     results["atualizacoes"] = sorted(results["atualizacoes"], key=lambda e: e["ambiente"]["titulo"])
+#     # print("counts:",counts)
+#     return results
 
 
 def set_favourite_course(username: str, ava: str, courseid: int, favourite: int) -> dict:
