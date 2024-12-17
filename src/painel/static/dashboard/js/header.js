@@ -15,10 +15,10 @@ export default {
     methods: {
         showAtualizacoes: function () {
             $(".icon-count").css("display", "inline-block");
-            axios.get("/api/v1/atualizacoes_counts/", { params: {} }).then((response) => {
-                Object.assign(this, response.data);
-                //console.log('PRINT:',response.data)
-            });
+            // axios.get("/api/v1/atualizacoes_counts/", { params: {} }).then((response) => {
+            //     Object.assign(this, response.data);
+            //     //console.log('PRINT:',response.data)
+            // });
         },
     },
 };

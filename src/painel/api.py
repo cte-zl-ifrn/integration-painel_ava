@@ -1,9 +1,8 @@
 from ninja import NinjaAPI
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404
 from a4.models import logged_user
-from .services import get_diarios, get_atualizacoes_counts, set_favourite_course, set_visible_course
+from .services import get_diarios, set_favourite_course, set_visible_course
 
 api = NinjaAPI(docs_decorator=staff_member_required)
 
