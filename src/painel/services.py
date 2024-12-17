@@ -141,18 +141,6 @@ def get_diarios(
                     else:
                         diario["gradesurl"] = re.sub("/course/view", "/grade/report/overview/index", diario["viewurl"])
 
-                    # try:
-                    #     # TODO: Foi removido pois a sincronização foi separada do painel
-                    #     ultima = Solicitacao.objects.ultima_do_diario(id_diario)
-
-                    #     if ultima is not None:
-                    #         diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
-                    #         print("ultima:", ultima.respondido)
-                    #         diario["coordenacaourl"] = ultima.respondido.get("url_sala_coordenacao")
-                    # except Exception as e:
-                    #     logging.error(e)
-                    #     sentry_sdk.capture_exception(e)
-
             def _merge_aluno(diario: dict, diario_re: re.Match):
                 if diario_re and len(diario_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
                     diario["componente"] = diario_re[0][CODIGO_PRATICA_SUFIXO_INDEX]
