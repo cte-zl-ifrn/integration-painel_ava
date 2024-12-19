@@ -12,7 +12,7 @@ MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", "/var/media")
 MARKDOWNX_URLS_PATH = env("MARKDOWNX_URLS_PATH", "{ROOT_URL_PATH}/markdownx/markdownify/")
 MARKDOWNX_UPLOAD_URLS_PATH = env("MARKDOWNX_UPLOAD_URLS_PATH", "{ROOT_URL_PATH}/markdownx/upload/")
 
-STATIC_URL = env("DJANGO_STATIC_URL", f"{ROOT_URL_PATH}/static/")
+STATIC_URL = env("DJANGO_STATIC_URL", f"static/")
 STATIC_ROOT = env("DJANGO_STATIC_ROOT", "/var/static")
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",

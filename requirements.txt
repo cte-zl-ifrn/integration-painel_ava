@@ -24,8 +24,8 @@ django-simple-history==3.7.0
 django-safedelete==1.4.0
 
 # UI
-# django-compressor==4.5.1
 # django-sass==1.1.0
+django-compressor==4.5.1
 django-sass-processor==1.4.1
 django-json-widget==2.0.1
 django-richtextfield==1.6.2

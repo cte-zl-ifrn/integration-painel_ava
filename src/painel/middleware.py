@@ -1,10 +1,13 @@
 import logging
 from django.conf import settings
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib import auth
 from a4.models import Usuario as UsuarioA4
 import requests
+import psycopg
+import psycopg_pool
+
 
 logger = logging.getLogger(__name__)
 
@@ -74,3 +77,24 @@ class AuthMobileUserMiddleware:
                 return response
         else:
             return self.get_response(request)
+
+
+class ExceptionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            return self.get_response(request)
+        except Exception as e:
+            print(f"ExceptionMiddleware.__call__")
+            if isinstance(e, psycopg_pool.PoolTimeout):
+                return HttpResponse("Erro de conexão com o banco!")
+            if isinstance(e, psycopg.errors.Error):
+                return HttpResponse("Erro de conexão com o banco!")
+            print("ExceptionMiddleware Exception")
+            ttt = str(type(e))
+            print("ExceptionMiddleware@ttt", ttt)
+            print("ExceptionMiddleware@e", e)
+            logger.info(f"{ttt}-{e}")
+            return HttpResponse(f"{ttt}-{e}, {isinstance(e, psycopg_pool.PoolTimeout)}, {isinstance(e, psycopg.errors.Error)}")

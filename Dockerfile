@@ -3,7 +3,7 @@ FROM python:3.13.1-slim-bookworm
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update \
-    && apt-get -y install curl vim \
+    && apt-get -y install curl vim nginx \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -23,7 +23,8 @@ RUN pip install --no-cache-dir -r requirements-dev.txt
 COPY docker/django-entrypoint.sh /django-entrypoint.sh
 COPY src /apps/app
 WORKDIR /apps/app
-RUN python manage.py collectstatic --noinput
+RUN python manage.py compilescss && \
+    python manage.py collectstatic --noinput
 
 EXPOSE 8000
 ENTRYPOINT [ "/django-entrypoint.sh" ]
