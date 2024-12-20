@@ -13,7 +13,7 @@ from http.client import HTTPException
 from .models import Ambiente, Curso
 
 
-CODIGO_DIARIO_REGEX = re.compile("^(\d\d\d\d\d)\.(\d*)\.(\d*)\.(.*)\.(\w*\.\d*)(#\d*)?$")
+CODIGO_DIARIO_REGEX = re.compile("^(\\d\\d\\d\\d\\d)\\.(\\d*)\\.(\\d*)\\.(.*)\\.(\\w*\\.\\d*)(#\\d*)?$")
 CODIGO_DIARIO_ANTIGO_ELEMENTS_COUNT = 5
 CODIGO_DIARIO_NOVO_ELEMENTS_COUNT = 6
 CODIGO_DIARIO_SEMESTRE_INDEX = 0
@@ -23,19 +23,19 @@ CODIGO_DIARIO_TURMA_INDEX = 3
 CODIGO_DIARIO_DISCIPLINA_INDEX = 4
 CODIGO_DIARIO_ID_DIARIO_INDEX = 5
 
-CODIGO_COORDENACAO_REGEX = re.compile("^(\w*)\.(\d*)(.*)*$")
+CODIGO_COORDENACAO_REGEX = re.compile("^(\\w*)\\.(\\d*)(.*)*$")
 CODIGO_COORDENACAO_ELEMENTS_COUNT = 3
 CODIGO_COORDENACAO_CAMPUS_INDEX = 0
 CODIGO_COORDENACAO_CURSO_INDEX = 1
 CODIGO_COORDENACAO_SUFIXO_INDEX = 2
 
-CODIGO_PRATICA_REGEX = re.compile("^(\d\d\d\d\d)\.(\d*)\.(\d*)\.(.*)\.(\d{11,14}\d*)$")
+CODIGO_PRATICA_REGEX = re.compile("^(\\d\\d\\d\\d\\d)\\.(\\d*)\\.(\\d*)\\.(.*)\\.(\\d{11,14}\\d*)$")
 CODIGO_PRATICA_ELEMENTS_COUNT = 5
 CODIGO_PRATICA_SUFIXO_INDEX = 4
 
 CURSOS_CACHE = {}
 
-CHANGE_URL = re.compile("/course/view.php\?")
+CHANGE_URL = re.compile("/course/view.php\\?")
 
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
