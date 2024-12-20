@@ -33,7 +33,7 @@ THIRD_APPS = env_as_list(
         "djrichtextfield",
         "django_json_widget",
         # "django_admin_json_editor",
-        # "corsheaders",
+        "corsheaders",
         "adminlte3",
         # "adminlte3/admin",
     ],
