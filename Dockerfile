@@ -3,7 +3,7 @@ FROM python:3.13.1-slim-bookworm
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update \
-    && apt-get -y install curl vim nginx \
+    && apt-get -y install curl vim \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

@@ -17,6 +17,7 @@ django-redis-sessions==0.6.2
 redis==5.2.0
 
 # Security
+django-cors-headers==4.6.0
 django-oauth-toolkit==3.0.1
 
 # Audit
@@ -24,7 +25,6 @@ django-simple-history==3.7.0
 django-safedelete==1.4.0
 
 # UI
-# django-sass==1.1.0
 django-compressor==4.5.1
 django-sass-processor==1.4.1
 django-json-widget==2.0.1
@@ -41,6 +41,6 @@ psycopg[binary,pool]==3.2.3
 pillow==11.0.0
 
 # Production
-sentry-sdk[django]==2.19.0
+sentry-sdk[django,celery,rq]==2.19.2
 gunicorn==23.0.0
 supervisor==4.2.5

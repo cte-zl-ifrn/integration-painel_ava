@@ -33,7 +33,7 @@ THIRD_APPS = env_as_list(
         "djrichtextfield",
         "django_json_widget",
         # "django_admin_json_editor",
-        # "corsheaders",
+        "corsheaders",
         "adminlte3",
         # "adminlte3/admin",
     ],
@@ -47,7 +47,7 @@ DJANGO_APPS = env_as_list(
         "django.contrib.contenttypes",
         "django.contrib.sessions",
         "django.contrib.messages",
-        # "django.contrib.staticfiles",
+        "django.contrib.staticfiles",
         "a4",
     ],
 )
