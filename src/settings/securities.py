@@ -44,14 +44,17 @@ CSRF_HEADER_NAME = env("DJANGO_CSRF_HEADER_NAME", "HTTP_X_CSRFTOKEN")
 CSRF_TRUSTED_ORIGINS = env_as_list("DJANGO_CSRF_TRUSTED_ORIGINS", [])
 
 
+oauth_base_url = env("OAUTH_BASE_URL", "http://login")
 OAUTH = {
-    "BASE_URL": env("OAUTH_BASE_URL", "http://login"),
-    "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
+    "BASE_URL": oauth_base_url,
+    "TOKEN_URL": env("OAUTH_TOKEN_URL", f"{oauth_base_url}/o/token/"),
+    "AUTHORIZE_URL": env("OAUTH_AUTHORIZE_URL", f"{oauth_base_url}/o/authorize/"),
+    "USERINFO_URL": env("OAUTH_USERINFO_URL", f"{oauth_base_url}/api/v1/userinfo/"),
+    "VERIFY_URL": env("OAUTH_VERIFY_URL", f"{oauth_base_url}/api/v1/verify/"),
     "CLIENT_ID": env("OAUTH_CLIENT_ID", "changeme"),
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "changeme"),
+    "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
     "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", False),
-    "TOKEN_URL": env("OAUTH_TOKEN_URL", "http://login/o/token/"),
-    "USERINFO_URL": env("OAUTH_USERINFO_URL", "http://login/api/v1/userinfo/"),
 }
 
 SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "changeme")
