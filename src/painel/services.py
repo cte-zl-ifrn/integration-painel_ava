@@ -64,7 +64,7 @@ def get_json_api(ava: Ambiente, service: str, **params: dict):
             querystring = "&".join([f"{k}={v}" for k, v in params.items() if v is not None])
         else:
             querystring = ""
-        url = f"{ava.base_api_url}/?{service}&{querystring}"
+        url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
         content = get_json(url, headers={"Authentication": f"Token {ava.token}"})
         return content
     except Exception as e:

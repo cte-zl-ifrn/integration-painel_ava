@@ -56,9 +56,7 @@ class AuthMobileUserMiddleware:
                 )
 
             try:
-                response = requests.post(
-                    f"{settings.OAUTH['BASE_URL']}/api/v1/verify/", json={"token": authorization[1]}
-                )
+                response = requests.post(settings.OAUTH['VERIFY_URL'], json={"token": authorization[1]})
             except:
                 return JsonResponse({"error": {"message": "O Login do SUAP retornou um erro", "code": 422}}, status=422)
 

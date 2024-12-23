@@ -14,7 +14,7 @@ from a4.models import Usuario
 def login(request: HttpRequest) -> HttpResponse:
     o = settings.OAUTH
     suap_url = (
-        f"{o["BASE_URL"]}/o/authorize/?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
+        f"{o["AUTHORIZE_URL"]}?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
     )
     return redirect(suap_url)
 
