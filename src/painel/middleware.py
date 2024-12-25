@@ -7,6 +7,7 @@ from a4.models import Usuario as UsuarioA4
 import requests
 import psycopg
 import psycopg_pool
+from django.utils.deprecation import MiddlewareMixin
 
 
 logger = logging.getLogger(__name__)
@@ -96,3 +97,10 @@ class ExceptionMiddleware:
             print("ExceptionMiddleware@e", e)
             logger.info(f"{ttt}-{e}")
             return HttpResponse(f"{ttt}-{e}, {isinstance(e, psycopg_pool.PoolTimeout)}, {isinstance(e, psycopg.errors.Error)}")
+
+
+class XForwardedForMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        if 'HTTP_X_FORWARDED_FOR' in request.META:
+            request.META['REMOTE_ADDR'] = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0].strip()
+        return None

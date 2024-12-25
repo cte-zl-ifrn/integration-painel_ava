@@ -7,6 +7,7 @@ from debug_toolbar import middleware
 MIDDLEWARE = [
     "painel.middleware.ExceptionMiddleware",
     "painel.middleware.GoToHTTPSMiddleware",  # <-
+    "painel.middleware.XForwardedForMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "painel.middleware.AuthMobileUserMiddleware",
