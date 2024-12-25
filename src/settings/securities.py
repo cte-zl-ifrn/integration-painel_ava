@@ -13,7 +13,7 @@ from sc4py.env import env, env_as_bool, env_as_list, env_as_int
 SECRET_KEY = env("DJANGO_SECRET_KEY", "changeme")
 LOGIN_URL = env("DJANGO_LOGIN_URL", "http://painel/login/")
 LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://painel/")
-LOGOUT_REDIRECT_URL = env("DJANGO_LOGOUT_REDIRECT_URL", "http://login/logout/")
+LOGOUT_REDIRECT_URL = env("DJANGO_LOGOUT_REDIRECT_URL", "https://suap.ifrn.edu.br/comum/logout/")
 AUTH_USER_MODEL = env("DJANGO_AUTH_USER_MODEL", "a4.Usuario")
 AUTHENTICATION_BACKENDS = env_as_list("vAUTHENTICATION_BACKENDS", ["django.contrib.auth.backends.ModelBackend"])
 AUTH_PASSWORD_VALIDATORS = env_as_list("DJANGO_AUTH_PASSWORD_VALIDATORS", [])
@@ -44,17 +44,17 @@ CSRF_HEADER_NAME = env("DJANGO_CSRF_HEADER_NAME", "HTTP_X_CSRFTOKEN")
 CSRF_TRUSTED_ORIGINS = env_as_list("DJANGO_CSRF_TRUSTED_ORIGINS", [])
 
 
-oauth_base_url = env("OAUTH_BASE_URL", "http://login")
+oauth_base_url = env("OAUTH_BASE_URL", "https://suap.ifrn.edu.br")
 OAUTH = {
     "BASE_URL": oauth_base_url,
     "TOKEN_URL": env("OAUTH_TOKEN_URL", f"{oauth_base_url}/o/token/"),
     "AUTHORIZE_URL": env("OAUTH_AUTHORIZE_URL", f"{oauth_base_url}/o/authorize/"),
-    "USERINFO_URL": env("OAUTH_USERINFO_URL", f"{oauth_base_url}/api/v1/userinfo/"),
+    "USERINFO_URL": env("OAUTH_USERINFO_URL", f"{oauth_base_url}/api/eu/"),
     "VERIFY_URL": env("OAUTH_VERIFY_URL", f"{oauth_base_url}/api/v1/verify/"),
     "CLIENT_ID": env("OAUTH_CLIENT_ID", "changeme"),
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "changeme"),
     "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
-    "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", False),
+    "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", True),
 }
 
 SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "changeme")

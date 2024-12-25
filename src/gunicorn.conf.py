@@ -16,4 +16,3 @@ accesslog = "-"
 capture_output = False
 syslog = False
 logger_class = 'gunicorn.glogging.Logger'
-

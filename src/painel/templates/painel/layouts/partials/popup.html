@@ -1,8 +1,8 @@
 {% load static %}
 {% if popup %}
     <script>
-        const popupModalName = "modal{{popup.id}}";
-        const popupModalUrl = "{{popup.url}}";
+        window.popupModalName = "modal{{popup.id}}";
+        window.popupModalUrl = "{{popup.url}}";
     </script>
     <!-- Modal: Begin -->
     <div class="modal fade"
