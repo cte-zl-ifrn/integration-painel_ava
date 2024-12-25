@@ -1,17 +1,22 @@
 from django.utils.translation import gettext as _
+import logging
 from django.conf import settings
 from django.db.models import ForeignKey, PROTECT, CharField, DateTimeField, EmailField, TextField
 from django.http import HttpRequest
+from django.core.cache import cache
 from django.contrib.auth.models import AbstractUser, Group as OrignalGroup, UserManager
 from django_better_choices import Choices
 from simple_history.models import HistoricalRecords
 from safedelete.models import SafeDeleteModel, SafeDeleteManager
 
 
+logger = logging.getLogger(__name__)
+
+
 def logged_user(request: HttpRequest):
     username = request.session.get("usuario_personificado", request.user.username)
-    user = Usuario.objects.filter(username=username).first()
-    return user if user is not None and user.is_authenticated and user.is_active else usuario_anonimo
+    user = Usuario.cached(username)
+    return user if user is not None else usuario_anonimo
 
 
 class Grupo(SafeDeleteModel, OrignalGroup):
@@ -79,6 +84,9 @@ class Usuario(SafeDeleteModel, AbstractUser):
         verbose_name = _("user")
         verbose_name_plural = _("users")
 
+    class AdminMeta:
+        icon = "fa fa-user"
+
     def __str__(self):
         return f"{self.nome_usual} [{self.username}]"
 
@@ -94,8 +102,16 @@ class Usuario(SafeDeleteModel, AbstractUser):
             return f"{settings.OAUTH['BASE_URL']}{self.foto}"
         return self.foto
 
-
-Usuario._meta.icon = "fa fa-user"
+    @staticmethod
+    def cached(username: str) -> AbstractUser:
+        userkey = f"username:{username}"
+        user = cache.get(userkey)
+        if user is None:
+            user = Usuario.objects.filter(username=username).first()
+            if user is not None and user.is_authenticated and user.is_active:
+                logger.debug(f"colocando no cache o usuário: {username}")
+                cache.set(userkey, user)
+        return user
 
 
 class UsuarioAnonimo:

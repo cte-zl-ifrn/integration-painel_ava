@@ -1,10 +1,14 @@
 import logging
 from django.conf import settings
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib import auth
-from a4.models import Usuario as UsuarioA4
+from a4.models import Usuario
 import requests
+import psycopg
+import psycopg_pool
+from django.utils.deprecation import MiddlewareMixin
+
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +57,7 @@ class AuthMobileUserMiddleware:
                 )
 
             try:
-                response = requests.post(
-                    f"{settings.OAUTH['BASE_URL']}/api/v1/verify/", json={"token": authorization[1]}
-                )
+                response = requests.post(settings.OAUTH['VERIFY_URL'], json={"token": authorization[1]})
             except:
                 return JsonResponse({"error": {"message": "O Login do SUAP retornou um erro", "code": 422}}, status=422)
 
@@ -66,7 +68,7 @@ class AuthMobileUserMiddleware:
                     {"error": {"message": "Erro ao integrar com o Login do SUAP", "code": 422}}, status=422
                 )
 
-            user = UsuarioA4.objects.filter(username=userdata["username"]).first()
+            user = Usuario.cached(userdata.get("username"))
             if user is not None:
                 auth.login(request, user)
                 response = self.get_response(request)
@@ -74,3 +76,31 @@ class AuthMobileUserMiddleware:
                 return response
         else:
             return self.get_response(request)
+
+
+class ExceptionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            return self.get_response(request)
+        except Exception as e:
+            print(f"ExceptionMiddleware.__call__")
+            if isinstance(e, psycopg_pool.PoolTimeout):
+                return HttpResponse("Erro de conexão com o banco!")
+            if isinstance(e, psycopg.errors.Error):
+                return HttpResponse("Erro de conexão com o banco!")
+            print("ExceptionMiddleware Exception")
+            ttt = str(type(e))
+            print("ExceptionMiddleware@ttt", ttt)
+            print("ExceptionMiddleware@e", e)
+            logger.info(f"{ttt}-{e}")
+            return HttpResponse(f"{ttt}-{e}, {isinstance(e, psycopg_pool.PoolTimeout)}, {isinstance(e, psycopg.errors.Error)}")
+
+
+class XForwardedForMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        if 'HTTP_X_FORWARDED_FOR' in request.META:
+            request.META['REMOTE_ADDR'] = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0].strip()
+        return None

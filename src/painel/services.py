@@ -8,12 +8,16 @@ from typing import Dict, List, Union, Any
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.conf import settings
+from django.core.cache import cache
 import requests
 from http.client import HTTPException
 from .models import Ambiente, Curso
 
 
-CODIGO_DIARIO_REGEX = re.compile("^(\d\d\d\d\d)\.(\d*)\.(\d*)\.(.*)\.(\w*\.\d*)(#\d*)?$")
+logger = logging.getLogger(__name__)
+
+
+CODIGO_DIARIO_REGEX = re.compile("^(\\d\\d\\d\\d\\d)\\.(\\d*)\\.(\\d*)\\.(.*)\\.(\\w*\\.\\d*)(#\\d*)?$")
 CODIGO_DIARIO_ANTIGO_ELEMENTS_COUNT = 5
 CODIGO_DIARIO_NOVO_ELEMENTS_COUNT = 6
 CODIGO_DIARIO_SEMESTRE_INDEX = 0
@@ -23,19 +27,19 @@ CODIGO_DIARIO_TURMA_INDEX = 3
 CODIGO_DIARIO_DISCIPLINA_INDEX = 4
 CODIGO_DIARIO_ID_DIARIO_INDEX = 5
 
-CODIGO_COORDENACAO_REGEX = re.compile("^(\w*)\.(\d*)(.*)*$")
+CODIGO_COORDENACAO_REGEX = re.compile("^(\\w*)\\.(\\d*)(.*)*$")
 CODIGO_COORDENACAO_ELEMENTS_COUNT = 3
 CODIGO_COORDENACAO_CAMPUS_INDEX = 0
 CODIGO_COORDENACAO_CURSO_INDEX = 1
 CODIGO_COORDENACAO_SUFIXO_INDEX = 2
 
-CODIGO_PRATICA_REGEX = re.compile("^(\d\d\d\d\d)\.(\d*)\.(\d*)\.(.*)\.(\d{11,14}\d*)$")
+CODIGO_PRATICA_REGEX = re.compile("^(\\d\\d\\d\\d\\d)\\.(\\d*)\\.(\\d*)\\.(.*)\\.(\\d{11,14}\\d*)$")
 CODIGO_PRATICA_ELEMENTS_COUNT = 5
 CODIGO_PRATICA_SUFIXO_INDEX = 4
 
 CURSOS_CACHE = {}
 
-CHANGE_URL = re.compile("/course/view.php\?")
+CHANGE_URL = re.compile("/course/view.php\\?")
 
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
@@ -64,7 +68,7 @@ def get_json_api(ava: Ambiente, service: str, **params: dict):
             querystring = "&".join([f"{k}={v}" for k, v in params.items() if v is not None])
         else:
             querystring = ""
-        url = f"{ava.base_api_url}/?{service}&{querystring}"
+        url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
         content = get_json(url, headers={"Authentication": f"Token {ava.token}"})
         return content
     except Exception as e:
@@ -98,14 +102,11 @@ def get_diarios(
                     co_curso = diario_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
                 else:
                     co_curso = diario_re[0][CODIGO_DIARIO_CURSO_INDEX]
-
-                if co_curso not in CURSOS_CACHE and CURSOS_CACHE.get(co_curso, None) is None:
-                    curso = Curso.objects.filter(codigo=co_curso).first()
-                    if curso:
-                        CURSOS_CACHE[co_curso] = curso
-
-                curso = CURSOS_CACHE.get(co_curso, Curso(codigo=co_curso, nome=f"Curso: {co_curso}"))
-                diario["curso"] = {"codigo": curso.codigo, "nome": curso.nome}
+                curso = next(iter(Curso.cached_by_codigos([co_curso])), None)
+                if curso is not None:
+                    diario["curso"] = {"codigo": curso.codigo, "nome": curso.nome}
+                else:
+                    diario["curso"] = {"codigo": co_curso, "nome": f"Curso {co_curso}"}
 
             def _merge_turma(diario: dict, diario_re: re.Match):
                 if len(diario_re) > 0 and len(diario_re[0]) >= CODIGO_DIARIO_TURMA_INDEX:
@@ -140,18 +141,6 @@ def get_diarios(
                         diario["gradesurl"] = re.sub("/course/view", "/grade/report/grader/index", diario["viewurl"])
                     else:
                         diario["gradesurl"] = re.sub("/course/view", "/grade/report/overview/index", diario["viewurl"])
-
-                    # try:
-                    #     # TODO: Foi removido pois a sincronização foi separada do painel
-                    #     ultima = Solicitacao.objects.ultima_do_diario(id_diario)
-
-                    #     if ultima is not None:
-                    #         diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
-                    #         print("ultima:", ultima.respondido)
-                    #         diario["coordenacaourl"] = ultima.respondido.get("url_sala_coordenacao")
-                    # except Exception as e:
-                    #     logging.error(e)
-                    #     sentry_sdk.capture_exception(e)
 
             def _merge_aluno(diario: dict, diario_re: re.Match):
                 if diario_re and len(diario_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
@@ -209,6 +198,13 @@ def get_diarios(
         sortedlist = sorted(deduplicated, key=lambda e: e["label"], reverse=reverse)
         return sortedlist
 
+    cache_key=f"get_diarios:{username}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
+
+    results = cache.get(cache_key, None)
+    if results is not None:
+        logger.debug(f"Results cache hit: {cache_key}")
+        return results
+
     results = {
         "semestres": [],
         "ambientes": Ambiente.as_dict(),
@@ -221,11 +217,7 @@ def get_diarios(
 
     has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()
 
-    ambientes = [
-        ava
-        for ava in Ambiente.objects.filter(active=True)
-        if (has_ambiente and int(ambiente) == ava.id) or not has_ambiente
-    ]
+    ambientes = [ava for ava in Ambiente.cached() if (has_ambiente and int(ambiente) == ava.id) or not has_ambiente]
 
     requests = [
         {
@@ -260,48 +252,59 @@ def get_diarios(
 
     results["coordenacoes"] = sorted(results["coordenacoes"], key=lambda e: e["fullname"])
     results["praticas"] = sorted(results["praticas"], key=lambda e: e["fullname"])
-    cursos = {c.codigo: c.nome for c in Curso.objects.filter(codigo__in=[x["id"] for x in results["cursos"]])}
+    codigos = [x["id"] for x in results["cursos"]]
+    cursos = {c.codigo: c.nome for c in Curso.cached_by_codigos(codigos)}
     for c in results["cursos"]:
         if c["id"] in cursos:
             c["label"] = f"{cursos[c['id']]}"
         else:
             c["label"] = f"Curso [{c['id']}], favor solicitar o cadastro"
+            try:
+                curso = Curso()
+                curso.codigo = c["id"]
+                curso.nome = f"Curso [{c['id']}], favor solicitar o cadastro"
+                curso.save()
+            except:
+                pass
     results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
 
+    cache.set(cache_key, results)
+    logger.debug(f"Putting cache for: {cache_key}")
+
     return results
 
 
-def get_atualizacoes_counts(username: str) -> dict:
-    def _callback(params):
-        try:
-            ava = params["ava"]
-
-            counts = get_json_api(ava, "get_atualizacoes_counts", username=params["username"])
-            print("counts AVA:", counts)
-
-        except Exception as e:
-            logging.error(e)
-            sentry_sdk.capture_exception(e)
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        results = {
-            "atualizacoes": [],
-            "unread_notification_total": 0,
-            "unread_conversations_total": 0,
-        }
-        requests = [
-            {
-                "username": username,
-                "ava": ava,
-                "results": results,
-            }
-            for ava in Ambiente.objects.filter(active=True)
-        ]
-        executor.map(_callback, requests)
-
-    results["atualizacoes"] = sorted(results["atualizacoes"], key=lambda e: e["ambiente"]["titulo"])
-    # print("counts:",counts)
-    return results
+# def get_atualizacoes_counts(username: str) -> dict:
+#     def _callback(params):
+#         try:
+#             ava = params["ava"]
+#
+#             counts = get_json_api(ava, "get_atualizacoes_counts", username=params["username"])
+#             print("counts AVA:", counts)
+#
+#         except Exception as e:
+#             logging.error(e)
+#             sentry_sdk.capture_exception(e)
+#
+#     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+#         results = {
+#             "atualizacoes": [],
+#             "unread_notification_total": 0,
+#             "unread_conversations_total": 0,
+#         }
+#         requests = [
+#             {
+#                 "username": username,
+#                 "ava": ava,
+#                 "results": results,
+#             }
+#             for ava in Ambiente.cached()
+#         ]
+#         executor.map(_callback, requests)
+#
+#     results["atualizacoes"] = sorted(results["atualizacoes"], key=lambda e: e["ambiente"]["titulo"])
+#     # print("counts:",counts)
+#     return results
 
 
 def set_favourite_course(username: str, ava: str, courseid: int, favourite: int) -> dict:

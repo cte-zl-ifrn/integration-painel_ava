@@ -1,9 +1,8 @@
 stages:
     - build
-    - publish
     - deploy
 
-build-job:
+build-and-push:
     stage: build
     image: docker:latest
     services:
@@ -16,26 +15,14 @@ build-job:
         - echo "Building the code for $CI_COMMIT_REF_NAME ..."
         - echo "APP_VERSION = '$CI_PIPELINE_ID.$CI_COMMIT_SHORT_SHA'" >> src/settings/apps.py
         - cat src/settings/apps.py
-    script:
-        - docker build -t ctezlifrn/avapainel:$CI_COMMIT_REF_NAME .
-    after_script:
-        - echo "Build complete for $CI_COMMIT_REF_NAME ."
-
-publish-job:
-    stage: publish
-    only:
-        - proximo
-        - teste
-        - producao
-    before_script:
-        - echo "Deploying image to $CI_COMMIT_REF_NAME ..."
         - docker login -u $DOCKERHUB_REGISTRY_USER -p $DOCKERHUB_REGISTRY_PASSWORD
     script:
+        - docker build -t ctezlifrn/avapainel:$CI_COMMIT_REF_NAME .
         - docker push ctezlifrn/avapainel:$CI_COMMIT_REF_NAME
     after_script:
-        - echo "Image successfully deployed in $CI_COMMIT_REF_NAME."
+        - echo "Build and push complete for $CI_COMMIT_REF_NAME ."
 
-deploy-job:
+deploy:
     stage: deploy
     only:
         # - proximo

@@ -20,37 +20,9 @@
                 href="https://suap.ifrn.edu.br/comum/minha_conta/">Perfil no SUAP</a>
         </li>
         <li class="mobile-only">
-            <hr class="dropdown-divider">
-        </li>
-        <li class="mobile-only">
             <h6 class="dropdown-header">Listagem</h6>
         </li>
         <li>
-            <hr class="dropdown-divider">
-        </li>
-        {% if not personificando %}
-            {% if user.is_superuser %}{% endif %}
-        {% endif %}
-        {% if not personificando %}
-            {% if user.is_superuser %}
-                {% if admins %}
-                    {% for ava in admins  %}
-                        <li style='border-left: 8px solid {{ ava.cor_mestra }};'>
-                            <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
-                        </li>
-                    {% endfor %}
-                {% else %}
-                    <li>
-                        <a class="dropdown-item"
-                            href="{% url 'admin:painel_ambiente_changelist' %}">Cadastrar ambiente</a>
-                    </li>
-                {% endif %}
-                <li style="border-left: 8px solid #000;">
-                    <a class="dropdown-item"  href="{% url 'admin:index' %}">Admin do Painel AVA</a>
-                </li>
-            {% endif %}
-        {% endif %}
-        <li style="border-left: 8px solid #fff;">
             <a class="dropdown-item" href="https://aberto.ava.ifrn.edu.br">AVA Aberto</a>
         </li>
         <li class="mobile-only">
@@ -89,6 +61,33 @@
                 target="_blank"
                 href="https://bit.ly/40aQDzN">Ver lista de contatos</a>
         </li>
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+        {% if not personificando %}
+            {% if user.is_superuser %}
+                <li>
+                    <span>
+                        <h6 class="dropdown-header">Admins</h6>
+                    </span>
+                </li>
+                {% if admins %}
+                    {% for ava in admins  %}
+                        <li style='border-left: 8px solid {{ ava.cor_mestra }};'>
+                            <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li>
+                        <a class="dropdown-item"
+                            href="{% url 'admin:painel_ambiente_changelist' %}">Cadastrar ambiente</a>
+                    </li>
+                {% endif %}
+                <li style="border-left: 8px solid #000;">
+                    <a class="dropdown-item"  href="{% url 'admin:index' %}">Painel AVA</a>
+                </li>
+            {% endif %}
+        {% endif %}
         <li>
             <hr class="dropdown-divider">
         </li>
