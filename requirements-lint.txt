@@ -1,0 +1,6 @@
+# -e ../django-adminlte3
+black
+djlint
+flake8
+mypy
+ruff

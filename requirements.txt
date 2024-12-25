@@ -43,4 +43,3 @@ pillow==11.0.0
 # Production
 sentry-sdk[django,celery,rq]==2.19.2
 gunicorn==23.0.0
-supervisor==4.2.5
