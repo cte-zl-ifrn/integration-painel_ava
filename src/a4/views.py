@@ -4,11 +4,12 @@ import urllib
 import requests
 import logging
 from django.conf import settings
-from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
+from django.core.cache import cache
+from django.contrib import auth
 from a4.models import Usuario
 
 
@@ -21,6 +22,16 @@ def login(request: HttpRequest) -> HttpResponse:
         f"{o["AUTHORIZE_URL"]}?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
     )
     return redirect(suap_url)
+
+
+def logout(request: HttpRequest) -> HttpResponse:
+    if request.user is not None and request.user.username is not None:
+        cache.delete(f"username:{request.user.username}")
+    auth.logout(request)
+
+    logout_token = request.session.get("logout_token", "")
+    next = urllib.parse.quote_plus(settings.LOGIN_REDIRECT_URL)
+    return redirect(f"{settings.LOGOUT_REDIRECT_URL}?token={logout_token}&next={next}")
 
 
 def authenticate(request: HttpRequest) -> HttpResponse:
@@ -74,7 +85,6 @@ def authenticate(request: HttpRequest) -> HttpResponse:
     username = user_info_data.get("identificacao", None)
     if username is None:
         return render(request, "a4/oauth_error.html", {"error": access_token_data})
-    user = Usuario.objects.filter(username=username).first()
     defaults = {
         "nome_registro": user_info_data.get("nome_registro"),
         "nome_social": user_info_data.get("nome_social"),
@@ -91,8 +101,12 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         "tipo_usuario": user_info_data.get("tipo_usuario"),
         "last_json": user_info_response.text,
     }
+
+    user = Usuario.objects.filter(username=username).first()
+    logger.debug(f"checking user: {user}")
     if user is None:
         is_superuser = Usuario.objects.count() == 0
+        logger.debug(f"need to create user: {username}")
         user = Usuario.objects.create(
             username=username,
             is_superuser=is_superuser,
@@ -101,21 +115,13 @@ def authenticate(request: HttpRequest) -> HttpResponse:
             **defaults,
         )
     else:
-        user = Usuario.objects.filter(username=username).first()
+        logger.debug(f"need to update user: {user}")
         if user.first_login is None:
             user.first_login = now()
             user.save()
         Usuario.objects.filter(username=username).update(**defaults)
     auth.login(request, user)
     return redirect("painel:dashboard")
-
-
-def logout(request: HttpRequest) -> HttpResponse:
-    auth.logout(request)
-
-    logout_token = request.session.get("logout_token", "")
-    next = urllib.parse.quote_plus(settings.LOGIN_REDIRECT_URL)
-    return redirect(f"{settings.LOGOUT_REDIRECT_URL}?token={logout_token}&next={next}")
 
 
 def personificar(request: HttpRequest, username: str):

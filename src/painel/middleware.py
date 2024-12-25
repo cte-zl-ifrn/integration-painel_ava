@@ -3,7 +3,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib import auth
-from a4.models import Usuario as UsuarioA4
+from a4.models import Usuario
 import requests
 import psycopg
 import psycopg_pool
@@ -68,7 +68,7 @@ class AuthMobileUserMiddleware:
                     {"error": {"message": "Erro ao integrar com o Login do SUAP", "code": 422}}, status=422
                 )
 
-            user = UsuarioA4.objects.filter(username=userdata["username"]).first()
+            user = Usuario.cached(userdata.get("username"))
             if user is not None:
                 auth.login(request, user)
                 response = self.get_response(request)

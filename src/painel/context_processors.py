@@ -28,7 +28,7 @@ def layout_settings(request: HttpRequest) -> dict:
         "last_startup": settings.LAST_STARTUP,
         "app_version": settings.APP_VERSION,
         "gtag": settings.GTAG_CODE if hasattr(settings, "GTAG_CODE") else False,
-        "ambientes": Ambiente.objects.filter(active=True),
+        "ambientes": Ambiente.cached(),
         "admins": Ambiente.admins(),
     }
 

@@ -8,9 +8,13 @@ from typing import Dict, List, Union, Any
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.conf import settings
+from django.core.cache import cache
 import requests
 from http.client import HTTPException
 from .models import Ambiente, Curso
+
+
+logger = logging.getLogger(__name__)
 
 
 CODIGO_DIARIO_REGEX = re.compile("^(\\d\\d\\d\\d\\d)\\.(\\d*)\\.(\\d*)\\.(.*)\\.(\\w*\\.\\d*)(#\\d*)?$")
@@ -98,14 +102,11 @@ def get_diarios(
                     co_curso = diario_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
                 else:
                     co_curso = diario_re[0][CODIGO_DIARIO_CURSO_INDEX]
-
-                if co_curso not in CURSOS_CACHE and CURSOS_CACHE.get(co_curso, None) is None:
-                    curso = Curso.objects.filter(codigo=co_curso).first()
-                    if curso:
-                        CURSOS_CACHE[co_curso] = curso
-
-                curso = CURSOS_CACHE.get(co_curso, Curso(codigo=co_curso, nome=f"Curso: {co_curso}"))
-                diario["curso"] = {"codigo": curso.codigo, "nome": curso.nome}
+                curso = next(iter(Curso.cached_by_codigos([co_curso])), None)
+                if curso is not None:
+                    diario["curso"] = {"codigo": curso.codigo, "nome": curso.nome}
+                else:
+                    diario["curso"] = {"codigo": co_curso, "nome": f"Curso {co_curso}"}
 
             def _merge_turma(diario: dict, diario_re: re.Match):
                 if len(diario_re) > 0 and len(diario_re[0]) >= CODIGO_DIARIO_TURMA_INDEX:
@@ -197,6 +198,13 @@ def get_diarios(
         sortedlist = sorted(deduplicated, key=lambda e: e["label"], reverse=reverse)
         return sortedlist
 
+    cache_key=f"get_diarios:{username}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
+
+    results = cache.get(cache_key, None)
+    if results is not None:
+        logger.debug(f"Results cache hit: {cache_key}")
+        return results
+
     results = {
         "semestres": [],
         "ambientes": Ambiente.as_dict(),
@@ -209,11 +217,7 @@ def get_diarios(
 
     has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()
 
-    ambientes = [
-        ava
-        for ava in Ambiente.objects.filter(active=True)
-        if (has_ambiente and int(ambiente) == ava.id) or not has_ambiente
-    ]
+    ambientes = [ava for ava in Ambiente.cached() if (has_ambiente and int(ambiente) == ava.id) or not has_ambiente]
 
     requests = [
         {
@@ -248,13 +252,24 @@ def get_diarios(
 
     results["coordenacoes"] = sorted(results["coordenacoes"], key=lambda e: e["fullname"])
     results["praticas"] = sorted(results["praticas"], key=lambda e: e["fullname"])
-    cursos = {c.codigo: c.nome for c in Curso.objects.filter(codigo__in=[x["id"] for x in results["cursos"]])}
+    codigos = [x["id"] for x in results["cursos"]]
+    cursos = {c.codigo: c.nome for c in Curso.cached_by_codigos(codigos)}
     for c in results["cursos"]:
         if c["id"] in cursos:
             c["label"] = f"{cursos[c['id']]}"
         else:
             c["label"] = f"Curso [{c['id']}], favor solicitar o cadastro"
+            try:
+                curso = Curso()
+                curso.codigo = c["id"]
+                curso.nome = f"Curso [{c['id']}], favor solicitar o cadastro"
+                curso.save()
+            except:
+                pass
     results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
+
+    cache.set(cache_key, results)
+    logger.debug(f"Putting cache for: {cache_key}")
 
     return results
 
@@ -283,7 +298,7 @@ def get_diarios(
 #                 "ava": ava,
 #                 "results": results,
 #             }
-#             for ava in Ambiente.objects.filter(active=True)
+#             for ava in Ambiente.cached()
 #         ]
 #         executor.map(_callback, requests)
 #

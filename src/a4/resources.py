@@ -1,6 +1,4 @@
 from import_export.resources import ModelResource
-from import_export.fields import Field
-from import_export.widgets import ForeignKeyWidget, DateTimeWidget
 from .models import Usuario
 
 
