@@ -27,6 +27,7 @@ def layout_settings(request: HttpRequest) -> dict:
         "layout_has_auth_remembering": True,
         "last_startup": settings.LAST_STARTUP,
         "app_version": settings.APP_VERSION,
+        "hostname": settings.HOSTNAME,
         "gtag": settings.GTAG_CODE if hasattr(settings, "GTAG_CODE") else False,
         "ambientes": Ambiente.cached(),
         "admins": Ambiente.admins(),

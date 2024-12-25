@@ -10,6 +10,7 @@ USERWAY_ACCOUNT = env("USERWAY_ACCOUNT", None)
 SHOW_VLIBRAS = env_as_bool("SHOW_VLIBRAS", True)
 SHOW_SUPPORT_FORM = env_as_bool("SHOW_SUPPORT_FORM", True)
 SHOW_SUPPORT_CHAT = env_as_bool("SHOW_SUPPORT_CHAT", True)
+HOSTNAME = env("HOSTNAME", "-")
 
 
 # Apps
