@@ -1,12 +1,17 @@
 from django.utils.translation import gettext as _
 import re
+import logging
 from django.utils.timezone import now
 from django.utils.safestring import mark_safe
 from django.forms import ValidationError
 from django.db.models import BooleanField, URLField, CharField, DateTimeField, Model, TextField, ForeignKey, PROTECT
+from django.core.cache import cache
 from django_better_choices import Choices
 from simple_history.models import HistoricalRecords
 from djrichtextfield.models import RichTextField
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseChoices(Choices):
@@ -25,12 +30,14 @@ class Situacao(Choices):
 
 
 class ActiveMixin:
+    active = BooleanField(_("ativo?"), default=True)
+
     @property
     def active_icon(self):
         return "✅" if self.active else "⛔"
 
 
-class Contrante(Model):
+class Contrante(ActiveMixin, Model):
     url = URLField(_("URL"), max_length=256)
     url_logo = URLField(_("URL da logo"), max_length=256)
     titulo = CharField(_("título do painel"), max_length=256)
@@ -53,7 +60,7 @@ class Contrante(Model):
         return f"{self.titulo} ({self.url})"
 
 
-class Ambiente(Model):
+class Ambiente(ActiveMixin, Model):
     def _c(color: str):
         return f"""<span style='background: {color}; color: #fff; padding: 1px 5px;
                                 font-size: 95%; border-radius: 4px;'>{color}</span>"""
@@ -83,13 +90,18 @@ class Ambiente(Model):
     def __str__(self):
         return f"{self.nome}"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        logger.debug(f"limpando o cache dos ambientes")
+        cache.delete("ambientes")
+
     @property
     def moodle_base_url(self):
         return self.url if self.url[-1:] != "/" else self.url[:-1]
 
     @property
     def moodle_base_api_url(self):
-        return f"{self.base_url}/local/suap/api"
+        return f"{self.moodle_base_url}/local/suap/api"
 
     @staticmethod
     def as_dict():
@@ -100,8 +112,17 @@ class Ambiente(Model):
                 "style": f"background-color: {a.cor_mestra}",
                 "color": a.cor_mestra,
             }
-            for a in Ambiente.objects.filter(active=True)
+            for a in Ambiente.cached()
         ]
+
+    @staticmethod
+    def cached() -> list:
+        all_ambientes = cache.get("ambientes")
+        if all_ambientes is None:
+            all_ambientes = [x for x in Ambiente.objects.filter(active=True)]
+            logger.debug(f"colocando no cache os ambientes: {all_ambientes}")
+            cache.set("ambientes", all_ambientes)
+        return all_ambientes
 
     @staticmethod
     def admins():
@@ -112,16 +133,14 @@ class Ambiente(Model):
                 "cor_mestra": a.cor_mestra,
                 "url": f"{a.url}/admin/",
             }
-            for a in Ambiente.objects.filter(active=True)
+            for a in Ambiente.cached()
         ]
 
 
 class Curso(Model):
     contratante = ForeignKey(Contrante, on_delete=PROTECT, null=True, blank=False)
-    suap_id = CharField(_("ID do curso no SUAP"), max_length=255, unique=True)
     codigo = CharField(_("código do curso"), max_length=255, unique=True)
     nome = CharField(_("nome do curso"), max_length=255)
-    descricao = CharField(_("descrição"), max_length=255)
 
     history = HistoricalRecords()
 
@@ -133,6 +152,24 @@ class Curso(Model):
     def __str__(self):
         return f"{self.nome} ({self.codigo})"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        logger.debug(f"limpando o cache dos cursos")
+        cache.delete("cursos")
+
+    @staticmethod
+    def cached() -> list:
+        all_instances = cache.get("cursos")
+        if all_instances is None:
+            all_instances = [x for x in Curso.objects.all()]
+            logger.debug(f"colocando no cache os cursos: {all_instances}")
+            cache.set("cursos", all_instances)
+        return all_instances or []
+
+    @staticmethod
+    def cached_by_codigos(codigos: list) -> list:
+        return [x for x in Curso.cached() if x.codigo in codigos]
+
 
 class Popup(ActiveMixin, Model):
     contratante = ForeignKey(Contrante, on_delete=PROTECT, null=True, blank=False)
@@ -141,7 +178,8 @@ class Popup(ActiveMixin, Model):
     mensagem = RichTextField(_("mensagem"))
     start_at = DateTimeField(_("inicia em"))
     end_at = DateTimeField(_("termina em"))
-    active = BooleanField(_("ativo?"))
+    active = BooleanField(_("ativo?"), default=True)
+
     history = HistoricalRecords()
 
     class Meta:
@@ -156,11 +194,21 @@ class Popup(ActiveMixin, Model):
         if self.start_at > self.end_at:
             return ValidationError("O término deve ser maior do que o início.")
         super().save(*args, **kwargs)
+        cache.delete("popups")
 
     def mostrando(self):
         sim = self.active and self.start_at <= now() and self.end_at >= now()
         return "✅" if sim else "❌"
 
     @staticmethod
+    def cached() -> list:
+        all_instances = cache.get("popups")
+        if all_instances is None:
+            all_instances = [x for x in Popup.objects.filter(active=True, start_at__lte=now(), end_at__gte=now())]
+            logger.debug(f"colocando no cache os popups: {all_instances}")
+            cache.set("popups", all_instances)
+        return all_instances or []
+
+    @staticmethod
     def activePopup():
-        return Popup.objects.filter(active=True, start_at__lte=now(), end_at__gte=now()).first()
+        return next(iter(Popup.cached()), None)

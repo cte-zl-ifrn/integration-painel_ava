@@ -46,7 +46,7 @@ class AmbienteAdmin(BaseModelAdmin):
 @register(Curso)
 class CursoAdmin(BaseModelAdmin):
     list_display = ["codigo", "nome"]
-    search_fields = ["suap_id", "codigo", "nome", "descricao"]
+    search_fields = ["codigo", "nome"]
     list_filter = BaseModelAdmin.list_filter
 
 
