@@ -32,7 +32,8 @@ def authenticate(request: HttpRequest) -> HttpResponse:
     if "code" not in request.GET:
         raise Exception(_("O código de autenticação não foi informado."))
 
-    logger.debug("OAUTH[", OAUTH)
+    logger.debug("OAUTH")
+    logger.debug(OAUTH)
 
     access_token_request_data = {
         "grant_type": "authorization_code",
