@@ -2,6 +2,7 @@ from django.utils.translation import gettext as _
 import json
 import urllib
 import requests
+import logging
 from django.conf import settings
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
@@ -9,6 +10,9 @@ from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
 from a4.models import Usuario
+
+
+logger = logging.getLogger(__name__)
 
 
 def login(request: HttpRequest) -> HttpResponse:
@@ -28,6 +32,8 @@ def authenticate(request: HttpRequest) -> HttpResponse:
     if "code" not in request.GET:
         raise Exception(_("O código de autenticação não foi informado."))
 
+    logger.debug("OAUTH[", OAUTH)
+
     access_token_request_data = {
         "grant_type": "authorization_code",
         "code": request.GET.get("code"),
@@ -35,40 +41,54 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         "client_id": OAUTH["CLIENT_ID"],
         "client_secret": OAUTH["CLIENT_SECRET"],
     }
+    logger.debug("access_token_request_data")
+    logger.debug(access_token_request_data)
+    access_token_response = requests.post(f"{OAUTH['TOKEN_URL']}", data=access_token_request_data, verify=OAUTH["VERIFY_SSL"])
+    logger.debug("access_token_response_text")
+    logger.debug(access_token_response.text)
+    access_token_data = json.loads(access_token_response.text)
+    logger.debug("access_token_data")
+    logger.debug(access_token_data)
 
-    response = requests.post(f"{OAUTH['TOKEN_URL']}", data=access_token_request_data, verify=OAUTH["VERIFY_SSL"])
-    request_data = json.loads(response.text)
+    if access_token_data.get("error_description") == "Mismatching redirect URI.":
+        return render(request, "a4/mismatching_redirect_uri.html", {"error": access_token_data})
 
-    if request_data.get("error_description") == "Mismatching redirect URI.":
-        return render(request, "a4/mismatching_redirect_uri.html", {"error": request_data})
-
-    response = requests.get(
-        f"{OAUTH['USERINFO_URL']}?scope={request_data.get('scope')}",
-        headers={
-            "Authorization": f"Bearer {request_data.get('access_token')}",
-            "x-api-key": OAUTH["CLIENT_SECRET"],
-        },
+    user_info_request_header = {
+        "Authorization": f"Bearer {access_token_data.get('access_token')}",
+        "x-api-key": OAUTH["CLIENT_SECRET"],
+    }
+    logger.debug("user_info_request_header")
+    logger.debug(user_info_request_header)
+    user_info_response = requests.get(
+        f"{OAUTH['USERINFO_URL']}?scope={access_token_data['scope']}",
+        headers=user_info_request_header,
         verify=OAUTH["VERIFY_SSL"],
     )
-    response_data = json.loads(response.text)
+    logger.debug("user_info_response.text")
+    logger.debug(user_info_response.text)
+    user_info_data = json.loads(user_info_response.text)
+    logger.debug("user_info_data")
+    logger.debug(user_info_data)
 
-    username = response_data["identificacao"]
+    username = user_info_data.get("identificacao", None)
+    if username is None:
+        return render(request, "a4/oauth_error.html", {"error": access_token_data})
     user = Usuario.objects.filter(username=username).first()
     defaults = {
-        "nome_registro": response_data.get("nome_registro"),
-        "nome_social": response_data.get("nome_social"),
-        "nome_usual": response_data.get("nome_usual"),
-        "nome": response_data.get("nome"),
-        "first_name": response_data.get("primeiro_nome"),
-        "last_name": response_data.get("ultimo_nome"),
-        "email": response_data.get("email_preferencial"),
-        "email_corporativo": response_data.get("email"),
-        "email_google_classroom": response_data.get("email_google_classroom"),
-        "email_academico": response_data.get("email_academico"),
-        "email_secundario": response_data.get("email_secundario"),
-        "foto": response_data.get("foto"),
-        "tipo_usuario": response_data.get("tipo_usuario"),
-        "last_json": response.text,
+        "nome_registro": user_info_data.get("nome_registro"),
+        "nome_social": user_info_data.get("nome_social"),
+        "nome_usual": user_info_data.get("nome_usual"),
+        "nome": user_info_data.get("nome"),
+        "first_name": user_info_data.get("primeiro_nome"),
+        "last_name": user_info_data.get("ultimo_nome"),
+        "email": user_info_data.get("email_preferencial"),
+        "email_corporativo": user_info_data.get("email"),
+        "email_google_classroom": user_info_data.get("email_google_classroom"),
+        "email_academico": user_info_data.get("email_academico"),
+        "email_secundario": user_info_data.get("email_secundario"),
+        "foto": user_info_data.get("foto"),
+        "tipo_usuario": user_info_data.get("tipo_usuario"),
+        "last_json": user_info_response.text,
     }
     if user is None:
         is_superuser = Usuario.objects.count() == 0
