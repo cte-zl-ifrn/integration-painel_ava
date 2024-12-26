@@ -72,7 +72,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
     logger.debug("user_info_request_header")
     logger.debug(user_info_request_header)
     user_info_response = requests.get(
-        f"{OAUTH['USERINFO_URL']}?scope={access_token_data['scope']}",
+        f"{OAUTH['USERINFO_URL']}?scope={access_token_data.get('scope', 'identificacao email documentos_pessoais')}",
         headers=user_info_request_header,
         verify=OAUTH["VERIFY_SSL"],
     )
