@@ -81,7 +81,6 @@ def authenticate(request: HttpRequest) -> HttpResponse:
     logger.debug(user_info_response.text)
     try:
         user_info_data = json.loads(user_info_response.text)
-        return render(request, "a4/oauth_usuario_sem_vinculo.html")
     except json.decoder.JSONDecodeError as e:
         sentry_sdk.capture_exception(e)
         if "__buscar_menu__" in user_info_response.text:
