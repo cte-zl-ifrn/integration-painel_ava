@@ -56,5 +56,3 @@ OAUTH = {
     "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
     "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", True),
 }
-
-SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "changeme")
