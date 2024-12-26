@@ -1,10 +1,8 @@
 # Painel AVA
 
-O Painel AVA é um middleware integrador entre SUAP e Moodle, além disso, também tem um dashboard com todos os cursos e inscrições que integrou, desta forma cada usuário tem acesso aos cursos/diários em que está inscrito sem precisar procurar em vários Moodles.
+O Painel AVA é um dashboard com todos os cursos e inscrições que dos AVA que com os quais ele integra, desta forma cada usuário tem acesso aos cursos/diários em que está inscrito sem precisar procurar em vários Moodles.
 
 > Neste projeto usamos o [Docker](https://docs.docker.com/engine/install/) e o [Docker Compose Plugin](https://docs.docker.com/compose/install/compose-plugin/#:~:text=%20Install%20the%20plugin%20manually%20%F0%9F%94%97%20%201,of%20Compose%20you%20want%20to%20use.%20More%20) (não o [docker-compose](https://docs.docker.com/compose/install/) 😎). O setup foi todo testado usando o Linux e Mac OS.
-
-> Os containeres terão o prefixo `ism-`, que é um acrônimo para "Integrador Suap Moodle".
 
 ## Como funciona
 
@@ -92,9 +90,6 @@ services:
             - OAUTH_CLIENT_SECRET=changeme
             - OAUTH_BASE_URL=https://suap.yourhost.edu.br
             - OAUTH_REDIRECT_URI=https://ava.yourhost.edu.br/painel/authenticate/
-
-            # 4. Atribua o token de integração do SUAP
-            - SUAP_INTEGRADOR_KEY=changeme
 
             # 5. Se cadastre no https://userway.org/ e registre o token da conta
             - SHOW_USERWAY=True
