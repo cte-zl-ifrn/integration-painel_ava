@@ -9,7 +9,7 @@ from django.core.exceptions import DisallowedHost
 from .apps import APP_VERSION
 
 sentry_sdk.init(
-    dsn=env("SENTRY_DNS"),
+    dsn=env("SENTRY_DNS", "https://9e94deb4dd327e881a9d3d1d6854350e@o289006.ingest.us.sentry.io/4508534897246208"),
     integrations=[
         DjangoIntegration(),
         RedisIntegration(),
