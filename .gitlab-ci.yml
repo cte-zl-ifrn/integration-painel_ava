@@ -25,9 +25,10 @@ build-and-push:
 deploy:
     stage: deploy
     only:
-        # - proximo
-        - teste
-        - producao
+#        # - proximo
+#        - teste
+#        - producao
+        - NEVER
     before_script:
         - echo "Setting SSH credentiais to $CI_COMMIT_REF_NAME ..."
         - mkdir -p ~/.ssh
