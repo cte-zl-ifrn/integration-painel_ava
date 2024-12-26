@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        {% include 'painel/layouts/partials/head.html' %}
+        <style>
+            main, header {
+                display: block;
+                width: 75%;
+                max-width: 600px;
+                padding: 30px;
+                margin: 0 auto;
+            }
+            h1 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .buttons {
+                border-top: 2px solid #ddd;
+                margin-top: 30px;
+                padding-top: 15px;
+                text-align: center;
+            }
+            .title {
+                font-size: 2em;
+                font-weight: bold;
+                margin-left: 10px;
+                display: inline;
+                height: 40px;
+                vertical-align: middle;
+                float: right;
+            }
+            a {
+                font-weight: 900;
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <img alt="Logo do IFRN" src="{% static 'dashboard/img/logo_ifrn_zl.png' %}" width="132" height="40" />
+            <div class="title">Painel AVA</div>
+        </header>
+        <main>
+            <h1>Usuário sem vínculo ativo</h1>
+            <p>
+                Prezado usuário,
+            </p>
+            <p>
+                Parece que você está cadastrado no SUAP, entretanto, você não tem um vínculo ativo no SUAP e por isso
+                não pode acessar o AVA.
+            </p>
+            <p>
+                Para resolver a questão de vínculo inativo no SUAP, sugerimos que o coordenador de curso abra um
+                chamado de <a href="https://suap.ifrn.edu.br/centralservicos/abrir_chamado/88/"
+                >"alteração de expiração de conta"</a> para a TI do Campus ZL.
+                Oriente teu coordenador de curso a informar ao menos:
+            </p>
+            <ul>
+               <li><b>Ocupação:</b> Tutor EAD.</li>
+               <li><b>Pessoa jurídica:</b> Seu campus de lotação.</li>
+               <li><b>Data de início:</b> A data de início das atividades.</li>
+               <li><b>Data final:</b> A data de término das atividades.</li>
+               <li><b>Setor Suap:</b> O setor onde você estará vinculado.</li>
+            </ul>
+            <p>
+                Exemplo de texto para o chamado:
+            </p>
+            <p style="background-color: silver; padding: 1em">
+                Solicito a vinculação de [Nome completo da pessoa], CPF [Número do CPF da pessoa], à ocupação de Tutora EAD. As informações para a vinculação são as seguintes:
+                <br />
+                <br /><b>Ocupação:</b> Tutora EAD
+                <br /><b>Pessoa Jurídica:</b> Campus Avançado Natal Zona Leste (Ead) (75671517000101)
+                <br /><b>Data de Início:</b> 01/01/2024
+                <br /><b>Data Final:</b> 31/12/2024
+                <br /><b>Setor SUAP:</b> DIAC/ZL
+            </p>
+            <p>
+                Seguindo essas orientações, você deverá conseguir acessar o AVA corretamente com seu CPF.
+            </p>
+        </main>
+    </body>
+</html>

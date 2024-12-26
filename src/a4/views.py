@@ -3,6 +3,7 @@ import json
 import urllib
 import requests
 import logging
+import sentry_sdk
 from django.conf import settings
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
@@ -78,13 +79,22 @@ def authenticate(request: HttpRequest) -> HttpResponse:
     )
     logger.debug("user_info_response.text")
     logger.debug(user_info_response.text)
-    user_info_data = json.loads(user_info_response.text)
+    try:
+        user_info_data = json.loads(user_info_response.text)
+        return render(request, "a4/oauth_usuario_sem_vinculo.html")
+    except json.decoder.JSONDecodeError as e:
+        sentry_sdk.capture_exception(e)
+        if "__buscar_menu__" in user_info_response.text:
+            return render(request, "a4/oauth_usuario_sem_vinculo.html")
+        else:
+            return render(request, "a4/oauth_error.html")
+
     logger.debug("user_info_data")
     logger.debug(user_info_data)
 
     username = user_info_data.get("identificacao", None)
     if username is None:
-        return render(request, "a4/oauth_error.html", {"error": access_token_data})
+        return render(request, "a4/oauth_error.html")
     defaults = {
         "nome_registro": user_info_data.get("nome_registro"),
         "nome_social": user_info_data.get("nome_social"),
