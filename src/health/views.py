@@ -27,9 +27,6 @@ def health(request: HttpRequest) -> HttpResponse:
     )
 
 def force_fail(request: HttpRequest) -> HttpResponse:
-    if not settings.DEBUG:
-        return HttpResponse("OK")
-
     1 / 0
 
 def force_db_fail(request: HttpRequest) -> HttpResponse:
