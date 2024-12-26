@@ -8,7 +8,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 from django.core.exceptions import DisallowedHost
 from .apps import APP_VERSION
 
-sentry_sdk.init(
+SENTRY_SETTINGS = dict(
     dsn=env("SENTRY_DNS", "https://9e94deb4dd327e881a9d3d1d6854350e@o289006.ingest.us.sentry.io/4508534897246208"),
     integrations=[
         DjangoIntegration(),
@@ -41,3 +41,7 @@ sentry_sdk.init(
     # transport=,
     # shutdown_timeout=env_as_int('SENTRY_SHUTDOWN_TIMEOUT', 2),
 )
+
+sentry_sdk.init(**SENTRY_SETTINGS)
+
+print(SENTRY_SETTINGS)
