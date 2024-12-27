@@ -16,6 +16,11 @@ from a4.models import Usuario
 
 logger = logging.getLogger(__name__)
 
+def _post(*args, **kwargs) -> requests.Response:
+    return requests.post(*args, verify=settings.OAUTH["VERIFY_SSL"], **kwargs)
+
+def _get(*args, **kwargs) -> requests.Response:
+    return requests.get(*args, verify=settings.OAUTH["VERIFY_SSL"], **kwargs)
 
 def login(request: HttpRequest) -> HttpResponse:
     o = settings.OAUTH
@@ -38,98 +43,141 @@ def logout(request: HttpRequest) -> HttpResponse:
 def authenticate(request: HttpRequest) -> HttpResponse:
     OAUTH = settings.OAUTH
 
-    if request.GET.get("error") == "access_denied":
-        return render(request, "a4/not_authorized.html")
+    def oauth_error(error) -> HttpResponse:
+        return render(request, "a4/oauth_error.html", {"error": error})
 
-    if "code" not in request.GET:
-        raise Exception(_("O código de autenticação não foi informado."))
+    def validate_request() -> None or HttpResponse:
+        if "error" in request.GET:
+            if request.GET['error'] == "access_denied":
+                return render(request, "a4/not_authorized.html")
+            else:
+                return render(request, "a4/not_authorized.html")
 
-    logger.debug("OAUTH")
-    logger.debug(OAUTH)
+        if "code" not in request.GET:
+            return oauth_error("")
 
-    access_token_request_data = {
-        "grant_type": "authorization_code",
-        "code": request.GET.get("code"),
-        "redirect_uri": OAUTH["REDIRECT_URI"],
-        "client_id": OAUTH["CLIENT_ID"],
-        "client_secret": OAUTH["CLIENT_SECRET"],
-    }
-    logger.debug("access_token_request_data")
-    logger.debug(access_token_request_data)
-    access_token_response = requests.post(f"{OAUTH['TOKEN_URL']}", data=access_token_request_data, verify=OAUTH["VERIFY_SSL"])
-    logger.debug("access_token_response_text")
-    logger.debug(access_token_response.text)
-    access_token_data = json.loads(access_token_response.text)
-    logger.debug("access_token_data")
-    logger.debug(access_token_data)
+    def check_access_token() -> dict or HttpResponse:
+        response_text = None
+        try:
+            reqeuest_data = {
+                "grant_type": "authorization_code",
+                "code": request.GET["code"],
+                "redirect_uri": OAUTH["REDIRECT_URI"],
+                "client_id": OAUTH["CLIENT_ID"],
+                "client_secret": OAUTH["CLIENT_SECRET"],
+            }
+            logger.debug(f"access_token_request_data: {reqeuest_data}")
 
-    if access_token_data.get("error_description") == "Mismatching redirect URI.":
-        return render(request, "a4/mismatching_redirect_uri.html", {"error": access_token_data})
+            response = _post(f"{OAUTH['TOKEN_URL']}", reqeuest_data)
+            response_text = response.text
+            logger.debug(f"access_token_response_text: {response_text}")
 
-    user_info_request_header = {
-        "Authorization": f"Bearer {access_token_data.get('access_token')}",
-        "x-api-key": OAUTH["CLIENT_SECRET"],
-    }
-    logger.debug("user_info_request_header")
-    logger.debug(user_info_request_header)
-    user_info_response = requests.get(
-        f"{OAUTH['USERINFO_URL']}?scope={access_token_data.get('scope', 'identificacao email documentos_pessoais')}",
-        headers=user_info_request_header,
-        verify=OAUTH["VERIFY_SSL"],
-    )
-    logger.debug("user_info_response.text")
-    logger.debug(user_info_response.text)
-    try:
-        user_info_data = json.loads(user_info_response.text)
-    except json.decoder.JSONDecodeError as e:
-        sentry_sdk.capture_exception(e)
-        if "__buscar_menu__" in user_info_response.text:
-            return render(request, "a4/oauth_usuario_sem_vinculo.html")
-        else:
-            return render(request, "a4/oauth_error.html")
+            if "invalid_grant" in response_text:
+                return render(request, "a4/oauth_error_invalid_grant.html")
 
-    logger.debug("user_info_data")
-    logger.debug(user_info_data)
+            if response.status_code != 200:
+                sentry_sdk.capture_message(response_text)
+                return oauth_error(response_text)
 
-    username = user_info_data.get("identificacao", None)
-    if username is None:
-        return render(request, "a4/oauth_error.html")
-    defaults = {
-        "nome_registro": user_info_data.get("nome_registro"),
-        "nome_social": user_info_data.get("nome_social"),
-        "nome_usual": user_info_data.get("nome_usual"),
-        "nome": user_info_data.get("nome"),
-        "first_name": user_info_data.get("primeiro_nome"),
-        "last_name": user_info_data.get("ultimo_nome"),
-        "email": user_info_data.get("email_preferencial"),
-        "email_corporativo": user_info_data.get("email"),
-        "email_google_classroom": user_info_data.get("email_google_classroom"),
-        "email_academico": user_info_data.get("email_academico"),
-        "email_secundario": user_info_data.get("email_secundario"),
-        "foto": user_info_data.get("foto"),
-        "tipo_usuario": user_info_data.get("tipo_usuario"),
-        "last_json": user_info_response.text,
-    }
+            data = json.loads(response_text)
+            logger.debug(f"access_token_data: {data}")
+            if data.get("error_description") == "Mismatching redirect URI.":
+                sentry_sdk.capture_message(response_text)
+                return oauth_error(str(data))
 
-    user = Usuario.objects.filter(username=username).first()
-    logger.debug(f"checking user: {user}")
-    if user is None:
-        is_superuser = Usuario.objects.count() == 0
-        logger.debug(f"need to create user: {username}")
-        user = Usuario.objects.create(
-            username=username,
-            is_superuser=is_superuser,
-            is_staff=is_superuser,
-            first_login=now(),
-            **defaults,
-        )
-    else:
-        logger.debug(f"need to update user: {user}")
-        if user.first_login is None:
-            user.first_login = now()
-            user.save()
-        Usuario.objects.filter(username=username).update(**defaults)
-    auth.login(request, user)
+            return data
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            return oauth_error(f"{e}. {response_text}")
+
+    def get_user_info(access_token) -> dict or HttpResponse:
+        response_text = None
+        try:
+            headers = {
+                "Authorization": f"Bearer {access_token.get('access_token')}",
+                "x-api-key": OAUTH["CLIENT_SECRET"],
+            }
+            logger.debug(f"user_info_request_header: {headers}")
+
+            scope = access_token.get('scope', 'identificacao email documentos_pessoais')
+            response = _get(f"{OAUTH['USERINFO_URL']}?scope={scope}", headers=headers)
+            response_text = response.text
+            logger.debug(f"user_info_response_text: {response_text}")
+
+            data = json.loads(response_text)
+            logger.debug(f"user_info_data: {data}")
+
+            if data.get("identificacao", None) is None:
+                return oauth_error(f"O JSON retornado pelo SUAP não veio correto. {response_text}")
+
+            return data
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            if response_text is not None and "__buscar_menu__" in response_text:
+                return render(request, "a4/oauth_usuario_sem_vinculo.html")
+            return oauth_error(f"{e}. {response_text}")
+
+    def save_user(user_info) -> Usuario or HttpResponse:
+        try:
+            username = user_info.get("identificacao", None)
+            defaults = {
+                "nome_registro": user_info.get("nome_registro"),
+                "nome_social": user_info.get("nome_social"),
+                "nome_usual": user_info.get("nome_usual"),
+                "nome": user_info.get("nome"),
+                "first_name": user_info.get("primeiro_nome"),
+                "last_name": user_info.get("ultimo_nome"),
+                "email": user_info.get("email_preferencial"),
+                "email_corporativo": user_info.get("email"),
+                "email_google_classroom": user_info.get("email_google_classroom"),
+                "email_academico": user_info.get("email_academico"),
+                "email_secundario": user_info.get("email_secundario"),
+                "foto": user_info.get("foto"),
+                "tipo_usuario": user_info.get("tipo_usuario"),
+                "last_json": json.dumps(user_info),
+            }
+
+            user = Usuario.objects.filter(username=username).first()
+            logger.debug(f"checking user: {user}")
+            if user is None:
+                is_superuser = Usuario.objects.count() == 0
+                logger.debug(f"need to create user: {username}")
+                user = Usuario.objects.create(
+                    username=username,
+                    is_superuser=is_superuser,
+                    is_staff=is_superuser,
+                    first_login=now(),
+                    **defaults,
+                )
+            else:
+                logger.debug(f"need to update user: {user}")
+                if user.first_login is None:
+                    user.first_login = now()
+                    user.save()
+                Usuario.objects.filter(username=username).update(**defaults)
+            return user
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            return oauth_error(f"{e}")
+
+    result = validate_request()
+    if isinstance(result, HttpResponse):
+        return result
+
+    access_token_data = check_access_token()
+    if isinstance(access_token_data, HttpResponse):
+        return access_token_data
+
+    user_info_data = get_user_info(access_token_data)
+    if isinstance(user_info_data, HttpResponse):
+        return user_info_data
+
+    user_model = save_user(user_info_data)
+    if isinstance(user_model, HttpResponse):
+        return user_model
+
+    auth.login(request, user_model)
+
     return redirect("painel:dashboard")
 
 

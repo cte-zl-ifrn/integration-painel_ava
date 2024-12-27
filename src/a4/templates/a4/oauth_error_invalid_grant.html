@@ -1,0 +1,12 @@
+{% extends "a4/base_error.html" %}
+
+{% block page_title %}Tentativa de atualização de página{% endblock page_title %}
+
+{% block content %}
+    <p>
+        Você deve ter tentado atualizar uma página de erro. Recomendo tentar iniciar o acesso ao Painel AVA novammente.
+    </p>
+    <div class="buttons">
+        <a class="btn btn-primary" href='{% url "painel:dashboard" %}'>Fazer novo login</a>
+    </div>
+{% endblock content %}

@@ -1,47 +1,12 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-    <head>
-        {% include 'painel/layouts/partials/head.html' %}
-        <style>
-            main, header {
-                display: block;
-                width: 75%;
-                max-width: 600px;
-                padding: 30px;
-                margin: 0 auto;
-            }
-            h1 {
-                text-align: center;
-                margin-bottom: 30px;
-            }
-            .buttons {
-                border-top: 2px solid #ddd;
-                margin-top: 30px;
-                padding-top: 15px;
-                text-align: center;
-            }
-            .title {
-                font-size: 2em;
-                font-weight: bold;
-                margin-left: 10px;
-                display: inline;
-                height: 40px;
-                vertical-align: middle;
-                float: right;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <img alt="Logo do IFRN" src="{% static 'dashboard/img/logo_ifrn_zl.png' %}" width="132" height="40" />
-            <div class="title">Painel AVA</div>
-        </header>
-        <main>
-            <h1>Erro na autenticação como SUAP</h1>
-            <p>
-                Ocorreu um erro na integração com o SUAP. Pode ser erro na configuração ou falha no SUAP.
-            </p>
-        </main>
-    </body>
-</html>
+{% extends "a4/base_error.html" %}
+
+{% block page_title %}Erro na autenticação SUAP{% endblock page_title %}
+
+{% block content %}
+    <p>
+        Ocorreu um erro na integração com o SUAP. Pode ser erro na configuração do Painel ou falha no SUAP.
+    </p>
+    <p>
+        {{ error | safe }}
+    </p>
+{% endblock content %}
