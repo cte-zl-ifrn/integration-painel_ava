@@ -4,75 +4,48 @@
 
 {% block content %}
     <p>
-        Prezado usuário,
+        Prezado tutor,
     </p>
     <p>
-        Parece que seu cadastrado no SUAP está incompleto, assim sendo, você não pode acessar o AVA,
-        para resolver isso:
+        Se você está vendo essa página então você provavel é um tutor e está sem vínculo ativo, para resolver isso:
     </p>
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Sou aluno</button>
-    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Sou colaborador</button>
+    <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Sou um tutor</button>
+    <button class="nav-link" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Não sou tutor</button>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
-  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+  <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
     <p>
-        Como você é um <b>aluno</b>, solicite à Secretaria Acadêmia (SEAC) do seu campus que cadastre sua foto.
-    </p>
-  </div>
-  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-    <p>
-        Como você é um <b>colaborador</b>, solicite ao seu coordenador de curso que verifique os itens abaixo
-        <i>(essas ações não podem ser feitas por você)</i>:
-    </p>
-    <p>
-        Para resolver a questão de vínculo inativo ou foto no SUAP, sugerimos que o coordenador de curso abra um
+        Para resolver a questão de vínculo inativo no SUAP, sugerimos que o <b>coordenador de curso</b> abra um
         chamado de <a href="https://suap.ifrn.edu.br/centralservicos/abrir_chamado/88/"
         >"alteração de expiração de conta"</a> para a TI do Campus ZL.
         Oriente ao seu coordenador de curso a informar ao menos:
     </p>
-    <h3>Em caso de vínculo inativo no SUAP:</h3>
-    <ul>
-       <li><b>Ocupação:</b> Tutor EAD.</li>
-       <li><b>Pessoa jurídica:</b> Seu campus de lotação.</li>
-       <li><b>Data de início:</b> A data de início das atividades.</li>
-       <li><b>Data final:</b> A data de término das atividades.</li>
-       <li><b>Setor Suap:</b> O setor onde você estará vinculado.</li>
-    </ul>
     <p>
         Exemplo de texto para o chamado:
     </p>
     <p style="background-color: #dee2e6; padding: 1em">
-        Solicito a vinculação de [SEU NOME COMPLETO], CPF [SEU CPF], à ocupação de Tutor EAD.
+        Solicito a vinculação de <b>{{ common_name }}</b>, CPF <b>{{ username }}</b>, à ocupação de Tutor EAD.
         As informações para a vinculação são as seguintes:
         <br />
-        <br /><b>Ocupação:</b> Tutor EAD
+        <br /><b>Ocupação:</b> <span>Tutor EAD</span>
         <br /><b>Pessoa Jurídica:</b> Campus Avançado Natal Zona Leste (Ead) (75671517000101)
-        <br /><b>Data de Início:</b> 01/01/2024
-        <br /><b>Data Final:</b> 31/12/2024
-        <br /><b>Setor SUAP:</b> DIAC/ZL
+        <br /><b>Data de Início:</b> <span class="badge bg-secondary">01/01/2024</span>
+        <br /><b>Data Final:</b> <span class="badge bg-secondary">31/12/2024</span>
+        <br /><b>Setor SUAP:</b> <span class="badge bg-secondary">DIAC/ZL</span>
     </p>
-
-    <h3>Em caso de não ter foto</h3>
+  </div>
+  <div class="tab-pane fade" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
     <p>
-        Para resolver a questão de vínculo inativo no SUAP, sugerimos que o coordenador de curso abra um
-        chamado de <a href="https://suap.ifrn.edu.br/centralservicos/abrir_chamado/88/"
-        >"alteração de expiração de conta"</a> para a TI do Campus ZL.
-        Oriente teu coordenador de curso a informar ao menos:
-    </p>
-    <p>
-        Exemplo de texto para o chamado:
-    </p>
-    <p style="background-color: #dee2e6; padding: 1em">
-        Solicito o cadastro da foto do "Usuário externo" [SEU NOME COMPLETO], CPF [SEU CPF], conforme foto
-        anexa. <br><i>Lembrar de anexar a foto 3x4 com estética para uso profissional.</i>
+        Como você é NÃO seja um <b>tutor</b>, solicite ao <b>Suporte AVA</b> que verifique sua situação abrindo um
+        <a href="https://suap.ifrn.edu.br/centralservicos/abrir_chamado/408/">chamado no Suap</a>.
     </p>
   </div>
 </div>
-
-
-
+<div class="buttons">
+    <a class="btn btn-primary" href='{% url "painel:dashboard" %}'>Tentar novamente</a>
+</div>
 {% endblock content %}
 

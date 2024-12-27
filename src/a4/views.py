@@ -4,6 +4,7 @@ import urllib
 import requests
 import logging
 import sentry_sdk
+import re
 from django.conf import settings
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
@@ -114,7 +115,17 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         except Exception as e:
             sentry_sdk.capture_exception(e)
             if response_text is not None and "__buscar_menu__" in response_text:
-                return render(request, "a4/oauth_usuario_sem_vinculo.html")
+                vinculo_regex = re.compile('<span title=\"Vínculo: (\d*)\">(\w* \w*)</span></a><a href="/comum/minha_conta/"')
+                parts = vinculo_regex.findall(response_text)[0]
+                return render(
+                    request,
+                    "a4/oauth_usuario_sem_vinculo.html",
+                    context={
+                        "username": parts[0] if len(parts) > 0  else "[SEU CPF]",
+                        "common_name": parts[1] if len(parts) > 0 else "[SEU NOME COMPLETO]",
+                        "tem_foto": "/static/comum/img/default.jpg" in response_text
+                    }
+                )
             return oauth_error(f"{e}. {response_text}")
 
     def save_user(user_info) -> Usuario or HttpResponse:
