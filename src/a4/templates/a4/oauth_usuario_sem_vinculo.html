@@ -1,21 +1,39 @@
 {% extends "a4/base_error.html" %}
 
-{% block page_title %}Usuário sem vínculo ativo{% endblock page_title %}
+{% block page_title %}Usuário sem vínculo ativo e/ou sem foto{% endblock page_title %}
 
 {% block content %}
     <p>
         Prezado usuário,
     </p>
     <p>
-        Parece que você está cadastrado no SUAP, entretanto, você não tem um vínculo ativo no SUAP e por isso
-        não pode acessar o AVA.
+        Parece que seu cadastrado no SUAP está incompleto, assim sendo, você não pode acessar o AVA,
+        para resolver isso:
+    </p>
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Sou aluno</button>
+    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Sou colaborador</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+    <p>
+        Como você é um <b>aluno</b>, solicite à Secretaria Acadêmia (SEAC) do seu campus que cadastre sua foto.
+    </p>
+  </div>
+  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <p>
+        Como você é um <b>colaborador</b>, solicite ao seu coordenador de curso que verifique os itens abaixo
+        <i>(essas ações não podem ser feitas por você)</i>:
     </p>
     <p>
-        Para resolver a questão de vínculo inativo no SUAP, sugerimos que o coordenador de curso abra um
+        Para resolver a questão de vínculo inativo ou foto no SUAP, sugerimos que o coordenador de curso abra um
         chamado de <a href="https://suap.ifrn.edu.br/centralservicos/abrir_chamado/88/"
         >"alteração de expiração de conta"</a> para a TI do Campus ZL.
-        Oriente teu coordenador de curso a informar ao menos:
+        Oriente ao seu coordenador de curso a informar ao menos:
     </p>
+    <h2>Em caso de vínculo inativo no SUAP:</h2>
     <ul>
        <li><b>Ocupação:</b> Tutor EAD.</li>
        <li><b>Pessoa jurídica:</b> Seu campus de lotação.</li>
@@ -36,8 +54,25 @@
         <br /><b>Data Final:</b> 31/12/2024
         <br /><b>Setor SUAP:</b> DIAC/ZL
     </p>
+
+    <h2>Em caso de não ter foto</h2>
     <p>
-        Seguindo essas orientações, você deverá conseguir acessar o AVA corretamente com seu CPF.
+        Para resolver a questão de vínculo inativo no SUAP, sugerimos que o coordenador de curso abra um
+        chamado de <a href="https://suap.ifrn.edu.br/centralservicos/abrir_chamado/88/"
+        >"alteração de expiração de conta"</a> para a TI do Campus ZL.
+        Oriente teu coordenador de curso a informar ao menos:
     </p>
+    <p>
+        Exemplo de texto para o chamado:
+    </p>
+    <p style="background-color: silver; padding: 1em">
+        Solicito o cadastro da foto do "Usuário externo" [SEU NOME COMPLETO], CPF [SEU CPF], conforme foto
+        anexa. <br><i>Lembrar de anexar a foto 3x4 com estética para uso profissional.</i>
+    </p>
+  </div>
+</div>
+
+
+
 {% endblock content %}
 
