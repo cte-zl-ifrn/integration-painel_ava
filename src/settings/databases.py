@@ -30,7 +30,5 @@ if env_as_bool("DEFAULT_POOL_ACTIVE", False):
         "num_workers": env_as_int("DEFAULT_POOL_NUM_WORKERS", 3),
     }
 
-print(DATABASES)
-
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
