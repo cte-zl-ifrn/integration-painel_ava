@@ -29,6 +29,7 @@ def layout_settings(request: HttpRequest) -> dict:
         "app_version": settings.APP_VERSION,
         "hostname": settings.HOSTNAME,
         "gtag": settings.GTAG_CODE if hasattr(settings, "GTAG_CODE") else False,
+        "clarity": settings.CLARITY_CODE if hasattr(settings, "CLARITY_CODE") else False,
         "ambientes": Ambiente.cached(),
         "admins": Ambiente.admins(),
     }
@@ -304,9 +305,3 @@ def notifications(request: HttpRequest) -> dict:
             ],
         }
     }
-
-
-def gtag(request):
-    if getattr(settings, "GTAG_ID", None) is not None:
-        return {"gtag_id": settings.GTAG_ID}
-    return {}

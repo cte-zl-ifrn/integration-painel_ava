@@ -11,7 +11,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "painel.context_processors.gtag",
                 "painel.context_processors.popup",
                 "painel.context_processors.layout_settings",
                 "painel.context_processors.top_menu",
