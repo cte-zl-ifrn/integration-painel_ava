@@ -9,4 +9,7 @@
     <p>
         {{ error | safe }}
     </p>
+    <div class="buttons">
+        <a class="btn btn-primary" href='{% url "painel:dashboard" %}'>Tentar novamente</a>
+    </div>
 {% endblock content %}
