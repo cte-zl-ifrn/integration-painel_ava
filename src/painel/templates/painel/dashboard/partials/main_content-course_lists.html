@@ -46,21 +46,13 @@
                     </div>
                     <div class="course-quickactions">
                         <label
-                            v-if="card.isfavourite"
-                            v-on:click="favourite(card)"
-
-                            type="button"
-                            title="Favoritar este diário para mim"
-                            :class="{ 'favorited': card.isfavourite}"
-                            ><i class="fa fa-star"></i
-                        ></label>
-                        <label
-                            v-if="!card.isfavourite"
                             v-on:click="favourite(card)"
                             type="button"
-                            title="Desfavoritar este diário para mim"
-                            ><i class="fa fa-star-o"></i
-                        ></label>
+                            :title="card.isfavourite ? 'Desfavoritar este diário para mim' : 'Favoritar este diário para mim'"
+                            :class="{ 'favorited': card.isfavourite }"
+                        >
+                            <i :class="card.isfavourite ? 'fa fa-star' : 'fa fa-star-o'"></i>
+                        </label>
                         <label v-if="card.idnumber && card.id_diario" v-on:click.capture="cardActionsToggler" type="button" title="Mais opções"
                         
                             ><i  class="icon icon-chevron-down "></i>
