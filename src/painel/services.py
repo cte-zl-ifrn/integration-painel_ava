@@ -198,7 +198,15 @@ def get_diarios(
         sortedlist = sorted(deduplicated, key=lambda e: e["label"], reverse=reverse)
         return sortedlist
 
+    if not cache.get("keys"):
+        cache.set("keys", [])
+
     cache_key=f"get_diarios:{username}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
+
+    if cache_key not in cache.get("keys"):
+        keys_list = cache.get("keys")
+        keys_list.append(cache_key)
+        cache.set("keys", keys_list)
 
     results = cache.get(cache_key, None)
     if results is not None:
@@ -309,6 +317,10 @@ def get_diarios(
 
 def set_favourite_course(username: str, ava: str, courseid: int, favourite: int) -> dict:
     ava = get_object_or_404(Ambiente, nome=ava)
+
+    for v in cache.get("keys"):
+        cache.delete(v)
+
     return get_json_api(ava, "set_favourite_course", username=username, courseid=courseid, favourite=favourite)
 
 
