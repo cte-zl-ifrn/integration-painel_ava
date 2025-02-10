@@ -46,14 +46,27 @@ class SuapBroker:
             logger.error(f"Erro ao tentar acessar dados do usuário. {type(e)}:{e}")
         self.__data = result
 
+
     def __suap_user_token(self, username: str, password: str):
-        response = requests.post(
-            f"{settings.SUAP['BASE_URL']}/api/token/pair",
-            json={"username": username, "password": password},
-            timeout=2,
-        )
-        response.raise_for_status()
-        self.__access_token = response.json()["access"]
+        try:
+            response = requests.post(
+                f"{settings.SUAP['BASE_URL']}/api/token/pair",
+                json={"username": username, "password": password},
+                timeout=2,
+            )
+            response.raise_for_status()
+            self.__access_token = response.json()["access"]
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"Erro ao tentar obter token do SUAP. {type(e)}:{e}")
+            if e.response is not None and e.response.status_code == 401:
+                raise ValidationError(_("Usuário ou senha inválidos"), code="401") # Corrected line
+            else:
+                raise Exception(f"Erro ao obter token do SUAP: {e}") from e
+        except requests.RequestException as e:
+            logger.error(f"Erro ao tentar obter token do SUAP. {type(e)}:{e}")
+            raise Exception(f"Erro de requisição ao SUAP: {e}") from e
+        
+
 
     def login(self, request: HttpRequest, username: str, password: str) -> None:
         try:
@@ -62,6 +75,7 @@ class SuapBroker:
             if e.status == 401:
                 raise ValidationError(_("Usuário ou senha inválidos"), code="401")
             logger.warning(f"Erro {e.status} ao tentar autenticar no SUAP. {type(e)}:{e}")
+            return
         try:
             self.__suap_user_data()
         except Exception as e:
