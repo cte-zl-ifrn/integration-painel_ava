@@ -56,3 +56,9 @@ OAUTH = {
     "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", True),
     "VERIFY_URL": env("OAUTH_VERIFY_URL", f"{oauth_base_url}/api/v1/verify/"),
 }
+
+SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "changeme")
+
+SUAP = {
+    "BASE_URL": env("SUAP_BASE_URL", "https://suap.ifrn.edu.br"),
+}
