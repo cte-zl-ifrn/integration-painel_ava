@@ -8,10 +8,12 @@ import requests
 import psycopg
 import psycopg_pool
 from django.utils.deprecation import MiddlewareMixin
+from painel.brokers import TokenBroker
 
 
 logger = logging.getLogger(__name__)
 
+token_broker = TokenBroker()
 
 class GoToHTTPSMiddleware(MiddlewareMixin):
     """
@@ -46,29 +48,23 @@ class AuthMobileUserMiddleware:
     def __call__(self, request):
         NOT_PRESENT = "NOT_PRESENT"
         dont_have_session = request.session.session_key is None
-        is_valid_path = "/api/v1/" in request.path
+        is_to_api = "/api/v1/" in request.path
+        is_not_to_auth = "/authenticate/" not in request.path and "/verify/" not in request.path
         is_not_options_method = request.method != "OPTIONS"
 
-        if dont_have_session and is_valid_path and is_not_options_method:
+        if dont_have_session and is_to_api and is_not_options_method and is_not_to_auth:
             authorization = request.headers.get("Authorization", f"Token {NOT_PRESENT}").split(" ")
             if len(authorization) != 2 or (len(authorization) == 2 and authorization[1] == NOT_PRESENT):
                 return JsonResponse(
                     {"error": {"message": "Invalid or not present authentication token", "code": 428}}, status=428
                 )
-
             try:
-                response = requests.post(settings.OAUTH['VERIFY_URL'], json={"token": authorization[1]})
+                username = token_broker.verify(token=authorization[1])
             except:
                 return JsonResponse({"error": {"message": "O Login do SUAP retornou um erro", "code": 422}}, status=422)
 
-            userdata = response.json()
-
-            if "username" not in userdata:
-                return JsonResponse(
-                    {"error": {"message": "Erro ao integrar com o Login do SUAP", "code": 422}}, status=422
-                )
-
-            user = Usuario.cached(userdata.get("username"))
+            # user = Usuario.objects.filter(username=username).first()
+            user = Usuario.cached(username)
             if user is not None:
                 auth.login(request, user)
                 response = self.get_response(request)
