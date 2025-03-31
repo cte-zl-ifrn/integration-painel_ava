@@ -44,10 +44,10 @@ CHANGE_URL = re.compile("/course/view.php\\?")
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
     response = requests.get(url, headers=headers, **kwargs)
-
+    byte_array_content = response.content
+    content = byte_array_content.decode(encoding) if decode and encoding is not None else byte_array_content
     if response.ok:
-        byte_array_content = response.content
-        return byte_array_content.decode(encoding) if decode and encoding is not None else byte_array_content
+        return content
     else:
         exc = HTTPException("%s - %s" % (response.status_code, response.reason))
         exc.status = response.status_code
@@ -63,17 +63,12 @@ def get_json(url, headers={}, encoding="utf-8", json_kwargs=None, **kwargs):
 
 
 def get_json_api(ava: Ambiente, service: str, **params: dict):
-    try:
-        if params is not None:
-            querystring = "&".join([f"{k}={v}" for k, v in params.items() if v is not None])
-        else:
-            querystring = ""
-        url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
-        content = get_json(url, headers={"Authentication": f"Token {ava.token}"})
-        return content
-    except Exception as e:
-        logging.error(e)
-        sentry_sdk.capture_exception(e)
+    if params is not None:
+        querystring = "&".join([f"{k}={v}" for k, v in params.items() if v is not None])
+    else:
+        querystring = ""
+    url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
+    return get_json(url, headers={"Authentication": f"Token {ava.token}"})
 
 
 def get_diarios(
@@ -280,39 +275,6 @@ def get_diarios(
     logger.debug(f"Putting cache for: {cache_key}")
 
     return results
-
-
-# def get_atualizacoes_counts(username: str) -> dict:
-#     def _callback(params):
-#         try:
-#             ava = params["ava"]
-#
-#             counts = get_json_api(ava, "get_atualizacoes_counts", username=params["username"])
-#             print("counts AVA:", counts)
-#
-#         except Exception as e:
-#             logging.error(e)
-#             sentry_sdk.capture_exception(e)
-#
-#     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-#         results = {
-#             "atualizacoes": [],
-#             "unread_notification_total": 0,
-#             "unread_conversations_total": 0,
-#         }
-#         requests = [
-#             {
-#                 "username": username,
-#                 "ava": ava,
-#                 "results": results,
-#             }
-#             for ava in Ambiente.cached()
-#         ]
-#         executor.map(_callback, requests)
-#
-#     results["atualizacoes"] = sorted(results["atualizacoes"], key=lambda e: e["ambiente"]["titulo"])
-#     # print("counts:",counts)
-#     return results
 
 
 def set_favourite_course(username: str, ava: str, courseid: int, favourite: int) -> dict:
