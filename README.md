@@ -257,3 +257,38 @@ O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-4
 -   `doc:` documentação no código ou do repositório.
 -   `env:` CI/CD ou settings.
 -   `build:` build ou dependências.
+
+## Como listar os diários no dashboard do Painel AVA (Desenvolvimento local) 
+
+### 1. No Painel
+
+**Identificação**  
+- Clique na sua foto no canto superior e selecione **Painel AVA** no menu suspenso.  
+- Acesse **Ambientes > Adicionar**.  
+
+**Preencha os campos:**  
+- **Nome do ambiente:** Defina um nome à sua escolha  
+- **Cor mestra:** Defina uma cor à sua escolha  
+
+**Integração**  
+- **Ativo?:** Marque este campo  
+- **URL:** `http://moodle`  
+- **Token:** `changeme`  
+
+---
+
+### 2. No Moodle
+
+Para que o Painel consiga listar os cursos corretamente, o usuário logado no Painel precisa existir no Moodle **com o mesmo identificador (matrícula ou CPF)** e estar inscrito em ao menos um curso ativo.
+
+**Se o usuário ainda não existe no Moodle:**  
+- Acesse **Administração do site > Usuários > Adicionar um novo usuário**  
+- Preencha os campos com atenção:  
+  - **Identificação de usuário:** Matrícula ou CPF do usuário logado no Painel  
+  - **Método de autenticação:** Selecione **OAuth 2**
+
+**Por fim**, inscreva esse usuário em pelo menos um curso ativo.
+
+---
+
+Agora, ao acessar o Painel AVA, serão listados todos os cursos ativos em que o usuário está inscrito no Moodle local.
