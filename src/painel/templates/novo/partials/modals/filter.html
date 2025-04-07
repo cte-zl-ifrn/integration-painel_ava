@@ -1,0 +1,80 @@
+{% verbatim %}
+<div id="modal-content-body-filter">
+
+    <div class="filter-search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" v-model="filterSearchQuery" placeholder="Pesquisar..." class="filter-search-input" />
+    </div>
+
+    <div class="filter-select-area">
+        <i class="fa-solid fa-book"></i>
+        <v-select v-model="filters.situacao" :options="situacoes" :reduce="item => item.id" label="label"
+            placeholder="Situações...">
+            <template #selected-option="{ label }">
+                <span class="selected-option-text">{{ label }}</span>
+            </template>
+        </v-select>
+    </div>
+
+    <div class="filter-select-area">
+        <i class="fa-solid fa-calendar-days"></i>
+        <v-select v-model="filters.semestre" :options="semestres" :reduce="item => item.id" label="label"
+            placeholder="Semestres...">
+            <template #selected-option="{ label }">
+                <span class="selected-option-text">{{ label }}</span>
+            </template>
+        </v-select>
+    </div>
+
+    <div class="filter-select-area">
+        <i class="fa-solid fa-calendar-week"></i>
+        <v-select v-model="filters.periodo" :options="periodos" :reduce="item => item.id" label="label"
+            placeholder="Periodos...">
+            <template #selected-option="{ label }">
+                <span class="selected-option-text">{{ label }}</span>
+            </template>
+        </v-select>
+    </div>
+
+    <div class="filter-select-area">
+        <i class="fa-solid fa-calendar-day"></i>
+        <v-select v-model="filters.modulo" :options="modulos" :reduce="item => item.id" label="label"
+            placeholder="Modulos...">
+            <template #selected-option="{ label }">
+                <span class="selected-option-text">{{ label }}</span>
+            </template>
+        </v-select>
+    </div>
+
+    <div class="filter-select-area">
+        <i class="fa-solid fa-newspaper"></i>
+        <v-select v-model="filters.disciplina" :options="disciplinas" :reduce="item => item.id" label="label"
+            placeholder="Disciplinas...">
+            <template #selected-option="{ label }">
+                <span class="selected-option-text">{{ label }}</span>
+            </template>
+        </v-select>
+    </div>
+
+    <div class="filter-select-area">
+        <img src="/novo/static/img/cursos.svg" alt="">
+        <v-select v-model="filters.curso" :options="cursos" :reduce="item => item.id" label="label"
+            placeholder="Cursos...">
+            <template #selected-option="{ label }">
+                <span class="selected-option-text">{{ label }}</span>
+            </template>
+        </v-select>
+    </div>
+
+    <div class="filter-select-area">
+        <img src="/novo/static/img/ambientes.svg" alt="">
+        <v-select v-model="filters.ambiente" :options="ambientes" :reduce="item => item.id" label="label"
+            placeholder="Ambientes...">
+            <template #selected-option="{ label }">
+                <span class="selected-option-text">{{ label }}</span>
+            </template>
+        </v-select>
+    </div>
+
+</div>
+{% endverbatim %}

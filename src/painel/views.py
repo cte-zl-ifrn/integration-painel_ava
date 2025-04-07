@@ -13,6 +13,10 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     return render(request, "painel/dashboard/index.html")
 
 
+@login_required
+def novo(request: HttpRequest) -> HttpResponse:
+    return render(request, "novo/index.html")
+
 # @login_required
 # def syncs(request: HttpRequest, id_diario: int) -> HttpResponse:
 #     solicitacoes = Solicitacao.objects.by_diario_id(id_diario)

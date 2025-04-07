@@ -1,0 +1,97 @@
+{% load static %}
+<div id="sidebar-container" :class="{'contracted': sidebarContracted}">
+    {% verbatim %}
+    <div class="sidebar-top-content">
+        <div class="sidebar-top-content-header">
+            <p class="sidebar-title">Painel AVA</p>
+            <button @click="toggleSidebar" :class="{'btn-toggle-sidebar': sidebarContracted}">
+                <img src="/static/novo/img/sidebar-toggle.svg" alt="Toggle Sidebar">
+            </button>
+        </div>
+        <div class="sidebar-top-content-filter-modal-button-area">
+            <div class="sidebar-modal-button" @click="openModalWithContent('filter')"
+                :class="{'active': modalType === 'filter'}">
+                <i class="fa-solid fa-filter"></i>
+                <span>Adicionar Filtros</span>
+            </div>
+        </div>
+        <div class="sidebar-top-content-filters">
+            <div>
+                <i class="fa-solid fa-sliders"></i>
+                <span>FILTRADO POR:</span>
+            </div>
+            <!-- <div class="sidebar-top-content-filters-list">
+                <div class="sidebar-top-content-filters-list-item">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="sidebar-top-content-filters-list-item-text">Diários em andamento</span>
+                    <span class="sidebar-top-content-filters-list-item-button" @click="removeFilter('semestre')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </span>
+                </div> 
+            </div>  -->
+
+            <!-- <div class="sidebar-top-content-filters-list">
+                <div 
+                    v-for="(filter, index) in activeFilters" 
+                    :key="index" 
+                    class="sidebar-top-content-filters-list-item"
+                >
+                    <i class="fa-solid fa-book"></i>
+                    <span class="sidebar-top-content-filters-list-item-text">
+                        {{ filter.label }}
+                    </span>
+                    <span 
+                        class="sidebar-top-content-filters-list-item-button" 
+                        @click="removeFilter(filter.type)"
+                    >
+                        <i class="fa-solid fa-xmark"></i>
+                    </span>
+                </div>
+            </div>  -->
+
+            <div class="sidebar-top-content-filters-list">
+                <div v-for="(filter, index) in activeFilters" :key="index"
+                    class="sidebar-top-content-filters-list-item">
+                    <i v-if="filter.icon.startsWith('fa-')" :class="`fa-solid ${filter.icon}`"></i>
+                    <img v-else :src="`/static/novo/img/${filter.icon}.svg`" alt="">
+                    <span class="sidebar-top-content-filters-list-item-text">
+                        {{ filter.label }}
+                    </span>
+                    <span v-if="filter.type !== 'situacao'" class="sidebar-top-content-filters-list-item-button"
+                        @click="removeFilter(filter.type)">
+                        <i class="fa-solid fa-xmark"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-bottom-content">
+        <div class="sidebar-modal-button" @click="openModalWithContent('accessibility')"
+            :class="{'active': modalType === 'accessibility'}">
+            <i class="fa-solid fa-universal-access"></i>
+            <span>Acessibilidade</span>
+        </div>
+        <div class="sidebar-modal-button" @click="openModalWithContent('help')"
+            :class="{'active': modalType === 'help'}">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>Ajuda</span>
+        </div>
+        <div class="sidebar-modal-button" @click="openModalWithContent('notifications')"
+            :class="{'active': modalType === 'notifications'}">
+            <i class="fa-solid fa-bell"></i>
+            <span>Notificações</span>
+        </div>
+        <div class="sidebar-modal-button" @click="openModalWithContent('messages')"
+            :class="{'active': modalType === 'messages'}">
+            <i class="fa-solid fa-comment"></i>
+            <span>Mensagens</span>
+        </div>
+        <div class="sidebar-bottom-content-footer" @click="openModalWithContent('profile')"
+            :class="{'active': modalType === 'profile'}">
+            <img src="/static/novo/img/eu.jpeg" alt="Imagem de perfil" class="profile-image">
+            <span>Catarina Miranda</span>
+        </div>
+    </div>
+    {% endverbatim %}
+</div>
