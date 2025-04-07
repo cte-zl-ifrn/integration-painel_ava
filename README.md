@@ -292,3 +292,11 @@ Para que o Painel consiga listar os cursos corretamente, o usuário logado no Pa
 ---
 
 Agora, ao acessar o Painel AVA, serão listados todos os cursos ativos em que o usuário está inscrito no Moodle local.
+
+## Construção do Novo Tema
+
+Estamos desenvolvendo um novo tema para o Painel AVA, com melhorias visuais e de usabilidade. Para garantir que a implementação atual não seja afetada durante o desenvolvimento, o novo tema está sendo disponibilizado no endpoint `/novo`. 
+
+Além disso, as pastas `template` e `static` possuem uma subpasta chamada `novo`, onde estão sendo armazenados os arquivos específicos do novo tema. Isso permite que o desenvolvimento ocorra de forma isolada, sem interferir no tema atual.
+
+Durante o período de transição, ambos os temas estarão disponíveis, permitindo testes e ajustes antes da migração definitiva para o novo design.

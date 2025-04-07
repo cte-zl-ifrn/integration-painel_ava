@@ -1,0 +1,150 @@
+<div id="content-container" :class="{'expanded': sidebarContracted}">
+    {% verbatim %}
+    <!--
+        Mantemos apenas as diretivas Vue (v-if, v-for, ...) dentro do bloco {% verbatim %} para evitar conflitos com a sintaxe do Django.
+        Os {% include %} ficam fora do bloco verbatim para que o Django possa processá-los normalmente durante a renderização do template.
+    -->
+    <div class="topbar">
+        <ul class="nav">
+            <li class="nav-link" v-for="(tab, index) in tabs" :key="index" :class="{ active: activeTab === index }"
+                @click="setActiveTab(index)">
+                {{ tab }}
+            </li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="sidebar-modal" :class="{'open': modalOpen}">
+            <div class="modal-content">
+                <div class="modal-content-header">
+                    <div class="modal-content-header-title">
+                        <i :class="'modal-content-header-icon fa-solid ' + modalHeaderIcon"></i>
+                        <span>{{ modalTitle }}</span>
+                    </div>
+                    <div class="modal-content-header-notifications" v-if="notificationsModalOpen">
+                        <i class="fa-regular fa-circle-check modal-content-header-notifications-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-notifications-icon"></i>
+                    </div>
+                    <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                        <i class="fa-solid fa-user-group modal-content-header-messages-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-messages-icon"></i>
+                    </div>
+                    <i class="fa-solid fa-x modal-content-header-icon-x" @click="toggleSidebarModal"></i>
+                </div>
+                <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                    <div class="modal-content-header-messages-search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" v-model="messageSearchQuery" placeholder="Pesquisar..."
+                            class="modal-content-header-messages-search-input" />
+                    </div>
+                    <div class="splide">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide" v-for="(option, index) in messageOptions" :key="index">
+                                    <div class="modal-content-header-messages-option"
+                                        :class="{ 'active': selectedMessageOption === option.value }"
+                                        @click="selectMessageOption(option.value)">
+                                        {{ option.label }}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-content-body" v-if="modalType === 'accessibility'">
+                    {% endverbatim %}
+                    {% include 'novo/partials/modals/accessibility.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'help'">
+                    {% endverbatim %}
+                    {% include 'novo/partials/modals/help.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'notifications'">
+                    {% endverbatim %}
+                    {% include 'novo/partials/modals/notifications.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'messages'">
+                    {% endverbatim %}
+                    {% include 'novo/partials/modals/messages.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'profile'">
+                    {% endverbatim %}
+                    {% include 'novo/partials/modals/profile.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'filter'">
+                    {% endverbatim %}
+                    {% include 'novo/partials/modals/filter.html' %}
+                    {% verbatim %}
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane" :class="{ active: activeTab === 0 }">
+                <div class="card-container">
+                    <div class="card" v-for="(item, index) in list1" :key="index">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.name }}</h5>
+                            <div class="card-details">
+                                <p><strong>ID:</strong> {{ item.id }}</p>
+                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 1 }">
+                <div class="card-container">
+                    <div class="card" v-for="(item, index) in list2" :key="index">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.name }}</h5>
+                            <div class="card-details">
+                                <p><strong>ID:</strong> {{ item.id }}</p>
+                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 2 }">
+                <div class="card-container">
+                    <div class="card" v-for="(item, index) in list3" :key="index">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.name }}</h5>
+                            <div class="card-details">
+                                <p><strong>ID:</strong> {{ item.id }}</p>
+                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 3 }">
+                <div class="card-container">
+                    <div class="card" v-for="(item, index) in list4" :key="index">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.name }}</h5>
+                            <div class="card-details">
+                                <p><strong>ID:</strong> {{ item.id }}</p>
+                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+</div>

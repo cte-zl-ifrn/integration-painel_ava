@@ -1,0 +1,86 @@
+#content-container .content .sidebar-modal .modal-content .modal-content-body #modal-content-body-notifications {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    margin-top: 20px;
+    max-height: 800px;
+    /* remover barra de scroll */
+    overflow: auto;
+    scrollbar-width: thin;
+
+    .notification-item {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        background: var(--branco-primario) 0% 0% no-repeat padding-box;
+        border-radius: 8px;
+        opacity: 1;
+        margin-bottom: 20px;
+        padding: 10px;
+
+        .notification-content {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            margin-bottom: 10px;
+
+            i {
+                font-size: 15px;
+                margin-right: 10px;
+                color: var(--escuro-primario);
+            }
+
+            .notification-content-text {
+                font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-normal) var(--unnamed-font-size-14)/19px var(--unnamed-font-family-noto-sans);
+                letter-spacing: var(--unnamed-character-spacing-0);
+                color: var(--escuro-primario);
+                text-align: left;
+                letter-spacing: 0px;
+                opacity: 1;
+            }
+        }
+
+        .notification-info {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .notification-date {
+                color: #858585;
+                opacity: 1;
+                font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-medium) 10px/14px var(--unnamed-font-family-noto-sans);
+                letter-spacing: var(--unnamed-character-spacing-0);
+                text-align: left;
+
+                i {
+                    font-size: 15px;
+                    margin-right: 5px;
+                    /* color: var(--escuro-primario); */
+                }
+            }
+
+            .notification-link {
+                font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-medium) 10px/14px var(--unnamed-font-family-noto-sans);
+                letter-spacing: var(--unnamed-character-spacing-0);
+                text-align: left;
+                letter-spacing: 0px;
+                color: var(--verde-tema);
+                opacity: 1;
+                text-decoration: none;
+                cursor: pointer;
+
+                i {
+                    font-size: 15px;
+                    margin-left: 5px;
+                    margin-top: 5px;
+                }
+            }
+        }
+    }
+}
