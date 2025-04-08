@@ -1,5 +1,5 @@
 {% verbatim %}
-<div id="modal-content-body-messages">
+<div id="modal-content-body-messages" v-if="messages.length > 0">
     <div v-for="message in filteredMessages" :key="message.id" class="message-item">
         <img :src="message.img" alt="Avatar" class="message-avatar">
         <div class="message-body">
@@ -18,5 +18,8 @@
             </div>
         </div>
     </div>
+</div>
+<div v-else>
+    <p class="no-messages">Nenhuma mensagem disponível.</p>
 </div>
 {% endverbatim %}

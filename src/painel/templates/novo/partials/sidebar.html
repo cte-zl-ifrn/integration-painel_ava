@@ -20,43 +20,17 @@
                 <i class="fa-solid fa-sliders"></i>
                 <span>FILTRADO POR:</span>
             </div>
-            <!-- <div class="sidebar-top-content-filters-list">
-                <div class="sidebar-top-content-filters-list-item">
-                    <i class="fa-solid fa-book"></i>
-                    <span class="sidebar-top-content-filters-list-item-text">Diários em andamento</span>
-                    <span class="sidebar-top-content-filters-list-item-button" @click="removeFilter('semestre')">
-                        <i class="fa-solid fa-xmark"></i>
-                    </span>
-                </div> 
-            </div>  -->
-
-            <!-- <div class="sidebar-top-content-filters-list">
-                <div 
-                    v-for="(filter, index) in activeFilters" 
-                    :key="index" 
-                    class="sidebar-top-content-filters-list-item"
-                >
-                    <i class="fa-solid fa-book"></i>
-                    <span class="sidebar-top-content-filters-list-item-text">
-                        {{ filter.label }}
-                    </span>
-                    <span 
-                        class="sidebar-top-content-filters-list-item-button" 
-                        @click="removeFilter(filter.type)"
-                    >
-                        <i class="fa-solid fa-xmark"></i>
-                    </span>
-                </div>
-            </div>  -->
-
             <div class="sidebar-top-content-filters-list">
                 <div v-for="(filter, index) in activeFilters" :key="index"
                     class="sidebar-top-content-filters-list-item">
-                    <i v-if="filter.icon.startsWith('fa-')" :class="`fa-solid ${filter.icon}`"></i>
-                    <img v-else :src="`/static/novo/img/${filter.icon}.svg`" alt="">
-                    <span class="sidebar-top-content-filters-list-item-text">
-                        {{ filter.label }}
-                    </span>
+                    <div class="sidebar-top-content-filters-list-item-divider">
+                        <i v-if="filter.icon.startsWith('fa-')" :class="`fa-solid ${filter.icon}`"></i>
+                        <img v-else :src="`/static/novo/img/${filter.icon}-green.svg`" alt=""
+                            class="sidebar-top-content-filters-list-item-icon">
+                        <span class="sidebar-top-content-filters-list-item-text">
+                            {{ filter.label }}
+                        </span>
+                    </div>
                     <span v-if="filter.type !== 'situacao'" class="sidebar-top-content-filters-list-item-button"
                         @click="removeFilter(filter.type)">
                         <i class="fa-solid fa-xmark"></i>

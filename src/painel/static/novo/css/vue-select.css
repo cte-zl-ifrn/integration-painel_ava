@@ -180,6 +180,7 @@
     background-color: transparent;
     cursor: pointer;
     margin-right: 8px;
+    display: none;
 }
 
 .vs__dropdown-menu {
@@ -368,3 +369,30 @@
 .vs--loading .vs__spinner {
     opacity: 1;
 }
+
+
+/* {
+    "id": "58",
+    "fullname": "Libras",
+    "shortname": "Libras",
+    "idnumber": "",
+    "startdate": "1670468400",
+    "enddate": "0",
+    "visible": "1",
+    "showactivitydates": "1",
+    "showcompletionconditions": "1",
+    "fullnamedisplay": "Libras",
+    "viewurl": "https://projetos.ava.ifrn.edu.br/course/view.php?id=58",
+    "progress": 0,
+    "hasprogress": false,
+    "isfavourite": true,
+    "hidden": false,
+    "showshortname": false,
+    "coursecategory": "Curso de Especialização em Docência para a Educação Profissional e Tecnológica",
+    "can_set_visibility": 0,
+    "ambiente": {
+        "id": 2,
+        "titulo": "Projetos",
+        "cor_mestra": "#f54f3b"
+    }
+} */
