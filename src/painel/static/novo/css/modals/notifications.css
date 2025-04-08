@@ -84,3 +84,14 @@
         }
     }
 }
+
+.no-notifications {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    font: normal normal normal 14px/19px Noto Sans;
+    color: var(--cinza-secundario);
+    margin-top: 20px;
+}

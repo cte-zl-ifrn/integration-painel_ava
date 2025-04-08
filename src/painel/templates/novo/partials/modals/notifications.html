@@ -1,5 +1,5 @@
 {% verbatim %}
-<div id="modal-content-body-notifications">
+<div id="modal-content-body-notifications" v-if="notifications.length > 0">
     <div v-for="notification in notifications" :key="notification.id" class="notification-item">
         <div class="notification-content">
             <i class="fa-solid fa-lightbulb"></i>
@@ -15,5 +15,8 @@
             <a :href="notification.link" class="notification-link">Ver mais <i class="fa-solid fa-angle-right"></i></a>
         </div>
     </div>
+</div>
+<div v-else>
+    <p class="no-notifications">Nenhuma notificação disponível.</p>
 </div>
 {% endverbatim %}

@@ -90,36 +90,94 @@
 
         <div class="tab-content">
             <div class="tab-pane" :class="{ active: activeTab === 0 }">
-                <div class="card-container">
-                    <div class="card" v-for="(item, index) in list1" :key="index">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.name }}</h5>
-                            <div class="card-details">
-                                <p><strong>ID:</strong> {{ item.id }}</p>
-                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                <div class="card-container" v-if="diarios.length > 0">
+                    <div class="card" v-for="(item, index) in diarios" :key="index">
+                        <div class="painel-card-header">
+                            <div class="painel-card-header-icon">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <span class="painel-card-header-env">{{ item.environment }}</span>
+                            </div>
+                            <span class="painel-card-header-shortname">{{ item.shortname }}</span>
+                        </div>
+                        <span class="painel-card-title">{{ item.fullname }}</span>
+                        <div class="painel-card-details">
+                            <div class="painel-card-details-progress">
+                                <div class="painel-progress-bar-container">
+                                    <div class="painel-progress-bar" :style="{ width: item.progress + '%' }"></div>
+                                </div>
+                                <span>{{ item.progress }}% concluído</span>
+                            </div>
+                            <div class="painel-card-details-info">
+                                <div
+                                    :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
+                                    <i
+                                        :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
+                                    <span>{{ item.visible ? 'Publicado' : 'Rascunho' }}</span>
+                                </div>
+                                <div
+                                    :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`">
+                                    <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
+                                </div>
+
+                                <div class="painel-card-details-info-chevron">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/novo/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
                 </div>
             </div>
 
             <div class="tab-pane" :class="{ active: activeTab === 1 }">
-                <div class="card-container">
-                    <div class="card" v-for="(item, index) in list2" :key="index">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.name }}</h5>
-                            <div class="card-details">
-                                <p><strong>ID:</strong> {{ item.id }}</p>
-                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                <div class="card-container" v-if="coordenacoes.length > 0">
+                    <div class="card" v-for="(item, index) in coordenacoes" :key="index">
+                        <div class="painel-card-header">
+                            <div class="painel-card-header-icon">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <span class="painel-card-header-env">{{ item.environment }}</span>
+                            </div>
+                            <span class="painel-card-header-shortname">{{ item.shortname }}</span>
+                        </div>
+                        <span class="painel-card-title">{{ item.fullname }}</span>
+                        <div class="painel-card-details">
+                            <div class="painel-card-details-progress">
+                                <div class="painel-progress-bar-container">
+                                    <div class="painel-progress-bar" :style="{ width: item.progress + '%' }"></div>
+                                </div>
+                                <span>{{ item.progress }}% concluído</span>
+                            </div>
+                            <div class="painel-card-details-info">
+                                <div
+                                    :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
+                                    <i
+                                        :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
+                                    <span>{{ item.visible ? 'Publicado' : 'Rascunho' }}</span>
+                                </div>
+                                <div
+                                    :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`">
+                                    <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
+                                </div>
+
+                                <div class="painel-card-details-info-chevron">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/novo/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
                 </div>
             </div>
 
             <div class="tab-pane" :class="{ active: activeTab === 2 }">
-                <div class="card-container">
-                    <div class="card" v-for="(item, index) in list3" :key="index">
+                <div class="card-container" v-if="praticas.length > 0">
+                    <div class="card" v-for="(item, index) in praticas" :key="index">
                         <div class="card-body">
                             <h5 class="card-title">{{ item.name }}</h5>
                             <div class="card-details">
@@ -129,11 +187,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/novo/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
+                </div>
             </div>
 
             <div class="tab-pane" :class="{ active: activeTab === 3 }">
-                <div class="card-container">
-                    <div class="card" v-for="(item, index) in list4" :key="index">
+                <div class="card-container" v-if="reutilizaveis.length > 0">
+                    <div class="card" v-for="(item, index) in reutilizaveis" :key="index">
                         <div class="card-body">
                             <h5 class="card-title">{{ item.name }}</h5>
                             <div class="card-details">
@@ -142,6 +204,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/novo/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
                 </div>
             </div>
         </div>
