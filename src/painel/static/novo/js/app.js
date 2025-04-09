@@ -34,7 +34,8 @@ const app = Vue.createApp({
                 modulo: null,
                 disciplina: null,
                 curso: null,
-                ambiente: null
+                ambiente: null,
+                query: null,
             },
 
             splideInstance: null,
@@ -64,7 +65,6 @@ const app = Vue.createApp({
                 // { id: 6, title: 'Notificação 6', date: '2025-03-21 12:00', link: '#' },
                 // { id: 7, title: 'Notificação 9', date: '2025-03-25 12:00', link: '#' },
             ],
-            filterSearchQuery: '',
             periodos: [],
             modulos: [],
             semestres: [],
@@ -83,15 +83,6 @@ const app = Vue.createApp({
             diarios: [],
             salas: [],
             reutilizaveis: [],
-            has_error: false,
-            is_filtering: true,
-            activeParagraph: null,
-            q: localStorage.q || "",
-            situacao: localStorage.situacao || "inprogress",
-            semestre: localStorage.getItem('semestre') || "",
-            disciplina: localStorage.disciplina || "",
-            curso: localStorage.curso || "",
-            ambiente: localStorage.ambiente || "",
         };
     },
     watch: {
@@ -109,7 +100,9 @@ const app = Vue.createApp({
         },
         filters: {
             handler() {
-                this.filterCards();
+                // this.filterCards();
+                console.log('Filters changed:', this.filters);
+                localStorage.setItem('filters', JSON.stringify(this.filters));
             },
             deep: true // Observa mudanças profundas no objeto
         }
@@ -166,6 +159,7 @@ const app = Vue.createApp({
         }
     },
     mounted() {
+        this.loadFilters();
         this.filterCards();
     },
     methods: {
@@ -308,16 +302,13 @@ const app = Vue.createApp({
         filterCards() {
             try {
                 const params = new URLSearchParams({
-                    q: this.q || "",
+                    q: this.filters.query || "",
                     situacao: this.filters.situacao,
                     semestre: this.filters.semestre || "",
                     disciplina: this.filters.disciplina || "",
                     curso: this.filters.curso || "",
                     ambiente: this.filters.ambiente || "",
                 });
-
-                console.log("Fetching data with params:", params.toString());
-                
 
                 fetch(`/api/v1/diarios/?${params.toString()}`)
                     .then((response) => {
@@ -327,19 +318,14 @@ const app = Vue.createApp({
                         return response.json();
                     })
                     .then((data) => {
-                        console.log("Data fetched successfully:", data);
+                        console.log('Data fetched:', data);
                         
                         this.handleFilterResponse(data);
                     })
                     .catch((error) => {
                         console.error("Error fetching data:", error);
                     });
-
-                // this.has_error = false;
-                // this.is_filtering = false;
             } catch (e) {
-                // this.has_error = true;
-                // this.is_filtering = false;
                 console.debug(e);
             }
         },
@@ -352,7 +338,8 @@ const app = Vue.createApp({
                     isfavourite: diario.isfavourite,
                     environment: diario.ambiente.titulo,
                     progress: diario.progress,
-                    visible: diario.visible
+                    visible: diario.visible,
+                    url: diario.viewurl
                 }));
             } else {
                 this.diarios = [];
@@ -365,7 +352,8 @@ const app = Vue.createApp({
                     isfavourite: coordenacao.isfavourite,
                     environment: coordenacao.ambiente.titulo,
                     progress: coordenacao.progress,
-                    visible: coordenacao.visible
+                    visible: coordenacao.visible,
+                    url: coordenacao.viewurl
                 }));
             }
             else {
@@ -379,7 +367,8 @@ const app = Vue.createApp({
             //         isfavourite: sala.isfavourite,
             //         environment: sala.ambiente.titulo,
             //         progress: sala.progress,
-            //         visible: sala.visible
+            //         visible: sala.visible,
+            //         url: sala.viewurl
             //     }));
             // }
             // else {
@@ -393,7 +382,8 @@ const app = Vue.createApp({
             //         isfavourite: sala.isfavourite,
             //         environment: sala.ambiente.titulo,
             //         progress: sala.progress,
-            //         visible: sala.visible
+            //         visible: sala.visible,
+            //         url: sala.viewurl
             //     }));
             // }
             // else {
@@ -461,6 +451,36 @@ const app = Vue.createApp({
             this.filters[filterType] = null;
             this.filterCards();
         },
+        resetFilters() {
+            this.filters = {
+                situacao: 'inprogress',
+                semestre: null,
+                periodo: null,
+                modulo: null,
+                disciplina: null,
+                curso: null,
+                ambiente: null
+            };
+            this.saveFilters();
+            this.filterCards();
+        },
+        saveFilters() {
+            localStorage.setItem('filters', JSON.stringify(this.filters));
+        },
+        loadFilters() {
+            const savedFilters = localStorage.getItem('filters');
+            if (savedFilters) {
+                try {
+                    const parsedFilters = JSON.parse(savedFilters);
+                    this.filters = {
+                        ...this.filters, // Valores padrão
+                        ...parsedFilters // Sobrescreve com os salvos
+                    };
+                } catch (e) {
+                    console.error('Erro ao carregar filtros:', e);
+                }
+            }
+        },
         changeShortnameStyle(shortname) {
             shortname = shortname.trim();
             const regexShortname = /^(\d+\.\d+\.\d+\.\w+)\.(\w+\.\d+)(#\d+)?$/;
@@ -474,6 +494,31 @@ const app = Vue.createApp({
             } else {
                 return shortname;
             }
+        },
+        toggleFavourite(item) {
+            const new_status = item.isfavourite ? 0 : 1;
+            const params = new URLSearchParams({
+                ava: item.environment,
+                courseid: item.id,
+                favourite: new_status,
+            });
+            
+            fetch(`/api/v1/set_favourite/?${params.toString()}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                item.isfavourite = new_status === 1;
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar favorito:', error);
+            });
+        },
+        goToCourse(item) {
+            window.location.href = item.url;
         }
     }
 });

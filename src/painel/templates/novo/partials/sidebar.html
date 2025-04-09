@@ -63,8 +63,10 @@
         </div>
         <div class="sidebar-bottom-content-footer" @click="openModalWithContent('profile')"
             :class="{'active': modalType === 'profile'}">
-            <img src="/static/novo/img/eu.jpeg" alt="Imagem de perfil" class="profile-image">
-            <span>Catarina Miranda</span>
+            {% endverbatim %}
+            <img src="{{ logged_user.foto_url }}" alt="Imagem de perfil" class="profile-image">
+            <span>{{ logged_user.show_name }}</span>
+            {% verbatim %}
         </div>
     </div>
     {% endverbatim %}

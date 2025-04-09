@@ -9,8 +9,17 @@
             <li class="nav-link" v-for="(tab, index) in tabs" :key="index" :class="{ active: activeTab === index }"
                 @click="setActiveTab(index)">
                 {{ tab }}
+                <!-- <span class="badge badge-danger">
+                    <span v-if="index === 0">{{ diarios.length }}</span>
+                    <span v-else-if="index === 1">{{ coordenacoes.length }}</span>
+                    <span v-else-if="index === 2">{{ praticas.length }}</span>
+                    <span v-else-if="index === 3">{{ reutilizaveis.length }}</span>
+                </span> -->
+
+                <!-- precisa adicionar a lógica para mostrar o número de itens em cada aba -->
             </li>
         </ul>
+        <span class="nav-line"></span>
     </div>
     <div class="content">
         <div class="sidebar-modal" :class="{'open': modalOpen}">
@@ -99,7 +108,7 @@
                             </div>
                             <span class="painel-card-header-shortname">{{ item.shortname }}</span>
                         </div>
-                        <span class="painel-card-title">{{ item.fullname }}</span>
+                        <span class="painel-card-title" @click="goToCourse(item)">{{ item.fullname }}</span>
                         <div class="painel-card-details">
                             <div class="painel-card-details-progress">
                                 <div class="painel-progress-bar-container">
@@ -114,8 +123,8 @@
                                         :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
                                     <span>{{ item.visible ? 'Publicado' : 'Rascunho' }}</span>
                                 </div>
-                                <div
-                                    :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`">
+                                <div :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`"
+                                    @click="toggleFavourite(item)">
                                     <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
                                 </div>
 
@@ -142,7 +151,7 @@
                             </div>
                             <span class="painel-card-header-shortname">{{ item.shortname }}</span>
                         </div>
-                        <span class="painel-card-title">{{ item.fullname }}</span>
+                        <span class="painel-card-title" @click="goToCourse(item)">{{ item.fullname }}</span>
                         <div class="painel-card-details">
                             <div class="painel-card-details-progress">
                                 <div class="painel-progress-bar-container">
@@ -157,8 +166,8 @@
                                         :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
                                     <span>{{ item.visible ? 'Publicado' : 'Rascunho' }}</span>
                                 </div>
-                                <div
-                                    :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`">
+                                <div :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`"
+                                    @click="toggleFavourite(item)">
                                     <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
                                 </div>
 
