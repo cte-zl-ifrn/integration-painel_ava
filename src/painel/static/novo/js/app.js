@@ -226,11 +226,16 @@ const app = Vue.createApp({
                 this.splideInstance.refresh();
             }
         },
-        openModalWithContent(type) {
-            this.modalType = type;
-            this.modalTitle = this.getModalTitle(type);
-            this.modalHeaderIcon = this.modalHeaderIcons[type];
-            this.modalOpen = true;
+        toggleModalWithContent(type) {
+            if (this.modalOpen && this.modalType === type) {
+                this.modalOpen = false;
+                this.modalType = null;
+            } else {
+                this.modalType = type;
+                this.modalTitle = this.getModalTitle(type);
+                this.modalHeaderIcon = this.modalHeaderIcons[type];
+                this.modalOpen = true;
+            }
         },
         getModalTitle(type) {
             switch (type) {

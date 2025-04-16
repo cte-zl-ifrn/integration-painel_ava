@@ -9,7 +9,7 @@
             </button>
         </div>
         <div class="sidebar-top-content-filter-modal-button-area">
-            <div class="sidebar-modal-button" @click="openModalWithContent('filter')"
+            <div class="sidebar-modal-button" @click="toggleModalWithContent('filter')"
                 :class="{'active': modalType === 'filter'}">
                 <i class="fa-solid fa-filter"></i>
                 <span>Adicionar Filtros</span>
@@ -41,27 +41,27 @@
     </div>
 
     <div class="sidebar-bottom-content">
-        <div class="sidebar-modal-button" @click="openModalWithContent('accessibility')"
+        <div class="sidebar-modal-button" @click="toggleModalWithContent('accessibility')"
             :class="{'active': modalType === 'accessibility'}">
             <i class="fa-solid fa-universal-access"></i>
             <span>Acessibilidade</span>
         </div>
-        <div class="sidebar-modal-button" @click="openModalWithContent('help')"
+        <div class="sidebar-modal-button" @click="toggleModalWithContent('help')"
             :class="{'active': modalType === 'help'}">
             <i class="fa-solid fa-circle-question"></i>
             <span>Ajuda</span>
         </div>
-        <div class="sidebar-modal-button" @click="openModalWithContent('notifications')"
+        <div class="sidebar-modal-button" @click="toggleModalWithContent('notifications')"
             :class="{'active': modalType === 'notifications'}">
             <i class="fa-solid fa-bell"></i>
             <span>Notificações</span>
         </div>
-        <div class="sidebar-modal-button" @click="openModalWithContent('messages')"
+        <div class="sidebar-modal-button" @click="toggleModalWithContent('messages')"
             :class="{'active': modalType === 'messages'}">
             <i class="fa-solid fa-comment"></i>
             <span>Mensagens</span>
         </div>
-        <div class="sidebar-bottom-content-footer" @click="openModalWithContent('profile')"
+        <div class="sidebar-bottom-content-footer" @click="toggleModalWithContent('profile')"
             :class="{'active': modalType === 'profile'}">
             {% endverbatim %}
             <img src="{{ logged_user.foto_url }}" alt="Imagem de perfil" class="profile-image">
