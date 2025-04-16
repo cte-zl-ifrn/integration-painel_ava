@@ -74,15 +74,15 @@
                 }
 
                 .modal-content {
-                    height: 100% !important;
-                    padding: 10px;
-                    color: black;
+                    height: 100%;
+                    padding: 1rem;
+                    color: var(--dark);
 
                     .modal-content-header {
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
-                        margin-bottom: 20px;
+                        margin-bottom: 1rem;
 
                         .modal-content-header-title {
                             font: normal normal bold 18px/22px Noto Sans;
@@ -94,10 +94,10 @@
 
                         .modal-content-header-icon-x {
                             cursor: pointer;
-                            color: red;
+                            color: var(--danger-dark);
                             width: 24px;
                             height: 24px;
-                            background: #FFE2E0 0% 0% no-repeat padding-box;
+                            background: var(--danger-light);
                             opacity: 1;
                             border-radius: 50%;
                             display: flex;

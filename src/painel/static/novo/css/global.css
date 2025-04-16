@@ -71,7 +71,7 @@
     padding: 0;
     box-sizing: border-box;
     text-align: left;
-    font-family: var(--unnamed-font-family-noto-sans);
+    font: var(--font-paragraph1);
     /* -moz-transition: all 100ms ease-in;
     -webkit-transition: all 100ms ease-in;
     -o-transition: all 100ms ease-in;

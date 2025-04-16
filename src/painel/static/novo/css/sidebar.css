@@ -83,7 +83,7 @@
                 }
 
                 span {
-                    font: normal normal normal 14px/17px Noto Sans;
+                    font: var(--font-heading5);
                     color: var(--branco-primario);
                 }
 
