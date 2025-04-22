@@ -267,9 +267,9 @@
                             transition: transform 0.2s;
                             display: flex;
                             flex-direction: column;
-                            gap: 16px;
+                            gap: 8px;
                             justify-content: space-between;
-                            padding: 12px;
+                            padding: 16px;
                             background: var(--branco-primario) 0% 0% no-repeat padding-box;
                             box-shadow: 0px 1px 6px #2B2B2B40;
                             border-radius: 8px;
@@ -290,7 +290,7 @@
                                     display: flex;
                                     width: fit-content;
                                     margin-right: 8px;
-                                    padding: 5px;
+                                    padding: 4px 8px;
                                     border-radius: 4px;
 
                                     i {
@@ -310,6 +310,10 @@
                                 cursor: pointer;
                                 width: fit-content;
                             }
+                            
+                            .painel-card-header-shortname {
+                                font-weight: 600;
+                            }
 
                             .painel-card-details {
                                 display: flex;
@@ -326,8 +330,9 @@
                                         background: #E3E3E3 0% 0% no-repeat padding-box;
                                         border-radius: 50px;
                                         opacity: 1;
-                                        height: 8px;
-                                        width: 187px;
+                                        height: 4px;
+                                        max-width: 187px;
+                                        width: 20vw;
                                         overflow: hidden;
                                         
                                         .painel-progress-bar {
@@ -337,11 +342,15 @@
                                             height: 100%;
                                         }
                                     }
+                                    span {
+                                        font-size: 12px;
+                                        color: #7D848B;
+                                    }
                                 }
 
                                 .painel-card-details-info {
                                     display: flex;
-                                    justify-content: space-between;
+                                    /* justify-content: space-between; */
                                     align-items: center;
                                     gap: 8px;
                                     width: 157px;
@@ -356,6 +365,12 @@
                                         padding: 4px;
                                         height: 24px;
                                         /* width: 77px; */
+                                        span {
+                                            font-size: 12px;
+                                        }
+                                        i {
+                                            font-size: 12px;
+                                        }
                                     }
                                     
                                     .painel-card-details-info-published {
@@ -379,13 +394,15 @@
                                         align-items: center;
                                         cursor: pointer;
                                         transition: all 0.2s ease-out;
-                                        /* padding: 3px; */
                                         color: #338F74;
+                                        display: flex;
 
                                         i {
-                                            width: 16px;
-                                            height: 16px;
-                                            /* margin-bottom: 2px; */
+                                            font-size: 12px;
+                                        }
+                                    }
+                                    .painel-card-details-info-chevron {
+                                        i {
                                         }
                                     }
                                 }
