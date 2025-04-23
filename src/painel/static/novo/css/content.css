@@ -52,6 +52,7 @@
                 height: 1px;
                 background: var(--cinza-primario);
             }
+          
         }
 
         .content {
@@ -354,9 +355,8 @@
                                 }
 
                                 .painel-card-details-info {
-                                    display: flex;
-                                    /* justify-content: space-between; */
                                     align-items: center;
+                                    display: flex;
                                     gap: 8px;
                                     width: 157px;
 
@@ -369,7 +369,7 @@
                                         gap: 4px;
                                         padding: 4px;
                                         height: 24px;
-                                        /* width: 77px; */
+                                        
                                         span {
                                             font-family: Noto Sans, Arial, sans-serif;
                                             font-size: 12px;
@@ -418,5 +418,59 @@
                 }
             }
         }
+    }
+}
+
+@media screen and (max-width: 600px) {
+   .topbar {
+        overflow: auto;
+        .nav {
+            white-space: nowrap;
+            flex-direction: column;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        .nav-link {
+            font-size: 14px;
+            flex-wrap: nowrap !important;
+            flex-shrink: 0;
+            min-width: fit-content;
+        }
+
+        .nav::-webkit-scrollbar {
+            display: none; 
+        }
+
+
+    }
+    .painel-card-header-icon  {
+        font-size: 10px;
+        color: #338F74;
+        padding: 4px 8px 0px !important;
+    }
+    .painel-card-header-shortname {
+        font-size: 12px;
+        min-width: 120px;
+        text-wrap: wrap;
+        width: 100%;
+    }
+    .painel-card-title {
+         font-size: 18px !important;
+    }
+    .painel-card-details-progress {
+        flex-flow: wrap-reverse;
+        span {
+            font-size: 10px !important;
+        }
+    }
+    .painel-card-details-info-published {
+        i, span {
+              font-size: 10px !important;
+        }
+        
+    }
+    .painel-card-details-info-favourite,  .painel-card-details-info-chevron {
+        font-size: 10px !important;
     }
 }
