@@ -213,6 +213,7 @@
             .sidebar-modal-button-text-contracted {
                 display: none;
                 font: var(--font-heading6);
+                font-weight: 600;
             }
 
         }

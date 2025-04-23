@@ -230,12 +230,23 @@ const app = Vue.createApp({
             if (this.modalOpen && this.modalType === type) {
                 this.modalOpen = false;
                 this.modalType = null;
-            } else {
-                this.modalType = type;
-                this.modalTitle = this.getModalTitle(type);
-                this.modalHeaderIcon = this.modalHeaderIcons[type];
-                this.modalOpen = true;
+                return;
             }
+            if(this.modalOpen && this.modalType !== type) {
+                this.modalOpen = false;
+                setTimeout(() => {
+                    this.modalType = type;
+                    this.modalTitle = this.getModalTitle(type);
+                    this.modalHeaderIcon = this.modalHeaderIcons[type];
+                    this.modalOpen = true;
+                }, 200);
+                return;
+            }
+            this.modalType = type;
+            this.modalTitle = this.getModalTitle(type);
+            this.modalHeaderIcon = this.modalHeaderIcons[type];
+            this.modalOpen = true;
+
         },
         getModalTitle(type) {
             switch (type) {
