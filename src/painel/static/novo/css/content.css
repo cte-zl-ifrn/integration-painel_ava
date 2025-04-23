@@ -310,8 +310,12 @@
                                 cursor: pointer;
                                 width: fit-content;
                             }
+                            .painel-card-header-env {
+                                font-family: Noto Sans, Arial, sans-serif;
+                            }
                             
                             .painel-card-header-shortname {
+                                font-family: Noto Sans, Arial, sans-serif;
                                 font-weight: 600;
                             }
 
@@ -343,6 +347,7 @@
                                         }
                                     }
                                     span {
+                                        font-family: Noto Sans, Arial, sans-serif;
                                         font-size: 12px;
                                         color: #7D848B;
                                     }
@@ -366,6 +371,7 @@
                                         height: 24px;
                                         /* width: 77px; */
                                         span {
+                                            font-family: Noto Sans, Arial, sans-serif;
                                             font-size: 12px;
                                         }
                                         i {
