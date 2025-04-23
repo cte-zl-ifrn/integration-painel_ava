@@ -228,8 +228,8 @@ const app = Vue.createApp({
         },
         toggleModalWithContent(type) {
             if (this.modalOpen && this.modalType === type) {
-                this.modalOpen = false;
                 this.modalType = null;
+                this.modalOpen = false;
                 return;
             }
             if(this.modalOpen && this.modalType !== type) {

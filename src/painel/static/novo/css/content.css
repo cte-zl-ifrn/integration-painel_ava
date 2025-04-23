@@ -73,7 +73,7 @@
                 }
 
                 .modal-content {
-                    width: 294px;
+                    min-width: 294px;
                     height: 100%;
                     padding: 1rem;
                     color: var(--dark);
@@ -92,6 +92,7 @@
                               
                             span {
                                 font: var(--font-heading2);
+                                white-space: nowrap;
                             }
                         }
 

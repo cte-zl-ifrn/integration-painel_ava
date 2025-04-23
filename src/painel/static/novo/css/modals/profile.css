@@ -4,11 +4,6 @@
     flex-direction: column;
     justify-content: start;
 
-    .modal-content-body-title {
-        font: var(--font-button2);
-        color: var(--dark-light);
-    }
-
     .ava-button-options, .admin-button-options {
         margin-top: .5rem;
     }
