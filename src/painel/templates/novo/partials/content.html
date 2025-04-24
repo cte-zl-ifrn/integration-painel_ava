@@ -8,15 +8,24 @@
         <ul class="nav">
             <li class="nav-link" v-for="(tab, index) in tabs" :key="index" :class="{ active: activeTab === index }"
                 @click="setActiveTab(index)">
-                {{ tab }}
-                <!-- <span class="badge badge-danger">
-                    <span v-if="index === 0">{{ diarios.length }}</span>
-                    <span v-else-if="index === 1">{{ coordenacoes.length }}</span>
-                    <span v-else-if="index === 2">{{ praticas.length }}</span>
-                    <span v-else-if="index === 3">{{ reutilizaveis.length }}</span>
-                </span> -->
-
-                <!-- precisa adicionar a lógica para mostrar o número de itens em cada aba -->
+                <div
+                    v-if="index == 0 || index == 1 || (index == 2 && praticas.length > 0) || (index == 3 && reutilizaveis.length > 0)">
+                    {{ tab }}
+                    <span v-if="activeTab === index" class="badge">
+                        <div v-if="activeTab === 0">
+                            {{ diarios.length }}
+                        </div>
+                        <div v-if="activeTab === 1">
+                            {{ coordenacoes.length }}
+                        </div>
+                        <div v-if="activeTab === 2">
+                            {{ praticas.length }}
+                        </div>
+                        <div v-if="activeTab === 3">
+                            {{ reutilizaveis.length }}
+                        </div>
+                    </span>
+                </div>
             </li>
         </ul>
         <span class="nav-line"></span>
