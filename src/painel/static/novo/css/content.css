@@ -417,10 +417,6 @@
                                             font-size: 12px;
                                         }
                                     }
-                                    .painel-card-details-info-chevron {
-                                        i {
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -428,5 +424,10 @@
                 }
             }
         }
+
+        @media (max-width: 575.98px) {
+            margin-left: 60px;
+        }
+
     }
 }

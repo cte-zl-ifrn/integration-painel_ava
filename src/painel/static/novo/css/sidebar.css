@@ -135,10 +135,10 @@
 
                         span.sidebar-top-content-filters-list-item-button {
                             font-size: 18px;
+                            cursor: pointer;
 
                             i {
                                 margin: 0 auto;
-                                cursor: pointer;
                             }
                         }
                     }
@@ -273,8 +273,41 @@
             }
 
             .sidebar-top-content-filters {
-                display: none;
+                margin-inline: 0;
+                .sidebar-top-content-filter-title, .sidebar-top-content-filters-list-item-text {
+                    display: none;
+                }
+
+                .sidebar-top-content-filters-list {
+                    align-items: center;
+
+                    .sidebar-top-content-filters-list-item {
+                        position: relative;
+                        width: auto;
+
+                        .sidebar-top-content-filters-list-item-button {
+                            position: absolute;
+                            left: 0;
+                            opacity: 0;
+                            padding: 4px 8px; 
+                        }
+
+                        i {
+                            margin: 0px;
+                        }
+
+                        .sidebar-top-content-filters-list-item-divider {
+                            justify-content: center;
+                            .sidebar-top-content-filters-list-item-icon {
+                                margin: 0;
+                            }
+                        }
+
+                    }
+                }
+
             }
         }
+    
     }
 }
