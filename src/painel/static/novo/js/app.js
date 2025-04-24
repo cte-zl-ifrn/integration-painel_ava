@@ -161,6 +161,7 @@ const app = Vue.createApp({
     mounted() {
         this.loadFilters();
         this.filterCards();
+        this.sidebarContracted = window.innerWidth < 768;
     },
     methods: {
         initSplide() {
