@@ -71,7 +71,7 @@
     padding: 0;
     box-sizing: border-box;
     text-align: left;
-    font-family: var(--unnamed-font-family-noto-sans);
+    /* font: var(--font-paragraph1); */
     /* -moz-transition: all 100ms ease-in;
     -webkit-transition: all 100ms ease-in;
     -o-transition: all 100ms ease-in;
@@ -272,4 +272,14 @@ h6 {
     line-height: var(--unnamed-line-spacing-22);
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--unnamed-color-1d2125);
+}
+
+@media (max-width: 767.98px) {
+    .mobile-backdrop:not(.contracted), .mobile-backdrop.open {
+        position: fixed;
+        z-index: 40;
+        height: 100vh;
+        width: 100vw;
+        background-color: rgb(0 0 0 / .4);
+    }
 }
