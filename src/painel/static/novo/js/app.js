@@ -161,7 +161,7 @@ const app = Vue.createApp({
     mounted() {
         this.loadFilters();
         this.filterCards();
-        this.sidebarContracted = this.isMobile;
+        this.sidebarContracted = this.isMobile();
     },
     methods: {
         initSplide() {
@@ -233,7 +233,7 @@ const app = Vue.createApp({
             }
         },
         toggleModalWithContent(type) {
-            if (this.isMobile) {
+            if (this.isMobile()) {
                 this.closeSidebar();
             }
             if (this.modalOpen && this.modalType === type) {
@@ -313,7 +313,7 @@ const app = Vue.createApp({
             }
         },
         toggleSidebar() {
-            if (this.isMobile) {
+            if (this.isMobile()) {
                 this.closeSidebarModal();
             }
             this.sidebarContracted = !this.sidebarContracted

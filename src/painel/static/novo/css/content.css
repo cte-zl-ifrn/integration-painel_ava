@@ -52,6 +52,7 @@
                 height: 1px;
                 background: var(--cinza-primario);
             }
+          
         }
 
         .content {
@@ -297,15 +298,14 @@
                                 .painel-card-header-icon {
                                     background-color: var(--verde-claro);
                                     display: flex;
+                                    align-items: center;
                                     width: fit-content;
                                     margin-right: 8px;
                                     padding: 4px 8px;
                                     border-radius: 4px;
 
                                     i {
-                                        width: 18px;
-                                        height: 18px;
-                                        margin: 2px 5px 0 0;
+                                        margin-right: 4px;
                                         color: #338F74;
                                     }
                                 }
@@ -365,8 +365,8 @@
                                 .painel-card-details-info {
                                     display: flex;
                                     align-items: center;
-                                    gap: 8px;
-                                    width: 157px;
+                                    justify-content: space-between;
+                                    gap: .75rem;
 
                                     .painel-card-details-info-published, .painel-card-details-info-unpublished {
                                         border-radius: 4px;
@@ -424,9 +424,60 @@
 
         @media (max-width: 767.98px) {
             margin-left: 60px;
+
             .content .sidebar-modal {
                 position: absolute;
                 height: 85vh;
+            }
+
+            .topbar {
+                overflow: auto;
+
+                .nav {
+                    white-space: nowrap;
+                    flex-direction: column;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    -webkit-overflow-scrolling: touch !important;
+                }
+                .nav-link {
+                    font-size: 14px;
+                    flex-wrap: nowrap !important;
+                    flex-shrink: 0;
+                    min-width: fit-content;
+                }
+        
+                .nav::-webkit-scrollbar {
+                    display: none; 
+                }
+            }
+
+            .painel-card-header-icon  {
+                font: var(--font-heading6);
+                color: #338F74;
+            }
+            .painel-card-header-shortname {
+                font-size: 12px;
+                min-width: 120px;
+                text-wrap: wrap;
+            }
+            .painel-card-title {
+                font-size: 18px !important;
+            }
+            .painel-card-details-progress {
+                flex-flow: wrap-reverse;
+                span {
+                    font-size: 10px !important;
+                }
+            }
+            .painel-card-details-info-published {
+                i, span {
+                    font-size: 10px !important;
+                }
+                
+            }
+            .painel-card-details-info-favourite,  .painel-card-details-info-chevron {
+                font-size: 10px !important;
             }
         }
 
