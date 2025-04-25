@@ -161,7 +161,7 @@ const app = Vue.createApp({
     mounted() {
         this.loadFilters();
         this.filterCards();
-        this.sidebarContracted = window.innerWidth < 768;
+        this.sidebarContracted = this.isMobile;
     },
     methods: {
         initSplide() {
@@ -227,7 +227,15 @@ const app = Vue.createApp({
                 this.splideInstance.refresh();
             }
         },
+        isMobile() {
+            if (window.innerWidth < 768) {
+                return true;
+            }
+        },
         toggleModalWithContent(type) {
+            if (this.isMobile) {
+                this.closeSidebar();
+            }
             if (this.modalOpen && this.modalType === type) {
                 this.modalType = null;
                 this.modalOpen = false;
@@ -305,13 +313,23 @@ const app = Vue.createApp({
             }
         },
         toggleSidebar() {
+            if (this.isMobile) {
+                this.closeSidebarModal();
+            }
             this.sidebarContracted = !this.sidebarContracted
         },
-        toggleSidebarModal() {
-            this.modalOpen = !this.modalOpen;
+        closeSidebar() {
+            this.sidebarContracted = true;
+        },
+        closeSidebarModal() {
+            this.modalOpen = false;
             this.modalType = '';
             this.modalTitle = '';
             this.modalHeaderIcon = '';
+        },
+        closeSidebarAndModal() {
+            this.closeSidebar();
+            this.closeSidebarModal();
         },
         setActiveTab(index) {
             this.activeTab = index;

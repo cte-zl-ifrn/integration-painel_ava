@@ -7,7 +7,11 @@
     <div id="app">
         {% include 'novo/partials/sidebar.html' %}
         {% include 'novo/partials/content.html' %}
-        <div @click="toggleSidebar" class="mobile-backdrop" :class="{'contracted': sidebarContracted}"></div>
+        <div @click="closeSidebarAndModal" class="mobile-backdrop" :class="{
+                'open': modalOpen,
+                'contracted': sidebarContracted
+            }">
+        </div>
     </div>
     {% include 'novo/partials/foot.html' %}
 </body>

@@ -226,7 +226,6 @@
                     .modal-content-body {
                         height: 100%;
                         border-top: 1px solid #CCCCCC;
-                        overflow-y: hidden;
                     }
                 }
             }
@@ -365,7 +364,6 @@
 
                                 .painel-card-details-info {
                                     display: flex;
-                                    /* justify-content: space-between; */
                                     align-items: center;
                                     gap: 8px;
                                     width: 157px;
@@ -379,7 +377,6 @@
                                         gap: 4px;
                                         padding: 4px;
                                         height: 24px;
-                                        /* width: 77px; */
                                         span {
                                             font-family: Noto Sans, Arial, sans-serif;
                                             font-size: 12px;
@@ -427,6 +424,10 @@
 
         @media (max-width: 767.98px) {
             margin-left: 60px;
+            .content .sidebar-modal {
+                position: absolute;
+                height: 85vh;
+            }
         }
 
     }
