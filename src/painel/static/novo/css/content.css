@@ -52,6 +52,7 @@
                 height: 1px;
                 background: var(--cinza-primario);
             }
+          
         }
 
         .content {
@@ -69,51 +70,61 @@
             .sidebar-modal {
                 height: 100%;
                 overflow-x: hidden;
-                transition: 0.3s;
+                width: 0;
+                transition: width 0.2s ease-in;
                 z-index: 50;
-                width: 294px;
                 height: 95%;
                 background: var(--background-color) 0% 0% no-repeat padding-box;
                 box-shadow: 3px 3px 6px #00000029;
                 border-radius: 0px 16px 16px 0px;
                 opacity: 1;
-                display: none;
+                display: flex;
                 
-
                 &.open {
-                    display: flex;
+                    width: 294px;
                 }
 
                 .modal-content {
-                    height: 100% !important;
-                    padding: 10px;
-                    color: black;
+                    min-width: 294px;
+                    height: 100%;
+                    padding: 1rem;
+                    color: var(--dark);
 
                     .modal-content-header {
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
-                        margin-bottom: 20px;
+                        margin-bottom: 1rem;
 
                         .modal-content-header-title {
-                            font: normal normal bold 18px/22px Noto Sans;
-
-                            .modal-content-header-icon {
-                                margin-right: 10px;
+                            display: flex;
+                            flex-wrap: nowrap;
+                            gap: .5rem;
+                            align-items: center;
+                              
+                            span {
+                                font: var(--font-heading2);
+                                white-space: nowrap;
                             }
                         }
 
                         .modal-content-header-icon-x {
                             cursor: pointer;
-                            color: red;
+                            color: var(--danger-dark);
                             width: 24px;
                             height: 24px;
-                            background: #FFE2E0 0% 0% no-repeat padding-box;
+                            background: var(--danger-light);
                             opacity: 1;
                             border-radius: 50%;
                             display: flex;
                             justify-content: center;
                             align-items: center;
+                            transition: all 0.2s ease-out;
+
+                            &:hover {
+                                background: var(--danger-dark);
+                                color: var(--danger-light);
+                            }
 
                         }
 
@@ -216,7 +227,6 @@
                     .modal-content-body {
                         height: 100%;
                         border-top: 1px solid #CCCCCC;
-                        overflow-y: hidden;
                     }
                 }
             }
@@ -288,15 +298,14 @@
                                 .painel-card-header-icon {
                                     background-color: var(--verde-claro);
                                     display: flex;
+                                    align-items: center;
                                     width: fit-content;
                                     margin-right: 8px;
                                     padding: 4px 8px;
                                     border-radius: 4px;
 
                                     i {
-                                        width: 18px;
-                                        height: 18px;
-                                        margin: 2px 5px 0 0;
+                                        margin-right: 4px;
                                         color: #338F74;
                                     }
                                 }
@@ -355,10 +364,9 @@
 
                                 .painel-card-details-info {
                                     display: flex;
-                                    /* justify-content: space-between; */
                                     align-items: center;
-                                    gap: 8px;
-                                    width: 157px;
+                                    justify-content: space-between;
+                                    gap: .75rem;
 
                                     .painel-card-details-info-published, .painel-card-details-info-unpublished {
                                         border-radius: 4px;
@@ -369,7 +377,6 @@
                                         gap: 4px;
                                         padding: 4px;
                                         height: 24px;
-                                        /* width: 77px; */
                                         span {
                                             font-family: Noto Sans, Arial, sans-serif;
                                             font-size: 12px;
@@ -407,10 +414,6 @@
                                             font-size: 12px;
                                         }
                                     }
-                                    .painel-card-details-info-chevron {
-                                        i {
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -418,5 +421,65 @@
                 }
             }
         }
+
+        @media (max-width: 767.98px) {
+            margin-left: 60px;
+
+            .content .sidebar-modal {
+                position: absolute;
+                height: 85vh;
+            }
+
+            .topbar {
+                overflow: auto;
+
+                .nav {
+                    white-space: nowrap;
+                    flex-direction: column;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    -webkit-overflow-scrolling: touch !important;
+                }
+                .nav-link {
+                    font-size: 14px;
+                    flex-wrap: nowrap !important;
+                    flex-shrink: 0;
+                    min-width: fit-content;
+                }
+        
+                .nav::-webkit-scrollbar {
+                    display: none; 
+                }
+            }
+
+            .painel-card-header-icon  {
+                font: var(--font-heading6);
+                color: #338F74;
+            }
+            .painel-card-header-shortname {
+                font-size: 12px;
+                min-width: 120px;
+                text-wrap: wrap;
+            }
+            .painel-card-title {
+                font-size: 18px !important;
+            }
+            .painel-card-details-progress {
+                flex-flow: wrap-reverse;
+                span {
+                    font-size: 10px !important;
+                }
+            }
+            .painel-card-details-info-published {
+                i, span {
+                    font-size: 10px !important;
+                }
+                
+            }
+            .painel-card-details-info-favourite,  .painel-card-details-info-chevron {
+                font-size: 10px !important;
+            }
+        }
+
     }
 }
