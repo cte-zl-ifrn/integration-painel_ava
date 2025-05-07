@@ -2,67 +2,76 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
     <head>
+        <style>
+            .statics-not-loaded {display: block;}
+            .statics-loaded {display: none;}
+        </style>
         {% block head %}
             {% include "painel/layouts/partials/head.html" %}
         {% endblock head %}
     </head>
 
     <body>
-        {% block header %}
-            {% include "painel/layouts/partials/header.html" %}
-        {% endblock header %}
+        <div class='statics-not-loaded'>
+            Os arquivos estáticos não estão sendo gerados/lidos.
+        </div>
+        <div class='statics-loaded'>
+            {% block header %}
+                {% include "painel/layouts/partials/header.html" %}
+            {% endblock header %}
 
-        {% block pre_loading %}
-            <div id="pre-loading">
-                <div id="search-loader" v-if="is_filtering">
-                    <p>Por favor, aguarde o carregamento do Painel AVA.</p>
-                    {% include "painel/layouts/partials/mosaic-loader.html" %}
+            {% block pre_loading %}
+                <div id="pre-loading">
+                    <div id="search-loader" v-if="is_filtering">
+                        <p>Por favor, aguarde o carregamento do Painel AVA.</p>
+                        {% include "painel/layouts/partials/mosaic-loader.html" %}
+                    </div>
                 </div>
-            </div>
-        {% endblock pre_loading %}
-        
-        <main id="app">
-
-            {% block page_title %}
-                <div id="page-title">
-                    <img src="{% static 'dashboard/img/logo_painel_ava.png'  %}" width="67" height="66" alt="" aria-hidden="true" />
-                    <h1>Painel AVA</h1>
-                    <img src="{% static 'dashboard/img/squares.svg'  %}" width="233" height="172" alt="" aria-hidden="true" />
-                </div>
-            {% endblock page_title %}
-
-            {% block page_menu %}
-            {% endblock page_menu %}
-
+            {% endblock pre_loading %}
             
-            {% block page_areas %}
-                <div  id="page-areas">
-                    <section id="sidebar">
-                        <!-- <a data-toggle="offcanvas" @click="toggleNavBar($event)">
-                            <div id="toggle-filter">
-                                <p><i class="fa fa-angle-left"></i><i class="fa fa-angle-right"></i></p>
-                            </div>
-                        </a> -->
+            <main id="app">
 
-                        {% block sidebar %}
-                        {% endblock sidebar %}
-                    </section>
-                    <section  id="maincontent">
-                        {% block main_content %} {% endblock main_content %}
-                    </section>  
-                </div>
-            {% endblock page_areas %}
-        </main>
+                {% block page_title %}
+                    <div id="page-title">
+                        <img src="{% static 'dashboard/img/logo_painel_ava.png'  %}" width="67" height="66" alt="" aria-hidden="true" />
+                        <h1>Painel AVA</h1>
+                        <img src="{% static 'dashboard/img/squares.svg'  %}" width="233" height="172" alt="" aria-hidden="true" />
+                    </div>
+                {% endblock page_title %}
 
-        {% block footer %}
-            {% include "painel/layouts/partials/footer.html" %}
-        {% endblock footer %}
+                {% block page_menu %}
+                {% endblock page_menu %}
 
-        {% block ending %}
-            {% block popup %}       {% include "painel/layouts/partials/popup.html" %}    {% endblock popup %}
-            {% block foot_pre %}    {% include "painel/layouts/partials/foot_pre.html" %} {% endblock foot_pre %}
-            {% block foot_custom %}                                                       {% endblock foot_custom %}
-            {% block foot_pos %}    {% include "painel/layouts/partials/foot_pos.html" %} {% endblock foot_pos %}
-        {% endblock ending %}
+                
+                {% block page_areas %}
+                    <div  id="page-areas">
+                        <section id="sidebar">
+                            <!-- <a data-toggle="offcanvas" @click="toggleNavBar($event)">
+                                <div id="toggle-filter">
+                                    <p><i class="fa fa-angle-left"></i><i class="fa fa-angle-right"></i></p>
+                                </div>
+                            </a> -->
+
+                            {% block sidebar %}
+                            {% endblock sidebar %}
+                        </section>
+                        <section  id="maincontent">
+                            {% block main_content %} {% endblock main_content %}
+                        </section>  
+                    </div>
+                {% endblock page_areas %}
+            </main>
+
+            {% block footer %}
+                {% include "painel/layouts/partials/footer.html" %}
+            {% endblock footer %}
+
+            {% block ending %}
+                {% block popup %}       {% include "painel/layouts/partials/popup.html" %}    {% endblock popup %}
+                {% block foot_pre %}    {% include "painel/layouts/partials/foot_pre.html" %} {% endblock foot_pre %}
+                {% block foot_custom %}                                                       {% endblock foot_custom %}
+                {% block foot_pos %}    {% include "painel/layouts/partials/foot_pos.html" %} {% endblock foot_pos %}
+            {% endblock ending %}
+        </div>
     </body>
 </html>

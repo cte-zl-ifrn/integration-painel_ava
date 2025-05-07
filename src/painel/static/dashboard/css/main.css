@@ -2144,3 +2144,5 @@ footer .madeby br {
     margin-right: 5px;
   }
 }
+.statics-loaded {display: block;}
+.statics-not-loaded {display: none;}
