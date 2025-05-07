@@ -66,6 +66,13 @@ class UsuarioAdmin(BaseModelAdmin):
                 "description": _("JSON com os dados do SUAP"),
             },
         ),
+        (
+            _("Settings"),
+            {
+                "fields": [("settings")],
+                "description": _("Configurações do usuário"),
+            },
+        ),
     ]
     readonly_fields: Sequence[str] = ["date_joined", "first_login", "last_login", "last_json"]
     # autocomplete_fields: Sequence[str] = ['groups']
