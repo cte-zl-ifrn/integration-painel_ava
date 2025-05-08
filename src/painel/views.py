@@ -10,7 +10,7 @@ from painel.services import get_json_api
 @login_required
 def dashboard(request: HttpRequest) -> HttpResponse:
     # https://ead.ifrn.edu.br/ava/academico/lib/ajax/service.php?info=core_course_get_enrolled_courses_by_timeline_classification
-    if "tema" in request.user.settings and request.user.settings["tema"] == "2025":
+    if request.user.settings and "tema" in request.user.settings and request.user.settings["tema"] == "2025":
         return render(request, "novo/index.html")
     return render(request, "painel/dashboard/index.html")
 
@@ -18,6 +18,7 @@ def dashboard(request: HttpRequest) -> HttpResponse:
 @login_required
 def novo(request: HttpRequest) -> HttpResponse:
     return render(request, "novo/index.html")
+
 
 # @login_required
 # def syncs(request: HttpRequest, id_diario: int) -> HttpResponse:
