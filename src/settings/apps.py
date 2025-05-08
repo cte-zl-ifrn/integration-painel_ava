@@ -40,6 +40,13 @@ THIRD_APPS = env_as_list(
     ],
 )
 
+try:
+    import django_extensions
+except ImportError:
+    print("django_extensions not installed, removing from INSTALLED_APPS")
+    THIRD_APPS.remove("django_extensions")
+
+
 DJANGO_APPS = env_as_list(
     "DJANGO_APPS",
     [

@@ -5,12 +5,17 @@ from .apps import INSTALLED_APPS
 from .middlewares import MIDDLEWARE
 
 DEBUG = env_as_bool("DJANGO_DEBUG", True)
-TESTING_MODE = 'test' in sys.argv
+TESTING_MODE = "test" in sys.argv
 
 if DEBUG and not TESTING_MODE:
-    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
-    INSTALLED_APPS += env_as_list("DEV_APPS", ["debug_toolbar"])
-    DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda request: request.get_host() in ["painel"]}
+    try:
+        import debug_toolbar
+
+        MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+        INSTALLED_APPS += env_as_list("DEV_APPS", ["debug_toolbar"])
+        DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda request: request.get_host() in ["painel"]}
+    except ImportError:
+        print("debug_toolbar not installed, removing from INSTALLED_APPS")
 
     # https://github.com/unbit/django-uwsgi
     # https://github.com/giginet/django-debug-toolbar-vcs-info
