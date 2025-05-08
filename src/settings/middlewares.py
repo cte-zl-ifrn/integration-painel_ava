@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-from sc4py.env import env_as_bool
-from django.core.handlers import exception
-from debug_toolbar import middleware
-
 # Middleware
 MIDDLEWARE = [
     "painel.middleware.ExceptionMiddleware",
