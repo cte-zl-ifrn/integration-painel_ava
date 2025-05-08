@@ -58,6 +58,7 @@ CMD  ["/app/venv/bin/gunicorn" ]
 ########################################################################
 FROM python:3.13.3-slim-bookworm
 
+ENV PATH="/app/venv/bin/:$PATH"
 RUN useradd -ms /bin/bash app
 COPY --chown=app:app --from=development-build-stage /app /app
 
