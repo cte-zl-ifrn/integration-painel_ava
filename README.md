@@ -89,7 +89,7 @@ services:
             - OAUTH_CLIENT_ID=changeme
             - OAUTH_CLIENT_SECRET=changeme
             - OAUTH_BASE_URL=https://suap.yourhost.edu.br
-            - OAUTH_REDIRECT_URI=https://ava.yourhost.edu.br/painel/authenticate/
+            - OAUTH_REDIRECT_URI=https://ava.yourhost.edu.br/authenticate/
 
             # 5. Se cadastre no https://userway.org/ e registre o token da conta
             - SHOW_USERWAY=True
@@ -108,7 +108,7 @@ services:
         test:
             [
                 "CMD-SHELL",
-                "curl --silent --fail https://ava.yourhost.edu.br/painel/health/ | grep 'Database: OK' || exit 1",
+                "curl --silent --fail https://ava.yourhost.edu.br/health/ | grep 'Database: OK' || exit 1",
             ]
         interval: 3s
         timeout: 1s
@@ -124,7 +124,7 @@ Suba os serviços.
 docker compose up
 ```
 
-Acesse o https://ava.yourhost.edu.br/painel/admin/, cadastre os AVA em **Ambientes**, o token que você gerar para cada ambiente deverá ser utilizado no plugin do local_suap que você instalar em cada AVA.
+Acesse o https://ava.yourhost.edu.br/admin/, cadastre os AVA em **Ambientes**, o token que você gerar para cada ambiente deverá ser utilizado no plugin do local_suap que você instalar em cada AVA.
 
 ## Como iniciar o desenvolvimento
 
@@ -258,22 +258,22 @@ O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-4
 -   `env:` CI/CD ou settings.
 -   `build:` build ou dependências.
 
-## Como listar os diários no dashboard do Painel AVA (Desenvolvimento local) 
+## Como listar os diários no dashboard do Painel AVA (Desenvolvimento local)
 
 ### 1. No Painel
 
-**Identificação**  
-- Clique na sua foto no canto superior e selecione **Painel AVA** no menu suspenso.  
-- Acesse **Ambientes > Adicionar**.  
+**Identificação**
+- Clique na sua foto no canto superior e selecione **Painel AVA** no menu suspenso.
+- Acesse **Ambientes > Adicionar**.
 
-**Preencha os campos:**  
-- **Nome do ambiente:** Defina um nome à sua escolha  
-- **Cor mestra:** Defina uma cor à sua escolha  
+**Preencha os campos:**
+- **Nome do ambiente:** Defina um nome à sua escolha
+- **Cor mestra:** Defina uma cor à sua escolha
 
-**Integração**  
-- **Ativo?:** Marque este campo  
-- **URL:** `http://moodle`  
-- **Token:** `changeme`  
+**Integração**
+- **Ativo?:** Marque este campo
+- **URL:** `http://moodle`
+- **Token:** `changeme`
 
 ---
 
@@ -281,10 +281,10 @@ O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-4
 
 Para que o Painel consiga listar os cursos corretamente, o usuário logado no Painel precisa existir no Moodle **com o mesmo identificador (matrícula ou CPF)** e estar inscrito em ao menos um curso ativo.
 
-**Se o usuário ainda não existe no Moodle:**  
-- Acesse **Administração do site > Usuários > Adicionar um novo usuário**  
-- Preencha os campos com atenção:  
-  - **Identificação de usuário:** Matrícula ou CPF do usuário logado no Painel  
+**Se o usuário ainda não existe no Moodle:**
+- Acesse **Administração do site > Usuários > Adicionar um novo usuário**
+- Preencha os campos com atenção:
+  - **Identificação de usuário:** Matrícula ou CPF do usuário logado no Painel
   - **Método de autenticação:** Selecione **OAuth 2**
 
 **Por fim**, inscreva esse usuário em pelo menos um curso ativo.
@@ -295,7 +295,7 @@ Agora, ao acessar o Painel AVA, serão listados todos os cursos ativos em que o 
 
 ## Construção do Novo Tema
 
-Estamos desenvolvendo um novo tema para o Painel AVA, com melhorias visuais e de usabilidade. Para garantir que a implementação atual não seja afetada durante o desenvolvimento, o novo tema está sendo disponibilizado no endpoint `/novo`. 
+Estamos desenvolvendo um novo tema para o Painel AVA, com melhorias visuais e de usabilidade. Para garantir que a implementação atual não seja afetada durante o desenvolvimento, o novo tema está sendo disponibilizado no endpoint `/novo`.
 
 Além disso, as pastas `template` e `static` possuem uma subpasta chamada `novo`, onde estão sendo armazenados os arquivos específicos do novo tema. Isso permite que o desenvolvimento ocorra de forma isolada, sem interferir no tema atual.
 

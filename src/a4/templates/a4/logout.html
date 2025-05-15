@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
-        {% block head %} {% include 'painel/layouts/partials/head.html' %} {% endblock head %}
-    </head> 
-    <body> 
+        {% block head %} {% include "theme/ifrn23/layouts/partials/head.html %} {% endblock head %}
+    </head>
+    <body>
         <header>
-            <img alt="Logo do IFRN" src="{% static 'dashboard/img/logo.png' %}" width="132" height="40" />
+            <img alt="Logo do IFRN" src="{% static 'theme/ifrn23/img/logo.png' %}" width="132" height="40" />
         </header>
         <main>
             <h1>Quase lá!</h1>
@@ -23,10 +23,10 @@
                 </p>
             </div>
         </main>
-        {% block foot_pre %} {% include 'painel/layouts/partials/foot_pre.html' %} {% endblock foot_pre %}
+        {% block foot_pre %} {% include "theme/ifrn23/layouts/partials/foot_pre.html" %} {% endblock foot_pre %}
 
         {% block foot_custom %} {% endblock foot_custom %}
-        
-        {% block foot_pos %} {% include 'painel/layouts/partials/foot_pos.html' %} {% endblock foot_pos %}
+
+        {% block foot_pos %} {% include "theme/ifrn23/layouts/partials/foot_pos.html" %} {% endblock foot_pos %}
     </body>
 </html>

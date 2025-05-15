@@ -1,0 +1,74 @@
+{% load static %}
+<div id="sidebar-container" :class="{'contracted': sidebarContracted}">
+    {% verbatim %}
+    <div class="sidebar-top-content">
+        <div class="sidebar-top-content-header">
+            <p class="sidebar-title">Painel AVA</p>
+            <button @click="toggleSidebar" :class="{'btn-toggle-sidebar': sidebarContracted}">
+                <img src="/static/theme/ifrn25/img/sidebar-toggle.svg" alt="Toggle Sidebar">
+            </button>
+        </div>
+        <div class="sidebar-top-content-filter-modal-button-area">
+            <div class="sidebar-modal-button" @click="toggleModalWithContent('filter')"
+                :class="{'active': modalType === 'filter'}">
+                <i class="fa-solid fa-filter"></i>
+                <span class="sidebar-modal-button-text-contracted">FILTRO</span>
+                <span>Adicionar filtros</span>
+            </div>
+        </div>
+        <div class="sidebar-top-content-filters">
+            <div class="sidebar-top-content-filter-title">
+                <i class="fa-solid fa-sliders"></i>
+                <span>FILTRADO POR:</span>
+            </div>
+            <div class="sidebar-top-content-filters-list">
+                <div v-for="(filter, index) in activeFilters" :key="index"
+                    class="sidebar-top-content-filters-list-item">
+                    <div class="sidebar-top-content-filters-list-item-divider">
+                        <i v-if="filter.icon.startsWith('fa-')" :class="`fa-solid ${filter.icon}`"></i>
+                        <img v-else :src="`/static/theme/ifrn25/img/${filter.icon}-green.svg`" alt=""
+                            class="sidebar-top-content-filters-list-item-icon">
+                        <span class="sidebar-top-content-filters-list-item-text">
+                            {{ filter.label }}
+                        </span>
+                    </div>
+                    <span v-if="filter.type !== 'situacao'" class="sidebar-top-content-filters-list-item-button"
+                        @click="removeFilter(filter.type)">
+                        <i class="fa-solid fa-xmark"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-bottom-content">
+        <div class="sidebar-modal-button" @click="toggleModalWithContent('accessibility')"
+            :class="{'active': modalType === 'accessibility'}">
+            <i class="fa-solid fa-universal-access"></i>
+            <span>Acessibilidade</span>
+        </div>
+        <div class="sidebar-modal-button" @click="toggleModalWithContent('help')"
+            :class="{'active': modalType === 'help'}">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>Ajuda</span>
+        </div>
+        <!-- <div class="sidebar-modal-button" @click="toggleModalWithContent('notifications')"
+            :class="{'active': modalType === 'notifications'}">
+            <i class="fa-solid fa-bell"></i>
+            <span>Notificações</span>
+        </div> -->
+        <!-- <div class="sidebar-modal-button" @click="toggleModalWithContent('messages')"
+            :class="{'active': modalType === 'messages'}">
+            <i class="fa-solid fa-comment"></i>
+            <span>Mensagens</span>
+        </div> -->
+        <div class="sidebar-bottom-content-footer" @click="toggleModalWithContent('profile')"
+            :class="{'active': modalType === 'profile'}">
+            {% endverbatim %}
+            <img src="{{ logged_user.foto_url }}" alt="Imagem de perfil" class="profile-image">
+            <span>{{ logged_user.show_name }}</span>
+            {% verbatim %}
+        </div>
+    </div>
+    {% endverbatim %}
+</div>

@@ -125,8 +125,6 @@ def get_diarios(
                     diario["checkgradesurl"] = reverse(
                         "painel:checkgrades", kwargs={"id_ambiente": ava["ambiente"]["id"], "id_diario": id_diario}
                     )
-                    # diario["can_view_syncsurl"] = True
-                    # diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
 
                     diario["mensagemurl"] = f"{settings.OAUTH["BASE_URL"]}/edu/enviar_mensagem/?diario={id_diario}"
 

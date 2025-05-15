@@ -1,0 +1,16 @@
+{% load static %}
+<header id="header">
+    <div id="header-wrapper">
+        <a href="{% url 'painel:dashboard' %}" aria-label='Voltar para o início'>
+            <div id="header-brand"></div>
+        </a>
+        <div class="nav-navigation">
+            {% include "theme/ifrn23/layouts/partials/header-1-user.html" %}
+{#            <div id="alerts">#}
+{#                {% include "theme/ifrn23/layouts/partials/header-2-messages.html" %}#}
+{#                {% include "theme/ifrn23/layouts/partials/header-3-notifications.html" %}#}
+{#            </div>#}
+            {% include "theme/ifrn23/layouts/partials/header-4-ajuda.html" %}
+        </div>
+    </div>
+</header>

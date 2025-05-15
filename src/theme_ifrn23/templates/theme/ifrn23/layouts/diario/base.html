@@ -1,0 +1,30 @@
+{% extends "theme/ifrn23/layouts/base.html" %}
+{% load static %}
+
+{% block sidebar %}
+    <p><strong>{{ diario.fullname }}</strong><br><i>{{ diario.shortname }}</i></p>
+    <dl>
+      <dt>Turma</dt><dd>{{ diario.coursecategory }}</dd>
+
+      <dt>ID SUAP</dt><dd><a href="#">{{ diario.id_diario }}</a></dd>
+      <dt>ID Moodle</dt><dd><a href="{{ diario.viewurl }}">{{ diario.id }}</a></dd>
+      <dt>Curso</dt><dd>-</dd>
+      <dt>Quadro de notas</dt><dd><a href="#">Ver</a></dd>
+      <dt>Sala de coordenação</dt><dd><a href="#">Ver</a></dd>
+      <dt>Oculto para os alunos</dt><dd>Não</dd>
+      <dt>Sincronizações</dt><dd><a href="#">Ver</a></dd>
+    </dl>
+{% endblock sidebar %}
+
+{% block main_content %}
+-
+{% endblock main_content %}
+
+{% block foot_custom %}
+  <script type="module">
+      import ava_frontpage from "{% static 'theme/ifrn23/js/diario.js' %}?last_startup={{last_startup}}";
+      Vue.createApp(ava_frontpage).mount("#app");
+  </script>
+{% endblock foot_custom %}
+
+

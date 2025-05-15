@@ -1,0 +1,13 @@
+#sidebar {
+    width: auto;
+    margin: 24px 24px 24px 24px;
+    padding: 0 10px 0 0;
+    background-color: var(--branco-primario);
+
+    > ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    @import "3-main/41-sidebar-frontpage_filters";
+}
