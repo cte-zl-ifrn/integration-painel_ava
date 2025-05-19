@@ -11,7 +11,7 @@
                 <div
                     v-if="index == 0 || index == 1 || (index == 2 && praticas.length > 0) || (index == 3 && reutilizaveis.length > 0)">
                     {{ tab }}
-                    <span v-if="activeTab === index" class="badge">
+                    <span v-if="activeTab != index" class="badge">
                         <div v-if="activeTab === 0">
                             {{ diarios.length }}
                         </div>
@@ -110,14 +110,16 @@
             <div class="tab-pane" :class="{ active: activeTab === 0 }">
                 <div class="card-container" v-if="diarios.length > 0">
                     <div class="card" v-for="(item, index) in diarios" :key="index">
-                        <div class="painel-card-header">
-                            <div class="painel-card-header-icon">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                                <span class="painel-card-header-env">{{ item.environment }}</span>
+                        <div @click="goToCourse(item)" style="cursor: pointer;">
+                            <div class="painel-card-header">
+                                <div class="painel-card-header-icon">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    <span class="painel-card-header-env">{{ item.environment }}</span>
+                                </div>
+                                <span class="painel-card-header-shortname">{{ item.shortname }}</span>
                             </div>
-                            <span class="painel-card-header-shortname">{{ item.shortname }}</span>
+                            <span class="painel-card-title">{{ item.fullname }}</span>
                         </div>
-                        <span class="painel-card-title" @click="goToCourse(item)">{{ item.fullname }}</span>
                         <div class="painel-card-details">
                             <div class="painel-card-details-progress">
                                 <div class="painel-progress-bar-container">
@@ -137,9 +139,11 @@
                                     <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
                                 </div>
 
+                                <!--
                                 <div class="painel-card-details-info-chevron">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
+                                -->
                             </div>
                         </div>
                     </div>
@@ -153,14 +157,16 @@
             <div class="tab-pane" :class="{ active: activeTab === 1 }">
                 <div class="card-container" v-if="coordenacoes.length > 0">
                     <div class="card" v-for="(item, index) in coordenacoes" :key="index">
-                        <div class="painel-card-header">
-                            <div class="painel-card-header-icon">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                                <span class="painel-card-header-env">{{ item.environment }}</span>
+                        <div @click="goToCourse(item)" style="cursor: pointer;">
+                            <div class="painel-card-header">
+                                <div class="painel-card-header-icon">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    <span class="painel-card-header-env">{{ item.environment }}</span>
+                                </div>
+                                <span class="painel-card-header-shortname">{{ item.shortname }}</span>
                             </div>
-                            <span class="painel-card-header-shortname">{{ item.shortname }}</span>
+                            <span class="painel-card-title">{{ item.fullname }}</span>
                         </div>
-                        <span class="painel-card-title" @click="goToCourse(item)">{{ item.fullname }}</span>
                         <div class="painel-card-details">
                             <div class="painel-card-details-progress">
                                 <div class="painel-progress-bar-container">
@@ -180,9 +186,11 @@
                                     <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
                                 </div>
 
+                                <!--
                                 <div class="painel-card-details-info-chevron">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
+                                -->
                             </div>
                         </div>
                     </div>
