@@ -1,8 +1,0 @@
-{% load static %}
-<script type="module">
-    import ava_dashboard from "{% static 'dashboard/js/app.js' %}?last_startup={{last_startup}}";
-    Vue.createApp(ava_dashboard).mount("#app");
-
-    import ava_header from "{% static 'dashboard/js/header.js' %}?last_startup={{last_startup}}";
-    Vue.createApp(ava_header).mount("#header");
-</script>

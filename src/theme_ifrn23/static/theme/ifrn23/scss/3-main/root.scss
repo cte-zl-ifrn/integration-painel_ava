@@ -1,0 +1,35 @@
+main {
+    display: none;
+    max-width: 1312px;
+
+    background: var(--branco-primario) 0% 0% no-repeat padding-box;
+    //box-shadow: -2px 3px 5px #00000033;
+    border: 1px solid #36394033;
+    border-radius: 0px 4px 4px 0px;
+    margin: 0 auto 0px auto;
+
+    @import "3-main/10-page-title";
+    @import "3-main/11-page-title-mobile";
+    @import "3-main/20-page-menu";
+    @import "3-main/21-page-menu-mobile";
+    @import "3-main/30-page-areas";
+    @import "3-main/31-page-areas-mobile";
+    @import "3-main/40-sidebar";
+    @import "3-main/50-maincontent";
+    @import "3-main/52-maincontent-frontpage_cards-mobile";
+    @import "3-main/51-maincontent-frontpage_cards";
+    @import "3-main/60-mobile";
+    @import "3-main/70-popupFIlter-mobile";
+}
+
+.open{
+    .divBackdop-filter{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+    }
+}

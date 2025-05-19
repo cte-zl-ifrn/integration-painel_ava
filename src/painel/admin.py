@@ -1,10 +1,42 @@
 from django.utils.translation import gettext as _
 from django.db.models import Model
-from django.contrib.admin import register, display
+from django.contrib.admin import register, display, TabularInline, StackedInline
 from django.utils.safestring import mark_safe
 from base.admin import BaseModelAdmin
-from painel.models import Contrante, Ambiente, Curso, Popup
+from painel.models import Contrante, Ambiente, Curso, Popup, Theme, AddedTheme
 from painel.resources import AmbienteResource
+from unfold.admin import StackedInline, TabularInline
+
+####
+# Inlines
+####
+
+
+class AddedThemeInline(TabularInline):
+    model = AddedTheme
+    list_display = ["theme", "active"]
+    extra = 0
+    tab = True
+
+class AmbienteInline(TabularInline):
+    model = Ambiente
+    # list_display = ["theme", "active"]
+    extra = 0
+    tab = True
+
+
+class CursoAmbienteInline(TabularInline):
+    model = Curso
+    # list_display = ["theme", "active"]
+    extra = 0
+    tab = True
+
+
+class PopupAmbienteInline(StackedInline):
+    model = Popup
+    # list_display = ["theme", "active"]
+    extra = 0
+    tab = True
 
 
 ####
@@ -14,48 +46,16 @@ from painel.resources import AmbienteResource
 
 @register(Contrante)
 class ContranteAdmin(BaseModelAdmin):
-    list_display = ["url", "titulo"]
+    list_display = ["titulo", "url"]
     history_list_display = list_display
     field_to_highlight = list_display[0]
     search_fields = ["titulo", "url", "nome_contratante", "observacoes", "rodape"]
-    list_filter = [
-        "active",
-    ] + BaseModelAdmin.list_filter
+    list_filter = ["active"] + BaseModelAdmin.list_filter
+    inlines = [AmbienteInline, CursoAmbienteInline, PopupAmbienteInline, AddedThemeInline]
 
 
-@register(Ambiente)
-class AmbienteAdmin(BaseModelAdmin):
-    list_display = ["nome", "cores", "url", "active"]
-    history_list_display = list_display
-    field_to_highlight = list_display[0]
-    search_fields = ["nome", "url"]
-    list_filter = [
-        "active",
-    ] + BaseModelAdmin.list_filter
-    fieldsets = [
-        (_("Identificação"), {"fields": ["nome", "cor_mestra"]}),
-        (_("Integração"), {"fields": ["active", "url", "token"]}),
-    ]
-    resource_classes = [AmbienteResource]
-
-    @display(description="Cores")
-    def cores(self, obj):
-        return mark_safe(f"<span style='background: {obj.cor_mestra};'>&nbsp;&nbsp;&nbsp;</span>")
-
-
-@register(Curso)
-class CursoAdmin(BaseModelAdmin):
-    list_display = ["codigo", "nome"]
-    search_fields = ["codigo", "nome"]
-    list_filter = BaseModelAdmin.list_filter
-
-
-@register(Popup)
-class PopupAdmin(BaseModelAdmin):
-    list_display = ["titulo", "mostrando", "start_at", "end_at", "active"]
-    search_fields = ["titulo", "mensagem", "url"]
-    list_filter = [
-        "active",
-        "start_at",
-        "end_at"
-    ] + BaseModelAdmin.list_filter
+@register(Theme)
+class ThemeAdmin(BaseModelAdmin):
+    list_display = ["nome", "active"]
+    search_fields = ["nome"]
+    list_filter = ["active"] + BaseModelAdmin.list_filter

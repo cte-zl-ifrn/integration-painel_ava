@@ -7,7 +7,6 @@ from django.utils.safestring import mark_safe
 from django.urls import path, reverse
 from django.contrib.admin import ModelAdmin, register, site, display
 from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404, redirect
 from base.admin import BaseModelAdmin
 from .models import Usuario, Grupo
 from .resources import UsuarioResource
@@ -64,6 +63,13 @@ class UsuarioAdmin(BaseModelAdmin):
             {
                 "fields": [("last_json")],
                 "description": _("JSON com os dados do SUAP"),
+            },
+        ),
+        (
+            _("Settings"),
+            {
+                "fields": [("settings")],
+                "description": _("Configurações do usuário"),
             },
         ),
     ]

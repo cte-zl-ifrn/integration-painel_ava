@@ -56,6 +56,7 @@ def atualizacoes_counts(request: HttpRequest):
 
 @api.api_operation(["GET", "OPTIONS"], "/set_favourite/")
 def set_favourite(request: HttpRequest, response: HttpResponse, ava: str, courseid: int, favourite: int):
+    print(f"set_favourite: {ava=}, {courseid=}, {favourite=}")
     if request.method == "OPTIONS":
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"

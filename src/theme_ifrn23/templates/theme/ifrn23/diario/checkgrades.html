@@ -1,0 +1,33 @@
+{% extends "theme/ifrn23/layouts/diario/base.html" %}
+{% load dict_key %}
+
+
+{% block main_content %}
+    {% if etapas %}
+      <h1>Notas neste diário</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Aluno</th>
+            {% for etapa in etapas %}
+              <th scope="col">{{etapa}}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for aluno in alunos %}
+          <tr>
+            <td>{{ aluno.nome_completo }}</td>
+            {% for etapa in etapas %}
+              <td>{{ aluno.notas|dict_key:etapa|default_if_none:"-"}}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p><i>* Se alguma nota ou algum aluno não aparece aqui, favor conferir o quadro de notas e as configuração do quadro de notas deste diário no Moodle.</i></p>
+    {% else %}
+      <h1>Configure as notas deste diário</h1>
+      <p>Não foram configuradas notas para este diário. Favor atribuir os valores N1, N2, N3, N4 ou NAF para as categorias de notas que serão importadas para o SUAP.</p>
+    {% endif %}
+{% endblock main_content %}

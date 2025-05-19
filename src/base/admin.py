@@ -8,8 +8,7 @@ from django.contrib.admin.helpers import AdminErrorList, AdminForm, InlineAdminF
 from django.contrib.admin.exceptions import DisallowedModelAdminToField
 from django.core.exceptions import PermissionDenied
 from import_export.admin import ImportExportMixin, ExportActionMixin
-from simple_history.admin import SimpleHistoryAdmin
-from safedelete.admin import SafeDeleteAdmin, SafeDeleteAdminFilter
+from unfold.admin import ModelAdmin
 
 
 ####
@@ -29,7 +28,7 @@ class BaseChangeList(ChangeList):
         return f"/foos/foo/{pk}/"
 
 
-class BaseModelAdmin(ImportExportMixin, ExportActionMixin, SafeDeleteAdmin, SimpleHistoryAdmin):
+class BaseModelAdmin(ImportExportMixin, ExportActionMixin, ModelAdmin):
     list_filter = []
 
     def get_changelist(self, request, **kwargs):

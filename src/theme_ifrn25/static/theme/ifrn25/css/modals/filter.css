@@ -1,0 +1,106 @@
+#content-container .content .sidebar-modal .modal-content .modal-content-body #modal-content-body-filter {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+
+    .filter-search-bar {
+        width: 100%;
+        height: 35px;
+        background: var(--branco-primario) 0% 0% no-repeat padding-box;
+        border-radius: 18px;
+        opacity: 1;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        padding: 0 16px;
+        margin-bottom: 16px;
+
+        .filter-search-input {
+            width: 100%;
+            height: 100%;
+            background: none;
+            border: none;
+            padding-left: 16px;
+            font: normal normal 600 14px/19px Noto Sans;
+            letter-spacing: 0px;
+            color: var(--escuro-primario);
+            outline: none;
+        }
+    }
+
+    .filter-select-area {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background: var(--light);
+        border-radius: 18px;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        padding-inline: 1rem;
+
+        img, i {
+            width: 16px;
+            height: 16px;
+            color: var(--escuro-primario) 0% 0% no-repeat padding-box;
+            opacity: 1;
+            margin-bottom: 3px;
+        }
+
+        .v-select {
+            width: 100% !important;
+        }
+    }
+
+    .filter-select-area:first-of-type {
+        background: #000 !important;
+    }
+
+    .vs__search {
+        margin-left: .5rem;
+    }
+
+    .vs__open-indicator {
+        fill: var(--dark);
+    }
+
+    .modal-content-body-filter-button {
+        all: unset;
+        width: 100%;
+        padding-block: .5rem;
+        color: var(--primary);
+        background: var(--primary-light);
+        border-radius: 18px;
+        text-align: center;
+        font: var(--font-button1);
+        cursor: pointer;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            color: var(--primary-light);
+            background-color: var(--primary-dark);
+        }
+    }
+
+    .modal-content-body-filter-clear {
+        all: unset;
+        background: var(--light);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .75rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        
+        span {
+            font: var(--font-button1);
+        }
+
+        &:hover {
+            background-color: var(--light-dark);
+        }
+    }
+}

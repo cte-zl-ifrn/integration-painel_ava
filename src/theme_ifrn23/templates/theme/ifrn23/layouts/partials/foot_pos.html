@@ -1,0 +1,27 @@
+{% load static %}
+{% if show_vlibras %}
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+{% endif %}
+{% if show_userway %}
+    <script>function expand(e) { e.style.display = "none" == e.style.display ? "block" : "none" } function wpex_toggle(e, n, l) { el = document.getElementById("wpexlink" + e), el.innerHTML = el.innerHTML == n ? l : n, expand(document.getElementById("wpex" + e)) }</script>
+    <div id="UserWayDiv">
+        <img src="{% static 'theme/ifrn23/img/icon-acessibilty.svg'  %}" alt="">
+    </div>
+    <script>
+        (function (e) {
+            var el = document.createElement('script');
+            el.setAttribute("data-position", 2);
+            el.setAttribute("data-trigger", "UserWayDiv")
+            el.setAttribute('data-account', '{{userway_account}}');
+            el.setAttribute('src', 'https://cdn.userway.org/widget.js');
+            document.body.appendChild(el);
+        })();
+    </script>
+{% endif %}

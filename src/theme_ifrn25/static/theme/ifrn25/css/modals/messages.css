@@ -1,0 +1,95 @@
+#content-container .content .sidebar-modal .modal-content .modal-content-body #modal-content-body-messages {
+    max-height: 650px;
+    padding-top: 20px;
+    /* overflow-y: auto; */
+    
+    .message-item {
+        background: transparent;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        height: 40px;
+        width: 100%;
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+        
+        .message-avatar {
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .message-body {
+            display: flex;
+            align-items: start;
+            flex-direction: column;
+            width: 100%;
+
+            .message-info {
+                display: flex;
+                align-items: start;
+                justify-content: space-between;
+                width: 100%;
+        
+                .message-user {
+                    font: normal normal 600 14px/19px Noto Sans;
+                    color: var(--escuro-primario);
+                    display: block;
+                }
+                
+                .message-date {
+                    font: normal normal normal 12px/16px Noto Sans;
+                    color: var(--cinza-secundario);
+                }
+            }
+            
+            .message-content {
+                display: flex;
+                align-items: center;
+                justify-content: start;
+                max-width: 225px;
+
+                .message-content-text {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                i {
+                    margin-right: 4px;
+                    border-radius: 50%;
+                    padding: 2.5px 4px;
+                    font-size: 12px;
+
+                    &.sender {
+                        color: var(--verde-primario);
+                        transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+                        background: var(--verde-terciario) 0% 0% no-repeat padding-box;
+                    }
+                    &.receiver {
+                        color: var(--cinza-secundario);
+                        transform: matrix(-0.71, -0.71, 0.71, -0.71, 0, 0);
+                        background: #ccccccd8 0% 0% no-repeat padding-box;
+                    }
+                }
+            }
+        }
+        
+    }
+    
+}
+
+.no-messages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    font: normal normal normal 14px/19px Noto Sans;
+    color: var(--cinza-secundario);
+    margin-top: 20px;
+}

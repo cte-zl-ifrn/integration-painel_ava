@@ -30,11 +30,22 @@ class Situacao(Choices):
 
 
 class ActiveMixin:
-    active = BooleanField(_("ativo?"), default=True)
-
     @property
     def active_icon(self):
         return "✅" if self.active else "⛔"
+
+
+class Theme(ActiveMixin, Model):
+    nome = CharField(_("nome do theme"), max_length=255)
+    active = BooleanField(_("ativo?"), default=True)
+
+    class Meta:
+        verbose_name = _("tema")
+        verbose_name_plural = _("temas")
+        ordering = ["nome"]
+
+    def __str__(self):
+        return f"{self.nome} - {self.active_icon}"
 
 
 class Contrante(ActiveMixin, Model):
@@ -47,6 +58,10 @@ class Contrante(ActiveMixin, Model):
     css_personalizado = TextField(_("CSS personalizado"), null=True, blank=True)
     menu_personalizado = TextField(_("menu personalizado"), null=True, blank=True)
     regex_coordenacao = TextField(_("regex coordenação"), null=True, blank=True)
+    default_theme = ForeignKey(Theme, on_delete=PROTECT, null=True, blank=False)
+    useraway_active = BooleanField(_("ativar userway?"), default=False)
+    useraway_account = TextField(_("código do userway"), null=True, blank=True)
+    vlibras_active = TextField(_("ativar vlibras"), null=True, blank=True)
     active = BooleanField(_("ativo?"), default=True)
 
     history = HistoricalRecords()
@@ -66,6 +81,9 @@ class Ambiente(ActiveMixin, Model):
                                 font-size: 95%; border-radius: 4px;'>{color}</span>"""
 
     contratante = ForeignKey(Contrante, on_delete=PROTECT, null=True, blank=False)
+    nome = CharField(_("nome do ambiente"), max_length=255)
+    url = CharField(_("URL"), max_length=255)
+    token = CharField(_("token"), max_length=255)
     cor_mestra = CharField(
         _("cor mestra"),
         max_length=255,
@@ -75,9 +93,6 @@ class Ambiente(ActiveMixin, Model):
                 {_c('#fabd57')} {_c('#fd7941')} {_c('#f54f3b')} {_c('#2dcfe0')}"""
         ),
     )
-    nome = CharField(_("nome do ambiente"), max_length=255)
-    url = CharField(_("URL"), max_length=255)
-    token = CharField(_("token"), max_length=255)
     active = BooleanField(_("ativo?"), default=True)
 
     history = HistoricalRecords()
@@ -212,3 +227,16 @@ class Popup(ActiveMixin, Model):
     @staticmethod
     def activePopup():
         return next(iter(Popup.cached()), None)
+
+class AddedTheme(ActiveMixin, Model):
+    contratante = ForeignKey(Contrante, on_delete=PROTECT)
+    theme = ForeignKey(Theme, on_delete=PROTECT)
+    active = BooleanField(_("ativo?"), default=True)
+
+    class Meta:
+        verbose_name = _("tema autorizado")
+        verbose_name_plural = _("temas autorizados")
+        unique_together = ("contratante", "theme")
+
+    def __str__(self):
+        return f"{self.theme} - {self.contratante} - {self.active_icon}"

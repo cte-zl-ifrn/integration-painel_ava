@@ -44,10 +44,10 @@ CHANGE_URL = re.compile("/course/view.php\\?")
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
     response = requests.get(url, headers=headers, **kwargs)
-
+    byte_array_content = response.content
+    content = byte_array_content.decode(encoding) if decode and encoding is not None else byte_array_content
     if response.ok:
-        byte_array_content = response.content
-        return byte_array_content.decode(encoding) if decode and encoding is not None else byte_array_content
+        return content
     else:
         exc = HTTPException("%s - %s" % (response.status_code, response.reason))
         exc.status = response.status_code
@@ -63,17 +63,15 @@ def get_json(url, headers={}, encoding="utf-8", json_kwargs=None, **kwargs):
 
 
 def get_json_api(ava: Ambiente, service: str, **params: dict):
+    if params is not None:
+        querystring = "&".join([f"{k}={v}" for k, v in params.items() if v is not None])
+    else:
+        querystring = ""
+    url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
     try:
-        if params is not None:
-            querystring = "&".join([f"{k}={v}" for k, v in params.items() if v is not None])
-        else:
-            querystring = ""
-        url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
-        content = get_json(url, headers={"Authentication": f"Token {ava.token}"})
-        return content
-    except Exception as e:
-        logging.error(e)
-        sentry_sdk.capture_exception(e)
+        return get_json(url, headers={"Authentication": f"Token {ava.token}"})
+    except requests.exceptions.RequestException as e:
+        return None
 
 
 def get_diarios(
@@ -130,8 +128,6 @@ def get_diarios(
                     diario["checkgradesurl"] = reverse(
                         "painel:checkgrades", kwargs={"id_ambiente": ava["ambiente"]["id"], "id_diario": id_diario}
                     )
-                    # diario["can_view_syncsurl"] = True
-                    # diario["syncsurl"] = reverse("painel:syncs", kwargs={"id_diario": id_diario})
 
                     diario["mensagemurl"] = f"{settings.OAUTH["BASE_URL"]}/edu/enviar_mensagem/?diario={id_diario}"
 
@@ -180,7 +176,7 @@ def get_diarios(
             if "q" in querystrings:
                 querystrings["q"] = urllib.parse.quote(querystrings["q"])
 
-            result = get_json_api(ambiente, "get_diarios", **querystrings)
+            result = get_json_api(ambiente, "get_diarios", **querystrings) or {}
 
             for k, v in params["results"].items():
                 if k in result:
@@ -201,7 +197,9 @@ def get_diarios(
     if not cache.get("keys"):
         cache.set("keys", [])
 
-    cache_key=f"get_diarios:{username}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
+    cache_key = (
+        f"get_diarios:{username.lower()}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
+    )
 
     if cache_key not in cache.get("keys"):
         keys_list = cache.get("keys")
@@ -230,7 +228,7 @@ def get_diarios(
     requests = [
         {
             "ambiente": ava,
-            "username": username,
+            "username": username.lower(),
             "semestre": semestre,
             "situacao": situacao,
             "disciplina": disciplina,
@@ -282,48 +280,18 @@ def get_diarios(
     return results
 
 
-# def get_atualizacoes_counts(username: str) -> dict:
-#     def _callback(params):
-#         try:
-#             ava = params["ava"]
-#
-#             counts = get_json_api(ava, "get_atualizacoes_counts", username=params["username"])
-#             print("counts AVA:", counts)
-#
-#         except Exception as e:
-#             logging.error(e)
-#             sentry_sdk.capture_exception(e)
-#
-#     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-#         results = {
-#             "atualizacoes": [],
-#             "unread_notification_total": 0,
-#             "unread_conversations_total": 0,
-#         }
-#         requests = [
-#             {
-#                 "username": username,
-#                 "ava": ava,
-#                 "results": results,
-#             }
-#             for ava in Ambiente.cached()
-#         ]
-#         executor.map(_callback, requests)
-#
-#     results["atualizacoes"] = sorted(results["atualizacoes"], key=lambda e: e["ambiente"]["titulo"])
-#     # print("counts:",counts)
-#     return results
-
-
 def set_favourite_course(username: str, ava: str, courseid: int, favourite: int) -> dict:
     ava = get_object_or_404(Ambiente, nome=ava)
 
     for v in cache.get("keys"):
         cache.delete(v)
 
-    return get_json_api(ava, "set_favourite_course", username=username, courseid=courseid, favourite=favourite)
+    return (
+        get_json_api(ava, "set_favourite_course", username=username.lower(), courseid=courseid, favourite=favourite)
+        or {}
+    )
 
 
 def set_visible_course(username: str, ava: str, courseid: int, visible: int) -> dict:
     ava = get_object_or_404(Ambiente, nome=ava)
-    return get_json_api(ava, "set_visible_course", username=username, courseid=courseid, visible=visible)
+    return get_json_api(ava, "set_visible_course", username=username.lower(), courseid=courseid, visible=visible) or {}

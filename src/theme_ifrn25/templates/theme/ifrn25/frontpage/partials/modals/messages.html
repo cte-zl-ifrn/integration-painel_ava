@@ -1,0 +1,25 @@
+{% verbatim %}
+<div id="modal-content-body-messages" v-if="messages.length > 0">
+    <div v-for="message in filteredMessages" :key="message.id" class="message-item">
+        <img :src="message.img" alt="Avatar" class="message-avatar">
+        <div class="message-body">
+            <div class="message-info">
+                <span class="message-user">{{ message.sender || message.receiver }}</span>
+                <span class="message-date">
+                    <i class="fa-regular fa-clock"></i>
+                    {{ formatDateForMessages(message.date) }}
+                </span>
+            </div>
+            <div class="message-content">
+                <i class="fa-solid fa-arrow-up" :class="message.sender ? 'sender' : 'receiver'"></i>
+                <span class="message-content-text">
+                    {{ message.content }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div v-else>
+    <p class="no-messages">Nenhuma mensagem disponível.</p>
+</div>
+{% endverbatim %}

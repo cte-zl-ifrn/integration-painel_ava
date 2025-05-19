@@ -1,0 +1,21 @@
+#content-container .content .sidebar-modal .modal-content .modal-content-body #modal-content-body-help {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+
+    .modal-content-body-help-link {
+        display: inline-block;
+        width: 100%;
+        font: var(--font-button2);
+        color: var(--dark);
+        padding: .5rem 1rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+        &:hover {
+            background-color: var(--light);
+        }
+    }
+}

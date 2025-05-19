@@ -1,0 +1,9 @@
+{% load static %}
+<script type="module">
+    import ava_frontpage from "{% static "theme/ifrn23/js/app.js" %}?last_startup={{last_startup}}";
+    Vue.createApp(ava_frontpage).mount("#app");
+
+    import ava_header from "{% static "theme/ifrn23/js/header.js" %}?last_startup={{last_startup}}";
+    Vue.createApp(ava_header).mount("#header");
+</script>
+

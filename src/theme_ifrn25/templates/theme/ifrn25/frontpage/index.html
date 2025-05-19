@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+{% include 'theme/ifrn25/frontpage/partials/head.html' %}
+
+<body>
+    <div id="app">
+        {% include 'theme/ifrn25/frontpage/partials/sidebar.html' %}
+        {% include 'theme/ifrn25/frontpage/partials/content.html' %}
+        <div @click="closeSidebarAndModal" class="mobile-backdrop" :class="{
+                'open': modalOpen,
+                'contracted': sidebarContracted
+            }">
+        </div>
+    </div>
+    {% include 'theme/ifrn25/frontpage/partials/foot.html' %}
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 from django.utils.translation import gettext as _
 import logging
 from django.conf import settings
-from django.db.models import ForeignKey, PROTECT, CharField, DateTimeField, EmailField, TextField
+from django.db.models import ForeignKey, PROTECT, CharField, DateTimeField, EmailField, TextField, JSONField
 from django.http import HttpRequest
 from django.core.cache import cache
 from django.contrib.auth.models import AbstractUser, Group as OrignalGroup, UserManager
@@ -71,6 +71,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     email_academico = EmailField(_("e-Mail academico"), max_length=2560, null=True, blank=True)
     first_login = DateTimeField(_("first login"), null=True, blank=True)
     last_json = TextField(_("último JSON"), null=True, blank=True)
+    settings = JSONField(_("configurações"), null=True, blank=True)
 
     history = HistoricalRecords()
 
@@ -97,7 +98,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     @property
     def foto_url(self):
         if self.foto is None:
-            return f"{settings.STATIC_URL}dashboard/img/user.png"
+            return f"{settings.STATIC_URL}img/user.png"
         if not self.foto.lower().startswith("http"):
             return f"{settings.OAUTH['BASE_URL']}{self.foto}"
         return self.foto

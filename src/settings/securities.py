@@ -54,7 +54,6 @@ OAUTH = {
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "changeme"),
     "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
     "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", True),
-    "VERIFY_URL": env("OAUTH_VERIFY_URL", f"{oauth_base_url}/api/v1/verify/"),
 }
 
 SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "changeme")

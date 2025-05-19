@@ -1,0 +1,45 @@
+#content-container .content .sidebar-modal .modal-content .modal-content-body #modal-content-body-profile {
+    height: 100% !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+
+    .ava-button-options, .admin-button-options {
+        margin-top: .5rem;
+    }
+
+    .modal-button-option {
+        margin-bottom: .5rem;
+        a {
+            display: inline-block;
+            width: 100%;
+            font: var(--font-button2);
+            color: var(--dark);
+            padding: .5rem 1rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            &:hover {
+                background-color: var(--light);
+            }
+        }
+        &.exit-button {
+            margin-top: auto;
+            a {
+                background-color: var(--danger-light);
+                color: var(--danger-dark);
+                &:hover {
+                    background-color: var(--danger-dark);
+                    color: var(--danger-light);
+                }
+            }
+        }
+    }
+
+    .modal-content-body-profile-divider {
+        width: 100%;
+        height: 1px;
+        background: var(--cinza-primario);
+        margin-block: .5rem;
+    }
+}

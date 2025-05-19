@@ -1,0 +1,52 @@
+<div id="modal-content-body-profile">
+    <div class="ava-button-options">
+        <div class="modal-button-option">
+            <a href="https://suap.ifrn.edu.br/comum/minha_conta/">Perfil no SUAP</a>
+        </div>
+        <div class="modal-button-option">
+            <a href="https://aberto.ava.ifrn.edu.br">AVA Aberto</a>
+        </div>
+    </div>
+    <span class="modal-content-body-profile-divider"></span>
+    <div class="ava-button-options">
+        <span class="modal-content-body-title">Tema</span>
+        <div class="modal-button-option">
+            <a class="dropdown-item" href="{% url "painel:change_theme" theme="ifrn23" %}">Outono de 2023</a>
+        </div>
+        <div class="modal-button-option">
+            <a class="dropdown-item"><i>Outono de 2025</i></a>
+        </div>
+    </div>
+    {% if personificando %}
+    <span class="modal-content-body-profile-divider"></span>
+    <div class="admin-button-options">
+        <div class="modal-button-option">
+            <a class="dropdown-item" href="{% url 'a4:despersonificar' %}">Voltar a ser {{ user.show_name }}</a>
+        </div>
+    </div>
+    {% else %}
+    {% if user.is_superuser %}
+    <span class="modal-content-body-profile-divider"></span>
+    <div class="admin-button-options">
+        <span class="modal-content-body-title">Admins</span>
+        {% if admins %}
+        {% for ava in admins %}
+        <div class="modal-button-option">
+            <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="modal-button-option">
+            <a class="dropdown-item" href="{% url 'admin:painel_contrante_changelist' %}">Cadastrar ambiente</a>
+        </div>
+        {% endif %}
+        <div class="modal-button-option">
+            <a class="dropdown-item" href="{% url 'admin:index' %}">Painel AVA</a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    <div class="modal-button-option exit-button">
+        <a href="{% url 'a4:logout' %}">Sair</a>
+    </div>
+</div>

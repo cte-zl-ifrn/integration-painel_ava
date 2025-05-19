@@ -1,22 +1,23 @@
 #!/usr/bin/env python
 import os
 import sys
-from settings import DATABASES, DEBUG
+from sc4py.env import env, env_as_bool
 import psycopg
 import time
 import logging
 
 
-def _wait_db(db):
-    connection = psycopg.connect(
-        dbname=db["NAME"],
-        user=db["USER"],
-        password=db["PASSWORD"],
-        host=db["HOST"],
-        port=db["PORT"],
-    )
+def _wait_db():
+    host = env("POSTGRES_HOST", "db")
+    port = env("POSTGRES_PORT", "5432")
+    dbname = env("POSTGRES_DATABASE", "painel")
+    user = env("POSTGRES_USER", "ava_user")
+    password = env("POSTGRES_PASSWORD", "ava_pass")
+
+    connection = psycopg.connect(host=host, port=port, dbname=dbname, user=user, password=password)
+
     while connection.closed:
-        logging.info(f"ERROR: Aguardando o banco {db['HOST']:db['PORT']/db['NAME']} subir")
+        logging.info(f"ERROR: Aguardando o banco {host}:{port}/{dbname} subir")
         time.sleep(3)
 
 
@@ -28,7 +29,7 @@ if __name__ == "__main__":
         raise ImportError("ops!") from exc
 
     if len(sys.argv) > 1 and sys.argv[1] in ["runserver", "runserver_plus"]:
-        _wait_db(DATABASES["default"])
+        _wait_db()
         # execute_from_command_line([sys.argv[0], "collectstatic", "--noinput"])
         execute_from_command_line([sys.argv[0], "migrate"])
 

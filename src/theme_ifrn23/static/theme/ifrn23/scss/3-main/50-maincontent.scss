@@ -1,0 +1,21 @@
+#maincontent {
+    background: var(--branco-primario) 0% 0% no-repeat padding-box;
+    //background: #00000232;
+    box-shadow: 0px 3px 5px #00000033;
+    border-right: none;
+
+
+
+    @import "3-main/51-maincontent-frontpage_cards";
+}
+
+
+@media only screen and (max-width: 432px)  {
+    #maincontent {
+        background: none;
+        box-shadow: none;
+        border: none;
+
+        @import "3-main/51-maincontent-frontpage_cards";
+    }
+}

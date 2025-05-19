@@ -1,0 +1,242 @@
+<div id="content-container" :class="{'expanded': sidebarContracted}">
+    {% verbatim %}
+    <!--
+        Mantemos apenas as diretivas Vue (v-if, v-for, ...) dentro do bloco {% verbatim %} para evitar conflitos com a sintaxe do Django.
+        Os {% include %} ficam fora do bloco verbatim para que o Django possa processá-los normalmente durante a renderização do template.
+    -->
+    <div class="topbar">
+        <ul class="nav">
+            <li class="nav-link" v-for="(tab, index) in tabs" :key="index" :class="{ active: activeTab === index }"
+                @click="setActiveTab(index)">
+                <div
+                    v-if="index == 0 || index == 1 || (index == 2 && praticas.length > 0) || (index == 3 && reutilizaveis.length > 0)">
+                    {{ tab }}
+                    <span v-if="activeTab != index" class="badge">
+                        <div v-if="activeTab === 0">
+                            {{ diarios.length }}
+                        </div>
+                        <div v-if="activeTab === 1">
+                            {{ coordenacoes.length }}
+                        </div>
+                        <div v-if="activeTab === 2">
+                            {{ praticas.length }}
+                        </div>
+                        <div v-if="activeTab === 3">
+                            {{ reutilizaveis.length }}
+                        </div>
+                    </span>
+                </div>
+            </li>
+        </ul>
+        <span class="nav-line"></span>
+    </div>
+    <div class="content">
+        <div class="sidebar-modal" :class="{'open': modalOpen}">
+            <div class="modal-content">
+                <div class="modal-content-header">
+                    <div class="modal-content-header-title">
+                        <i :class="'modal-content-header-icon fa-solid ' + modalHeaderIcon"></i>
+                        <span>{{ modalTitle }}</span>
+                    </div>
+                    <div class="modal-content-header-notifications" v-if="notificationsModalOpen">
+                        <i class="fa-regular fa-circle-check modal-content-header-notifications-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-notifications-icon"></i>
+                    </div>
+                    <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                        <i class="fa-solid fa-user-group modal-content-header-messages-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-messages-icon"></i>
+                    </div>
+                    <i class="fa-solid fa-xmark modal-content-header-icon-x" @click="closeSidebarModal"></i>
+                </div>
+                <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                    <div class="modal-content-header-messages-search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" v-model="messageSearchQuery" placeholder="Pesquisar..."
+                            class="modal-content-header-messages-search-input" />
+                    </div>
+                    <div class="splide">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide" v-for="(option, index) in messageOptions" :key="index">
+                                    <div class="modal-content-header-messages-option"
+                                        :class="{ 'active': selectedMessageOption === option.value }"
+                                        @click="selectMessageOption(option.value)">
+                                        {{ option.label }}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-content-body" v-if="modalType === 'accessibility'">
+                    {% endverbatim %}
+                    {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'help'">
+                    {% endverbatim %}
+                    {% include 'theme/ifrn25/frontpage/partials/modals/help.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'notifications'">
+                    {% endverbatim %}
+                    {% include 'theme/ifrn25/frontpage/partials/modals/notifications.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'messages'">
+                    {% endverbatim %}
+                    {% include 'theme/ifrn25/frontpage/partials/modals/messages.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'profile'">
+                    {% endverbatim %}
+                    {% include 'theme/ifrn25/frontpage/partials/modals/profile.html' %}
+                    {% verbatim %}
+                </div>
+
+                <div class="modal-content-body" v-if="modalType === 'filter'">
+                    {% endverbatim %}
+                    {% include 'theme/ifrn25/frontpage/partials/modals/filter.html' %}
+                    {% verbatim %}
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane" :class="{ active: activeTab === 0 }">
+                <div class="card-container" v-if="diarios.length > 0">
+                    <div class="card" v-for="(item, index) in diarios" :key="index">
+                        <div @click="goToCourse(item)" style="cursor: pointer;">
+                            <div class="painel-card-header">
+                                <div class="painel-card-header-icon">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    <span class="painel-card-header-env">{{ item.environment }}</span>
+                                </div>
+                                <span class="painel-card-header-shortname">{{ item.shortname }}</span>
+                            </div>
+                            <span class="painel-card-title">{{ item.fullname }}</span>
+                        </div>
+                        <div class="painel-card-details">
+                            <div class="painel-card-details-progress">
+                                <div class="painel-progress-bar-container">
+                                    <div class="painel-progress-bar" :style="{ width: item.progress + '%' }"></div>
+                                </div>
+                                <span>{{ item.progress }}% concluído</span>
+                            </div>
+                            <div class="painel-card-details-info">
+                                <div
+                                    :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
+                                    <i
+                                        :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
+                                    <span>{{ item.visible ? 'Publicado' : 'Rascunho' }}</span>
+                                </div>
+                                <div :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`"
+                                    @click="toggleFavourite(item)">
+                                    <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
+                                </div>
+
+                                <!--
+                                <div class="painel-card-details-info-chevron">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/theme/ifrn25/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
+                </div>
+            </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 1 }">
+                <div class="card-container" v-if="coordenacoes.length > 0">
+                    <div class="card" v-for="(item, index) in coordenacoes" :key="index">
+                        <div @click="goToCourse(item)" style="cursor: pointer;">
+                            <div class="painel-card-header">
+                                <div class="painel-card-header-icon">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    <span class="painel-card-header-env">{{ item.environment }}</span>
+                                </div>
+                                <span class="painel-card-header-shortname">{{ item.shortname }}</span>
+                            </div>
+                            <span class="painel-card-title">{{ item.fullname }}</span>
+                        </div>
+                        <div class="painel-card-details">
+                            <div class="painel-card-details-progress">
+                                <div class="painel-progress-bar-container">
+                                    <div class="painel-progress-bar" :style="{ width: item.progress + '%' }"></div>
+                                </div>
+                                <span>{{ item.progress }}% concluído</span>
+                            </div>
+                            <div class="painel-card-details-info">
+                                <div
+                                    :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
+                                    <i
+                                        :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
+                                    <span>{{ item.visible ? 'Publicado' : 'Rascunho' }}</span>
+                                </div>
+                                <div :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`"
+                                    @click="toggleFavourite(item)">
+                                    <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
+                                </div>
+
+                                <!--
+                                <div class="painel-card-details-info-chevron">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/theme/ifrn25/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
+                </div>
+            </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 2 }">
+                <div class="card-container" v-if="praticas.length > 0">
+                    <div class="card" v-for="(item, index) in praticas" :key="index">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.name }}</h5>
+                            <div class="card-details">
+                                <p><strong>ID:</strong> {{ item.id }}</p>
+                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/theme/ifrn25/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
+                </div>
+            </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 3 }">
+                <div class="card-container" v-if="reutilizaveis.length > 0">
+                    <div class="card" v-for="(item, index) in reutilizaveis" :key="index">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.name }}</h5>
+                            <div class="card-details">
+                                <p><strong>ID:</strong> {{ item.id }}</p>
+                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="no-data" v-else>
+                    <!-- <img src="/static/theme/ifrn25/img/no-data.svg" alt="No Data"> -->
+                    <p>Nenhum dado encontrado.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+</div>

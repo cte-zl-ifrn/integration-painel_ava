@@ -115,7 +115,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         except Exception as e:
             sentry_sdk.capture_exception(e)
             if response_text is not None and "__buscar_menu__" in response_text:
-                vinculo_regex = re.compile('<span title=\"Vínculo: (\d*)\">(\w* \w*)</span></a><a href="/comum/minha_conta/"')
+                vinculo_regex = re.compile('<span title=\\"Vínculo: (\\d*)\\">(\\w* \\w*)</span></a><a href="/comum/minha_conta/"')
                 parts = vinculo_regex.findall(response_text)[0]
                 return render(
                     request,
