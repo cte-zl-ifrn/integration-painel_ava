@@ -68,7 +68,10 @@ def get_json_api(ava: Ambiente, service: str, **params: dict):
     else:
         querystring = ""
     url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
-    return get_json(url, headers={"Authentication": f"Token {ava.token}"})
+    try:
+        return get_json(url, headers={"Authentication": f"Token {ava.token}"})
+    except requests.exceptions.RequestException as e:
+        return None
 
 
 def get_diarios(
@@ -173,7 +176,7 @@ def get_diarios(
             if "q" in querystrings:
                 querystrings["q"] = urllib.parse.quote(querystrings["q"])
 
-            result = get_json_api(ambiente, "get_diarios", **querystrings)
+            result = get_json_api(ambiente, "get_diarios", **querystrings) or {}
 
             for k, v in params["results"].items():
                 if k in result:
@@ -194,7 +197,9 @@ def get_diarios(
     if not cache.get("keys"):
         cache.set("keys", [])
 
-    cache_key=f"get_diarios:{username}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
+    cache_key = (
+        f"get_diarios:{username.lower()}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
+    )
 
     if cache_key not in cache.get("keys"):
         keys_list = cache.get("keys")
@@ -223,7 +228,7 @@ def get_diarios(
     requests = [
         {
             "ambiente": ava,
-            "username": username,
+            "username": username.lower(),
             "semestre": semestre,
             "situacao": situacao,
             "disciplina": disciplina,
@@ -281,9 +286,12 @@ def set_favourite_course(username: str, ava: str, courseid: int, favourite: int)
     for v in cache.get("keys"):
         cache.delete(v)
 
-    return get_json_api(ava, "set_favourite_course", username=username, courseid=courseid, favourite=favourite)
+    return (
+        get_json_api(ava, "set_favourite_course", username=username.lower(), courseid=courseid, favourite=favourite)
+        or {}
+    )
 
 
 def set_visible_course(username: str, ava: str, courseid: int, visible: int) -> dict:
     ava = get_object_or_404(Ambiente, nome=ava)
-    return get_json_api(ava, "set_visible_course", username=username, courseid=courseid, visible=visible)
+    return get_json_api(ava, "set_visible_course", username=username.lower(), courseid=courseid, visible=visible) or {}
