@@ -13,14 +13,14 @@ logger = logging.getLogger(__name__)
 
 def __get_theme_prefix(request: HttpRequest) -> str:
     user: Usuario = request.user
-    selected = "ifrn25"
+    selected = "ifrn23"
     if user.settings is not None and "theme" in user.settings and "selected" in user.settings["theme"]:
         selected = user.settings["theme"]["selected"]
 
     instance = Theme.objects.filter(nome=selected, active=True).first()
     logger.info(f"Theme {selected} does not exist")
     if instance is None:
-        return "theme/ifrn25"
+        return "theme/ifrn23"
 
     return f"theme/{selected}"
 
@@ -37,7 +37,7 @@ def change_theme(request: HttpRequest, theme: str) -> HttpResponse:
         return redirect("painel:dashboard")
 
     user: Usuario = request.user
-    if user.settings is not None:
+    if user.settings is None:
         user.settings = {}
     if "theme" not in user.settings:
         user.settings["theme"] = {}
@@ -49,17 +49,20 @@ def change_theme(request: HttpRequest, theme: str) -> HttpResponse:
 @login_required
 def checkgrades(request: HttpRequest, id_ambiente: int, id_diario: int) -> HttpResponse:
     ambiente = get_object_or_404(Ambiente, pk=id_ambiente)
-    resposta = get_json_api(
-        ambiente,
-        "get_diarios",
-        **{"username": logged_user(request).username, "q": f"%23{id_diario}", "situacao": Situacao.ALL},
+    resposta = (
+        get_json_api(
+            ambiente,
+            "get_diarios",
+            **{"username": logged_user(request).username, "q": f"%23{id_diario}", "situacao": Situacao.ALL},
+        )
+        or {}
     )
     diario = resposta["diarios"][0] if len(resposta.get("diarios", [])) == 1 else None
     if diario is None:
         raise Exception("Diário não encontrado")
     parts = diario.get("idnumber", "").split("#")
     diario["id_diario"] = parts[1] if len(parts) == 2 else None
-    alunos = get_json_api(ambiente, "sync_down_grades", **{"diario_id": id_diario})
+    alunos = get_json_api(ambiente, "sync_down_grades", **{"diario_id": id_diario}) or []
     etapas = {}
     for grade in alunos:
         if grade["notas"]:
