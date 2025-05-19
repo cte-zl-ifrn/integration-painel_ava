@@ -5,6 +5,7 @@ MIDDLEWARE = [
     "painel.middleware.GoToHTTPSMiddleware",  # <-
     "painel.middleware.XForwardedForMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "painel.middleware.AuthMobileUserMiddleware",
     # "corsheaders.middleware.CorsMiddleware",

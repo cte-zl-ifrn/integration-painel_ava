@@ -14,6 +14,9 @@ MARKDOWNX_UPLOAD_URLS_PATH = env("MARKDOWNX_UPLOAD_URLS_PATH", "{ROOT_URL_PATH}/
 
 STATIC_URL = env("DJANGO_STATIC_URL", f"static/")
 STATIC_ROOT = env("DJANGO_STATIC_ROOT", "/app/static")
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"  # Configuração para otimizar arquivos estáticos
+)
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
