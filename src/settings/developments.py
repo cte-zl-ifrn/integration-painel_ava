@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
-from sc4py.env import env_as_bool, env_as_list
-from .apps import INSTALLED_APPS
-from .middlewares import MIDDLEWARE
-
-DEBUG = env_as_bool("DJANGO_DEBUG", True)
-TESTING_MODE = "test" in sys.argv
+from sc4py.env import env_as_list
+from settings.apps import INSTALLED_APPS
+from settings.middlewares import MIDDLEWARE
+from settings.indebug import DEBUG, TESTING_MODE
 
 if DEBUG and not TESTING_MODE:
     try:

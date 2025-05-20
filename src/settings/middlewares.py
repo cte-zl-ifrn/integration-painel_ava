@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from settings.indebug import DEBUG
+
 # Middleware
 MIDDLEWARE = [
     "painel.middleware.ExceptionMiddleware",
     "painel.middleware.GoToHTTPSMiddleware",  # <-
     "painel.middleware.XForwardedForMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "painel.middleware.AuthMobileUserMiddleware",
     # "corsheaders.middleware.CorsMiddleware",
@@ -16,3 +17,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
+
+if not DEBUG:
+    MIDDLEWARE.insert(4, "whitenoise.middleware.WhiteNoiseMiddleware")

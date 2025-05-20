@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from sc4py.env import env, env_as_bool, env_as_list
+from settings.indebug import DEBUG
 
 ALLOWED_HOSTS = env_as_list("DJANGO_ALLOWED_HOSTS", ["painel"] if env_as_bool("DJANGO_DEBUG", True) else [])
 WSGI_APPLICATION = env("DJANGO_WSGI_APPLICATION", "wsgi.application")
@@ -14,11 +15,13 @@ MARKDOWNX_UPLOAD_URLS_PATH = env("MARKDOWNX_UPLOAD_URLS_PATH", "{ROOT_URL_PATH}/
 
 STATIC_URL = env("DJANGO_STATIC_URL", f"static/")
 STATIC_ROOT = env("DJANGO_STATIC_ROOT", "/app/static")
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"  # Configuração para otimizar arquivos estáticos
-)
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "sass_processor.finders.CssFinder",
 ]
+
+if not DEBUG:
+    STATICFILES_STORAGE = (
+        "whitenoise.storage.CompressedManifestStaticFilesStorage"  # Configuração para otimizar arquivos estáticos
+    )
