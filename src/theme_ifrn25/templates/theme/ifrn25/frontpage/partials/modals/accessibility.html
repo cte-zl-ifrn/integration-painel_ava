@@ -1,0 +1,125 @@
+{% load static %}
+<div id="modal-content-body-profile">
+      
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="dyslexia-friendly">
+            <label class="custom-control-label" for="dyslexia-friendly">Fonte amigável a disléxicos</label>
+        </div>
+    </div>
+      
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="remove-justify">
+            <label class="custom-control-label" for="remove-justify">Remover alinhamento justificado</label>
+        </div>
+    </div>
+      
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="highlight-links">
+            <label class="custom-control-label" for="highlight-links">Links destacados</label>
+        </div>
+    </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="stop-animations">
+            <label class="custom-control-label" for="stop-animations">Parar animações</label>
+        </div>
+    </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="hide-illustrative-images">
+            <label class="custom-control-label" for="hide-illustrative-images ">Ocultar imagens apenas ilustrativas</label>
+        </div>
+    </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="high-line-height">
+            <label class="custom-control-label" for="high-line-height" alt="Aumenta para 1.5x">Linhas mais distantes</label>
+        </div>
+    </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="high-paragraph-distance">
+            <label class="custom-control-label" for="high-paragraph-distance" alt="Aumenta para 2x">Parágrafos distantes</label>
+        </div>
+    </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="big-cursor">
+            <label class="custom-control-label" for="big-cursor" alt="Usar variação de https://cdn.userway.org/widgetapp/images/arrow_w.svg">Cursos grande</label>
+        </div>
+    </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="activate-vlibras">
+            <label class="custom-control-label" for="activate-vlibras" alt="Usar variação de https://cdn.userway.org/widgetapp/images/arrow_w.svg">Habilitar vLibras</label>
+        </div>
+    </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        Cor
+        <div style='margin-left: 1em'>
+            <div class="custom-control custom-switch">
+                <input type="radio" class="custom-control-input" name='color-scheme' id="colors-default">
+                <label class="custom-control-label" for="colors-default">Padrão</label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input type="radio" class="custom-control-input" name='color-scheme' id="colors-dark">
+                <label class="custom-control-label" for="colors-dark">Escuro</label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input type="radio" class="custom-control-input" name='color-scheme' id="colors-light">
+                <label class="custom-control-label" for="colors-light">Claro</label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input type="radio" class="custom-control-input" name='color-scheme' id="colors-grays">
+                <label class="custom-control-label" for="colors-grays">Tons de cinza</label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input type="radio" class="custom-control-input" name='color-scheme' id="colors-low-saturation">
+                <label class="custom-control-label" for="colors-low-saturation">Baixa saturação</label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input type="radio" class="custom-control-input" name='color-scheme' id="colors-high-saturation">
+                <label class="custom-control-label" for="colors-high-saturation">Alta saturação</label>
+            </div>
+        </div>
+    </div>
+<style>
+    input[type="radio"]:checked + .radio-label {
+        background-color: #007bff; /* Cor de fundo para quando o radio está marcado */
+        color: white;              /* Cor do texto para quando o radio está marcado */
+      }
+</style>
+    <div class="drawer-item" id="settingsvisual">
+        Zoom
+        <div style='margin-left: 1em'>
+            <input type="radio" class="custom-control-input" name='color-scheme' id="zoom-100">&nbsp;<label class="custom-control-label" for="zoom-100">100%</label>
+            <input type="radio" class="custom-control-input" name='color-scheme' id="zoom-120">&nbsp;<label class="custom-control-label" for="zoom-120">120%</label>
+            <input type="radio" class="custom-control-input" name='color-scheme' id="zoom-130">&nbsp;<label class="custom-control-label" for="zoom-130">130%</label>
+            <input type="radio" class="custom-control-input" name='color-scheme' id="zoom-140">&nbsp;<label class="custom-control-label" for="zoom-140">140%</label>
+            <input type="radio" class="custom-control-input" name='color-scheme' id="zoom-150">&nbsp;<label class="custom-control-label" for="zoom-120">150%</label>
+        </div>
+    </div>
+
+<!--
+      <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+      </div>
+      <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+      <script>
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+      </script>
+-->
+</div>
