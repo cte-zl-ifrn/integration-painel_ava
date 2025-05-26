@@ -12,16 +12,16 @@
                     v-if="index == 0 || index == 1 || (index == 2 && praticas.length > 0) || (index == 3 && reutilizaveis.length > 0)">
                     {{ tab }}
                     <span v-if="activeTab != index" class="badge">
-                        <div v-if="activeTab === 0">
+                        <div v-if="index === 0 && diarios.length > 0">
                             {{ diarios.length }}
                         </div>
-                        <div v-if="activeTab === 1">
+                        <div v-if="index === 1 && coordenacoes.length > 0">
                             {{ coordenacoes.length }}
                         </div>
-                        <div v-if="activeTab === 2">
+                        <div v-if="index === 2 && praticas.length > 0">
                             {{ praticas.length }}
                         </div>
-                        <div v-if="activeTab === 3">
+                        <div v-if="index === 3 && reutilizaveis.length > 0">
                             {{ reutilizaveis.length }}
                         </div>
                     </span>
