@@ -4,7 +4,7 @@
         Mantemos apenas as diretivas Vue (v-if, v-for, ...) dentro do bloco {% verbatim %} para evitar conflitos com a sintaxe do Django.
         Os {% include %} ficam fora do bloco verbatim para que o Django possa processá-los normalmente durante a renderização do template.
     -->
-    <div class="topbar">
+    <div class="topbar" v-cloak>
         <ul class="nav">
             <li class="nav-link" v-for="tabItem in visibleTabs" :key="tabItem.originalIndex"
                 :class="{ active: activeTab === tabItem.originalIndex }" @click="setActiveTab(tabItem.originalIndex)">

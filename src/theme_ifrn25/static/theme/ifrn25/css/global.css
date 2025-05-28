@@ -287,6 +287,11 @@ h6 {
     color: var(--unnamed-color-1d2125);
 }
 
+/* Para esperar carregamento do vue */
+[v-cloak] {
+  display: none !important;
+}
+
 .isDesktop {
     display: inline;
 }
