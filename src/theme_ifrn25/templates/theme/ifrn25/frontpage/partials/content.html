@@ -12,23 +12,22 @@
                     v-if="index == 0 || index == 1 || (index == 2 && praticas.length > 0) || (index == 3 && reutilizaveis.length > 0)">
                     {{ tab }}
                     <span v-if="activeTab != index" class="badge">
-                        <div v-if="activeTab === 0">
+                        <div v-if="index === 0 && diarios.length > 0">
                             {{ diarios.length }}
                         </div>
-                        <div v-if="activeTab === 1">
+                        <div v-if="index === 1 && coordenacoes.length > 0">
                             {{ coordenacoes.length }}
                         </div>
-                        <div v-if="activeTab === 2">
+                        <div v-if="index === 2 && praticas.length > 0">
                             {{ praticas.length }}
                         </div>
-                        <div v-if="activeTab === 3">
+                        <div v-if="index === 3 && reutilizaveis.length > 0">
                             {{ reutilizaveis.length }}
                         </div>
                     </span>
                 </div>
             </li>
         </ul>
-        <span class="nav-line"></span>
     </div>
     <div class="content">
         <div class="sidebar-modal" :class="{'open': modalOpen}">
@@ -111,14 +110,8 @@
                 <div class="card-container" v-if="diarios.length > 0">
                     <div class="card" v-for="(item, index) in diarios" :key="index">
                         <div @click="goToCourse(item)" style="cursor: pointer;">
-                            <div class="painel-card-header">
-                                <div class="painel-card-header-icon">
-                                    <i class="fa-solid fa-graduation-cap"></i>
-                                    <span class="painel-card-header-env">{{ item.environment }}</span>
-                                </div>
-                                <span class="painel-card-header-shortname">{{ item.shortname }}</span>
-                            </div>
-                            <span class="painel-card-title">{{ item.fullname }}</span>
+                            <h2 class="painel-card-title">{{ item.fullname }}</h2>
+                            <span class="painel-card-header-shortname">{{ item.shortname }}</span>
                         </div>
                         <div class="painel-card-details">
                             <div class="painel-card-details-progress">
@@ -128,6 +121,10 @@
                                 <span>{{ item.progress }}% concluído</span>
                             </div>
                             <div class="painel-card-details-info">
+                                <div class="painel-card-info-icon">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    <span class="painel-card-header-env">{{ item.environment }}</span>
+                                </div>
                                 <div
                                     :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
                                     <i
