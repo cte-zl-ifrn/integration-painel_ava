@@ -96,9 +96,15 @@ class Usuario(SafeDeleteModel, AbstractUser):
         return self.nome_usual if self.nome_usual is not None and self.nome_usual != "" else self.username
 
     @property
+    def theme_selected(self) -> str:
+        if self.settings is not None and "theme" in self.settings and "selected" in self.settings["theme"]:
+            return self.settings["theme"]["selected"]
+        return "ifrn23"
+
+    @property
     def foto_url(self):
-        if self.foto is None:
-            return f"{settings.STATIC_URL}img/user.png"
+        if self.foto is None or "" == self.foto:
+            return f"{settings.STATIC_URL}theme/{self.theme_selected}/img/user.png"
         if not self.foto.lower().startswith("http"):
             return f"{settings.OAUTH['BASE_URL']}{self.foto}"
         return self.foto

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pathlib
-from settings.developments import DEBUG
+from settings.indebug import DEBUG
 
 PROJECT_PATH = pathlib.Path(__file__).parent.parent.resolve()
 

@@ -12,17 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 def __get_theme_prefix(request: HttpRequest) -> str:
-    user: Usuario = request.user
-    selected = "ifrn23"
-    if user.settings is not None and "theme" in user.settings and "selected" in user.settings["theme"]:
-        selected = user.settings["theme"]["selected"]
-
-    instance = Theme.objects.filter(nome=selected, active=True).first()
-    logger.info(f"Theme {selected} does not exist")
+    instance = Theme.objects.filter(nome=request.user.theme_selected, active=True).first()
     if instance is None:
         return "theme/ifrn23"
 
-    return f"theme/{selected}"
+    return f"theme/{request.user.theme_selected}"
 
 
 @login_required
