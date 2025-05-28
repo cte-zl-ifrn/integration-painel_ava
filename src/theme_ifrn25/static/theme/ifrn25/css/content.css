@@ -60,7 +60,7 @@
             display: flex;
             overflow: hidden;
             background-color: var(--branco-secundario);
-            gap: 15px;
+            gap: 1rem;
 
             .sidebar-modal.open ~ .tab-content {
                 padding-left: 0;
@@ -137,7 +137,7 @@
                             display: flex;
                             justify-content: center;
                             align-items: center;
-                            margin-left: 15px;
+                            margin-left: 1rem;
 
                             .modal-content-header-notifications-icon, .modal-content-header-messages-icon {
                                 color: var(--escuro-primario) 0% 0% no-repeat padding-box;
@@ -276,7 +276,6 @@
                             transition: transform 0.2s;
                             display: flex;
                             flex-direction: column;
-                            gap: 8px;
                             justify-content: space-between;
                             padding: 16px;
                             background: var(--branco-primario) 0% 0% no-repeat padding-box;
@@ -289,42 +288,36 @@
                                 box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                             }
 
-                            .painel-card-header {
+                            .painel-card-header-icon {
+                                background-color: var(--verde-claro);
                                 display: flex;
-                                justify-content: start;
                                 align-items: center;
+                                width: fit-content;
+                                margin-right: 8px;
+                                padding: 4px 8px;
+                                border-radius: 4px;
 
-                                .painel-card-header-icon {
-                                    background-color: var(--verde-claro);
-                                    display: flex;
-                                    align-items: center;
-                                    width: fit-content;
-                                    margin-right: 8px;
-                                    padding: 4px 8px;
-                                    border-radius: 4px;
-
-                                    i {
-                                        margin-right: 4px;
-                                        color: #338F74;
-                                    }
+                                i {
+                                    margin-right: 4px;
+                                    color: #338F74;
                                 }
                             }
-
+                            
                             .painel-card-title {
-                                font: normal normal 600 24px/22px Noto Sans;
+                                font: var(--font-heading1);
                                 color: var(--escuro-primario);
                                 letter-spacing: 0px;
                                 opacity: 1;
-                                cursor: pointer;
+                                /* cursor: pointer; */
                                 width: fit-content;
+                                margin-bottom: 1rem;
                             }
                             .painel-card-header-env {
                                 font-family: Noto Sans, Arial, sans-serif;
                             }
                             
                             .painel-card-header-shortname {
-                                font-family: Noto Sans, Arial, sans-serif;
-                                font-weight: 600;
+                                font:var(--font-button2);
                             }
 
                             .painel-card-details {
@@ -367,7 +360,7 @@
                                     justify-content: space-between;
                                     gap: .75rem;
 
-                                    .painel-card-details-info-published, .painel-card-details-info-unpublished {
+                                    .painel-card-details-info-published, .painel-card-details-info-unpublished, .painel-card-info-icon {
                                         border-radius: 4px;
                                         opacity: 1;
                                         display: flex;
@@ -384,21 +377,21 @@
                                             font-size: 12px;
                                         }
                                     }
-                                    
-                                    .painel-card-details-info-published {
-                                        background: var(--verde-claro) 0% 0% no-repeat padding-box;
-                                        color: var(--verde-escuro);
+
+                                    .painel-card-info-icon, .painel-card-details-info-published {
+                                        background-color: var(--primary-light);
+                                        color: var(--primary-dark);
                                     }
 
                                     .painel-card-details-info-unpublished {
-                                        background: var(--cinza-terciario) 0% 0% no-repeat padding-box;
-                                        color: var(--cinza-secundario);
+                                        background: var(--light);
+                                        color: var(--dark);
                                     }
 
                                     .painel-card-details-info-favourite, .painel-card-details-info-unfavourite, .painel-card-details-info-chevron {
                                         width: 24px;
                                         height: 24px;
-                                        background: var(--verde-claro) 0% 0% no-repeat padding-box;
+                                        background: var(--primary-light);
                                         opacity: 1;
                                         border-radius: 100%;
                                         display: flex;
@@ -406,11 +399,15 @@
                                         align-items: center;
                                         cursor: pointer;
                                         transition: all 0.2s ease-out;
-                                        color: #338F74;
+                                        color: var(--primary-dark);
                                         display: flex;
 
                                         i {
                                             font-size: 12px;
+                                        }
+                                        &:hover {
+                                            color: var(--primary-light);
+                                            background-color: var(--primary);
                                         }
                                     }
                                 }
@@ -422,11 +419,10 @@
         }
 
         @media (max-width: 767.98px) {
-            margin-left: 60px;
 
             .content .sidebar-modal {
                 position: absolute;
-                height: 85vh;
+                height: 85dvh;
             }
 
             .topbar {
@@ -449,6 +445,22 @@
                 }
             }
 
+            .content .tab-content {
+                margin-left: 1rem;
+                .tab-pane .card-container .card .painel-card-details {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: .5rem;
+                    .painel-card-details-progress {
+                        flex-flow: wrap-reverse;
+                        width: 100%;
+                        .painel-progress-bar-container {
+                            flex: 1;
+                        }
+                    }
+                }
+            } 
+
             .painel-card-header-icon  {
                 font: var(--font-heading6);
                 color: #338F74;
@@ -459,14 +471,9 @@
                 text-wrap: wrap;
             }
             .painel-card-title {
-                font-size: 18px !important;
+                font: var(--font-heading2) !important;
             }
-            .painel-card-details-progress {
-                flex-flow: wrap-reverse;
-                span {
-                    font-size: 10px !important;
-                }
-            }
+
             .painel-card-details-info-published {
                 i, span {
                     font-size: 10px !important;
