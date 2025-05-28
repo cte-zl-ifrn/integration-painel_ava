@@ -26,7 +26,12 @@ const app = Vue.createApp({
             modalType: '',
             modalTitle: '',
             activeTab: 0,
-            tabs: ['Meus Diários', 'Salas de Coordenação', 'Práticas', 'Reutilizar'],
+            tabs: [
+                { desktop: 'Meus Diários', mobile: 'Diários' }, 
+                { desktop: 'Salas de Coordenação', mobile: 'Coordenações' }, 
+                { desktop: 'Práticas', mobile: 'Práticas'}, 
+                { desktop: 'Reutilizar', mobile: 'Reutilizar'},
+            ],
             filters: {
                 situacao: 'inprogress',
                 semestre: null,
@@ -228,9 +233,7 @@ const app = Vue.createApp({
             }
         },
         isMobile() {
-            if (window.innerWidth < 768) {
-                return true;
-            }
+            return window.innerWidth < 768
         },
         toggleModalWithContent(type) {
             if (this.isMobile()) {

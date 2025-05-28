@@ -10,7 +10,8 @@
                 @click="setActiveTab(index)">
                 <div
                     v-if="index == 0 || index == 1 || (index == 2 && praticas.length > 0) || (index == 3 && reutilizaveis.length > 0)">
-                    {{ tab }}
+                    <span class="isDesktop">{{ tab.desktop }}</span>
+                    <span class="isMobile">{{ tab.mobile }}</span>
                     <span v-if="activeTab != index" class="badge">
                         <div v-if="index === 0 && diarios.length > 0">
                             {{ diarios.length }}
