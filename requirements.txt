@@ -12,12 +12,12 @@ requests==2.32.3
 
 # Session
 django-redis-sessions==0.6.2
-redis==6.1.0
+redis==6.2.0
 #valkey[libvalkey]==6.1.0
 
 # Security
 django-oauth-toolkit==3.0.1
-cryptography==44.0.3
+cryptography==45.0.3
 pyjwt==2.10.1
 django-cors-headers==4.7.0
 
@@ -27,7 +27,7 @@ django-safedelete==1.4.1
 
 # UI
 # django-unfold==1.0.0
-django-unfold==0.57.0
+django-unfold==0.59.0
 django-json-widget==2.0.1
 django-import-export==4.3.7
 django-compressor==4.5.1
@@ -45,5 +45,5 @@ psycopg[binary,pool]==3.2.9
 # pillow==11.2.0
 
 # Production
-sentry-sdk[django,rq]==2.27.0
+sentry-sdk[django,rq]==2.29.1
 gunicorn==23.0.0
