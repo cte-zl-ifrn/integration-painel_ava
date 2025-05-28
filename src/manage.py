@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 import os
 import sys
-from sc4py.env import env, env_as_bool
+from sc4py.env import env
 import psycopg
 import time
 import logging
+from settings.indebug import DEBUG, TESTING_MODE  # noqa: F401
+from settings.databases import DATABASES  # noqa: F401
 
 
 def _wait_db():
-    host = env("POSTGRES_HOST", "db")
-    port = env("POSTGRES_PORT", "5432")
-    dbname = env("POSTGRES_DATABASE", "painel")
-    user = env("POSTGRES_USER", "ava_user")
-    password = env("POSTGRES_PASSWORD", "ava_pass")
+    db = DATABASES['default']
+    host = db["HOST"]
+    port = db["PORT"]
+    dbname = db["NAME"]
+    user = db["USER"]
+    password = db["PASSWORD"]
 
     connection = psycopg.connect(host=host, port=port, dbname=dbname, user=user, password=password)
 
@@ -33,9 +36,7 @@ if __name__ == "__main__":
         # execute_from_command_line([sys.argv[0], "collectstatic", "--noinput"])
         execute_from_command_line([sys.argv[0], "migrate"])
 
-        from sc4py.env import env_as_bool
-
-        if env_as_bool("DJANGO_DEBUG", False):
+        if DEBUG:
             try:
                 import debugpy
 
