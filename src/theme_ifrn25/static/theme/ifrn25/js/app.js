@@ -113,6 +113,30 @@ const app = Vue.createApp({
         }
     },
     computed: {
+        visibleTabs() {
+            return this.tabs
+              .map((tab, index) => ({
+                ...tab, 
+                originalIndex: index
+              }))
+              .filter(tabItem => {
+                // Abas 0 (Meus Diários) e 1 (Salas de Coordenação) são sempre visíveis
+                if (tabItem.originalIndex === 0 || tabItem.originalIndex === 1) {
+                  return true;
+                }
+                // Aba 2 (Práticas) só é visível se praticas.length > 0
+                if (tabItem.originalIndex === 2 && this.praticas.length > 0) {
+                  return true;
+                }
+                // Aba 3 (Reutilizar) só é visível se reutilizaveis.length > 0
+                if (tabItem.originalIndex === 3 && this.reutilizaveis.length > 0) {
+                  return true;
+                }
+
+                return false;
+              });
+        },
+
         filteredMessages() {
             const searchQuery = this.messageSearchQuery.toLowerCase();
             
