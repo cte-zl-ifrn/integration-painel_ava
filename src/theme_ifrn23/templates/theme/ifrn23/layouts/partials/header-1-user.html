@@ -92,11 +92,6 @@
                             <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
                         </li>
                     {% endfor %}
-                {% else %}
-                    <li>
-                        <a class="dropdown-item"
-                            href="{% url 'admin:painel_ambiente_changelist' %}">Cadastrar ambiente</a>
-                    </li>
                 {% endif %}
                 <li style="border-left: 8px solid #000;">
                     <a class="dropdown-item"  href="{% url 'admin:index' %}">Painel AVA</a>
