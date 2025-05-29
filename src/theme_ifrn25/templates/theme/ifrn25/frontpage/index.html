@@ -3,13 +3,13 @@
 <html lang="pt-br">
 {% include 'theme/ifrn25/frontpage/partials/head.html' %}
 
-<body class="{% if request.user.menu_position == 'bottom' %}menu-bottom{% endif %}">
+<body>
     <script>
         window.INITIAL_SETTINGS = {
             menuPosition: "{{ request.user.menu_position }}"
         };
     </script>
-    <div id="app">
+    <div id="app" class="{% if request.user.menu_position == 'bottom' %}menu-bottom{% endif %}">
         {% include 'theme/ifrn25/frontpage/partials/sidebar.html' %}
         {% include 'theme/ifrn25/frontpage/partials/content.html' %}
         <div @click="closeSidebarAndModal" class="mobile-backdrop" :class="{
@@ -23,10 +23,11 @@
         // Caso o Vue ainda não tenha montado, já aplica a classe correta
         document.addEventListener("DOMContentLoaded", () => {
             const menuPosition = window.INITIAL_SETTINGS?.menuPosition || "top";
+            const app = document.getElementById('app');
             if (menuPosition === "bottom") {
-                document.body.classList.add("menu-bottom");
+                app.classList.add("menu-bottom");
             } else {
-                document.body.classList.remove("menu-bottom");
+                app.classList.remove("menu-bottom");
             }
         });
     </script>

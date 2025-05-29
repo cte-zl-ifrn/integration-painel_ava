@@ -196,14 +196,14 @@ const app = Vue.createApp({
     methods: {
         async savePosition() {
             const pos = this.isBottom ? 'bottom' : 'top';
+            const app = document.getElementById('app');
             try {
                 await axios.post(
                 '/settings/menu-position/',
                 new URLSearchParams({ position: pos }),
                 { headers: { 'X-CSRFToken': this.getCsrfToken() } }
                 );
-                // ajusta a classe no <body> (ou no wrapper)
-                document.body.classList.toggle('menu-bottom', this.isBottom);
+                app.classList.toggle('menu-bottom', this.isBottom);
             } catch (err) {
                 console.error('Não foi possível salvar a posição:', err);
             }
