@@ -1,8 +1,14 @@
 <div id="modal-content-body-profile">
     <div class="ava-button-options">
         <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="preferVisual">
-            <label class="custom-control-label" for="preferVisual">
+            <input 
+                type="checkbox" 
+                class="custom-control-input" 
+                id="menuPositionCheckbox"
+                v-model="isBottom"
+                @change="savePosition"
+            />
+            <label class="custom-control-label" for="menuPositionCheckbox">
                 Menu na parte inferior
             </label>
         </div>

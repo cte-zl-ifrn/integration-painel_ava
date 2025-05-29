@@ -100,6 +100,12 @@ class Usuario(SafeDeleteModel, AbstractUser):
         if self.settings is not None and "theme" in self.settings and "selected" in self.settings["theme"]:
             return self.settings["theme"]["selected"]
         return "ifrn23"
+    
+    @property
+    def menu_position(self) -> str:
+        if self.settings and "menu_position" in self.settings:
+            return self.settings["menu_position"]
+        return "bottom"
 
     @property
     def foto_url(self):

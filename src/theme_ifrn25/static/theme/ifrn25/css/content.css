@@ -453,6 +453,9 @@
                 .tab-pane .card-container .card .painel-card-details {
                     flex-direction: column;
                     align-items: flex-start;
+                    .painel-card-details-info {
+                        gap: .5rem;
+                    }
                     .painel-card-details-progress {
                         flex-flow: wrap-reverse;
                         width: 100%;

@@ -6,6 +6,7 @@ const app = Vue.createApp({
     },
     data() {
         return {
+            isBottom: window.INITIAL_SETTINGS.menuPosition === 'bottom',
             sidebarContracted: false,
             modalOpen: false,
             accessibilityModalOpen: false,
@@ -193,6 +194,27 @@ const app = Vue.createApp({
         this.sidebarContracted = this.isMobile();
     },
     methods: {
+        async savePosition() {
+            const pos = this.isBottom ? 'bottom' : 'top';
+            try {
+                await axios.post(
+                '/settings/menu-position/',
+                new URLSearchParams({ position: pos }),
+                { headers: { 'X-CSRFToken': this.getCsrfToken() } }
+                );
+                // ajusta a classe no <body> (ou no wrapper)
+                document.body.classList.toggle('menu-bottom', this.isBottom);
+            } catch (err) {
+                console.error('Não foi possível salvar a posição:', err);
+            }
+        },
+        getCsrfToken() {
+            // simples helper para pegar o cookie 'csrftoken'
+            return document.cookie.split(';')
+                .map(c => c.trim())
+                .find(c => c.startsWith('csrftoken='))
+                .split('=')[1];
+        },
         initSplide() {
             if (this.splideInstance) {
                 this.splideInstance.destroy();
