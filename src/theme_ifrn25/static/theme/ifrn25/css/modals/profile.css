@@ -8,6 +8,60 @@
         margin-top: .5rem;
     }
 
+    .modal-switch-option {
+        display: flex;
+        position: relative;
+        gap: .5rem;
+        margin-bottom: .5rem;
+        margin: .5rem 1rem;
+        font: var(--font-button2);
+        cursor: pointer;
+        input {
+            opacity: 0;
+            width: 32px;
+            height: 20px;
+        }
+        .slider {
+            position: absolute;
+            z-index: -1;
+            height: 20px;
+            width: 32px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--light-dark);
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+            &:before { /* O círculo */
+                position: absolute;
+                content: "";
+                height: 12px;
+                width: 12px; 
+                left: 4px;
+                bottom: 4px;
+                background-color: var(--general-white);
+                -webkit-transition: .4s;
+                transition: .4s;
+                border-radius: 50%;
+            }
+        }
+        input:checked + .slider {
+            background-color: var(--primary); /* Cor switch ligado */
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--primary);
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(12px);
+            -ms-transform: translateX(12px);
+            transform: translateX(12px);
+        }
+    }
+
     .modal-button-option {
         margin-bottom: .5rem;
         a {

@@ -1,8 +1,9 @@
 import logging
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from a4.models import logged_user, Usuario
 from painel.models import Ambiente, Situacao, Theme
 from painel.services import get_json_api
@@ -38,6 +39,21 @@ def change_theme(request: HttpRequest, theme: str) -> HttpResponse:
     user.settings["theme"]["selected"] = theme
     user.save()
     return redirect("painel:dashboard")
+
+
+@login_required
+@require_POST
+def change_menu_position(request: HttpRequest) -> JsonResponse:
+    position = request.POST.get("position")
+    if position not in ("top", "bottom"):
+        return JsonResponse({"error": "Valor inválido"}, status=400)
+
+    user = request.user
+    if user.settings is None:
+        user.settings = {}
+    user.settings["menu_position"] = position
+    user.save(update_fields=["settings"])
+    return JsonResponse({"status": "ok", "position": position})
 
 
 @login_required

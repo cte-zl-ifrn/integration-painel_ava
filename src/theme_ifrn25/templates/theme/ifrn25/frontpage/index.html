@@ -4,7 +4,12 @@
 {% include 'theme/ifrn25/frontpage/partials/head.html' %}
 
 <body>
-    <div id="app">
+    <script>
+        window.INITIAL_SETTINGS = {
+            menuPosition: "{{ request.user.menu_position }}"
+        };
+    </script>
+    <div id="app" class="{% if request.user.menu_position == 'bottom' %}menu-bottom{% endif %}">
         {% include 'theme/ifrn25/frontpage/partials/sidebar.html' %}
         {% include 'theme/ifrn25/frontpage/partials/content.html' %}
         <div @click="closeSidebarAndModal" class="mobile-backdrop" :class="{
@@ -14,6 +19,19 @@
         </div>
     </div>
     {% include 'theme/ifrn25/frontpage/partials/foot.html' %}
+    <script>
+        // Caso o Vue ainda não tenha montado, já aplica a classe correta
+        document.addEventListener("DOMContentLoaded", () => {
+            const menuPosition = window.INITIAL_SETTINGS?.menuPosition || "top";
+            const app = document.getElementById('app');
+            if (menuPosition === "bottom") {
+                app.classList.add("menu-bottom");
+            } else {
+                app.classList.remove("menu-bottom");
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>
 
 </html>

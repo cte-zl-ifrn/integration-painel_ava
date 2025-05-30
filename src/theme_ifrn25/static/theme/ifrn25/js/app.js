@@ -6,6 +6,7 @@ const app = Vue.createApp({
     },
     data() {
         return {
+            isBottom: window.INITIAL_SETTINGS.menuPosition === 'bottom',
             sidebarContracted: false,
             modalOpen: false,
             accessibilityModalOpen: false,
@@ -26,7 +27,12 @@ const app = Vue.createApp({
             modalType: '',
             modalTitle: '',
             activeTab: 0,
-            tabs: ['Meus Diários', 'Salas de Coordenação', 'Práticas', 'Reutilizar'],
+            tabs: [
+                { desktop: 'Meus Diários', mobile: 'Diários' }, 
+                { desktop: 'Salas de Coordenação', mobile: 'Coordenações' }, 
+                { desktop: 'Práticas', mobile: 'Práticas'}, 
+                { desktop: 'Reutilizar', mobile: 'Reutilizar'},
+            ],
             filters: {
                 situacao: 'inprogress',
                 semestre: null,
@@ -108,6 +114,30 @@ const app = Vue.createApp({
         }
     },
     computed: {
+        visibleTabs() {
+            return this.tabs
+              .map((tab, index) => ({
+                ...tab, 
+                originalIndex: index
+              }))
+              .filter(tabItem => {
+                // Abas 0 (Meus Diários) e 1 (Salas de Coordenação) são sempre visíveis
+                if (tabItem.originalIndex === 0 || tabItem.originalIndex === 1) {
+                  return true;
+                }
+                // Aba 2 (Práticas) só é visível se praticas.length > 0
+                if (tabItem.originalIndex === 2 && this.praticas.length > 0) {
+                  return true;
+                }
+                // Aba 3 (Reutilizar) só é visível se reutilizaveis.length > 0
+                if (tabItem.originalIndex === 3 && this.reutilizaveis.length > 0) {
+                  return true;
+                }
+
+                return false;
+              });
+        },
+
         filteredMessages() {
             const searchQuery = this.messageSearchQuery.toLowerCase();
             
@@ -164,6 +194,27 @@ const app = Vue.createApp({
         this.sidebarContracted = this.isMobile();
     },
     methods: {
+        async savePosition() {
+            const pos = this.isBottom ? 'bottom' : 'top';
+            const app = document.getElementById('app');
+            try {
+                await axios.post(
+                '/settings/menu-position/',
+                new URLSearchParams({ position: pos }),
+                { headers: { 'X-CSRFToken': this.getCsrfToken() } }
+                );
+                app.classList.toggle('menu-bottom', this.isBottom);
+            } catch (err) {
+                console.error('Não foi possível salvar a posição:', err);
+            }
+        },
+        getCsrfToken() {
+            // simples helper para pegar o cookie 'csrftoken'
+            return document.cookie.split(';')
+                .map(c => c.trim())
+                .find(c => c.startsWith('csrftoken='))
+                .split('=')[1];
+        },
         initSplide() {
             if (this.splideInstance) {
                 this.splideInstance.destroy();
@@ -228,9 +279,7 @@ const app = Vue.createApp({
             }
         },
         isMobile() {
-            if (window.innerWidth < 768) {
-                return true;
-            }
+            return window.innerWidth < 768
         },
         toggleModalWithContent(type) {
             if (this.isMobile()) {
