@@ -1,6 +1,7 @@
 import * as VueSelect from './vue-select.js';
 
 const app = Vue.createApp({
+    delimiters: ["[[", "]]"],
     components: {
         'v-select': VueSelect.default,
     },

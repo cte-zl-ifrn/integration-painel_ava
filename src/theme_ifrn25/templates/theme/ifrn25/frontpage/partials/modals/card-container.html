@@ -1,0 +1,65 @@
+<!-- Se estiver carregando, mostra animação/skeleton -->
+<div class="card-container loading" v-if="loading">
+    <div class="card-skeleton" v-for="n in 4" :key="n">
+        <div class="header-skeleton">
+            <div class="title-skeleton"></div>
+            <div class="subtitle-skeleton"></div>
+        </div>
+
+        <div class="footer-skeleton">
+            <div class="progress-bar-skeleton-container">
+                <div class="progress-bar-skeleton"></div>
+                <div class="progress-text-skeleton"></div>
+            </div>
+            <div class="itens-skeleton">
+                <div class="badge-skeleton"></div>
+                <div class="badge-skeleton"></div>
+                <div class="icon-skeleton"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="card-container" v-if="!loading && {{ list_name }}.length > 0">
+    <div class="card" v-for="(item, index) in {{ list_name }}" :key="index">
+        <div @click="goToCourse(item)" style="cursor: pointer;">
+            <h2 class="painel-card-title">[[ item.fullname ]]</h2>
+            <span class="painel-card-header-shortname">[[ item.shortname ]]</span>
+        </div>
+        <div class="painel-card-details">
+            <div class="painel-card-details-progress">
+                <div class="painel-progress-bar-container">
+                    <div class="painel-progress-bar" :style="{ width: item.progress + '%' }"></div>
+                </div>
+                <span>[[ item.progress ]]% concluído</span>
+            </div>
+            <div class="painel-card-details-info">
+                <div class="painel-card-info-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span class="painel-card-header-env">[[ item.environment ]]</span>
+                </div>
+                <div
+                    :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
+                    <i :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
+                    <span>[[ item.visible ? 'Publicado' : 'Rascunho' ]]</span>
+                </div>
+                <div :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`"
+                    @click="toggleFavourite(item)">
+                    <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
+                </div>
+
+                <!--
+                                <div class="painel-card-details-info-chevron">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                                -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="no-data" v-if="!loading && {{ list_name }}.length===0">
+    <!-- <img src="/static/theme/ifrn25/img/no-data.svg" alt="No Data"> -->
+    <p>Nenhum dado encontrado.</p>
+</div>
