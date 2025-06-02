@@ -422,7 +422,7 @@ const app = Vue.createApp({
                     isfavourite: diario.isfavourite,
                     environment: diario.ambiente.titulo,
                     progress: diario.progress,
-                    visible: diario.visible,
+                    visible: diario.visible == 1,
                     url: diario.viewurl
                 }));
             } else {
@@ -436,7 +436,7 @@ const app = Vue.createApp({
                     isfavourite: coordenacao.isfavourite,
                     environment: coordenacao.ambiente.titulo,
                     progress: coordenacao.progress,
-                    visible: coordenacao.visible,
+                    visible: coordenacao.visible == 1,
                     url: coordenacao.viewurl
                 }));
             }
