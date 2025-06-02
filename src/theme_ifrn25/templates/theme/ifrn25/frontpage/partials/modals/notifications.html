@@ -1,16 +1,15 @@
-{% verbatim %}
 <div id="modal-content-body-notifications" v-if="notifications.length > 0">
     <div v-for="notification in notifications" :key="notification.id" class="notification-item">
         <div class="notification-content">
             <i class="fa-solid fa-lightbulb"></i>
             <span class="notification-content-text">
-                {{ notification.title }}
+                [[ notification.title ]]
             </span>
         </div>
         <div class="notification-info">
             <span class="notification-date">
                 <i class="fa-regular fa-clock"></i>
-                {{ formatDateForNotifications(notification.date) }}
+                [[ formatDateForNotifications(notification.date) ]]
             </span>
             <a :href="notification.link" class="notification-link">Ver mais <i class="fa-solid fa-angle-right"></i></a>
         </div>
@@ -19,4 +18,3 @@
 <div v-else>
     <p class="no-notifications">Nenhuma notificação disponível.</p>
 </div>
-{% endverbatim %}

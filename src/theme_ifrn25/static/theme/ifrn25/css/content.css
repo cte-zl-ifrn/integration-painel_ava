@@ -46,10 +46,10 @@
                 .badge{
                     background-color: var(--secondary-light);
                     border-radius: 50%;
-                    font-size: var(--font-heading6);
+                    font: var(--font-heading5);
                     color: var(--secondary-dark);
                     margin-left: .5rem;
-                    padding: 3px 6px;
+                    padding: 1px 6px;
                 }
             }
         }
@@ -356,6 +356,9 @@
                             min-height: 100px;
                             max-height: 350px;
                             width: 100%;
+                            max-width: 1360px;
+                            margin-left: auto;
+                            margin-right: auto;
                             margin-bottom: 1rem;
                             border: none;
                             transition: transform 0.2s;
