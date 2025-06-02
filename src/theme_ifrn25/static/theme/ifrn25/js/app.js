@@ -89,6 +89,7 @@ const app = Vue.createApp({
             diarios: [],
             salas: [],
             reutilizaveis: [],
+            loading: false,
         };
     },
     watch: {
@@ -383,7 +384,8 @@ const app = Vue.createApp({
         setActiveTab(index) {
             this.activeTab = index;
         },
-        filterCards() {
+        async filterCards() {
+            this.loading = true;
             try {
                 const params = new URLSearchParams({
                     q: this.filters.query || "",
@@ -394,23 +396,16 @@ const app = Vue.createApp({
                     ambiente: this.filters.ambiente || "",
                 });
 
-                fetch(`/api/v1/diarios/?${params.toString()}`)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log('Data fetched:', data);
-                        
-                        this.handleFilterResponse(data);
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching data:", error);
-                    });
-            } catch (e) {
-                console.debug(e);
+                const res = await fetch(`/api/v1/diarios/?${params.toString()}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                this.handleFilterResponse(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                this.diarios = [];
+            } finally {
+                this.loading = false;
             }
         },
         handleFilterResponse(data) {

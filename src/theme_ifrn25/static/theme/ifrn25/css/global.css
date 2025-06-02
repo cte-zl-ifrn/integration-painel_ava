@@ -299,6 +299,19 @@ h6 {
     display: none;
 }
 
+/* Animação de Pulsação/Brilho */
+@keyframes pulse {
+    0% {
+        background-color: #e0e0e0;
+    }
+    50% {
+        background-color: #f0f0f0;
+    }
+    100% {
+        background-color: #e0e0e0;
+    }
+}
+
 @media (max-width: 767.98px) {
     .mobile-backdrop:not(.contracted), .mobile-backdrop.open {
         position: fixed;
