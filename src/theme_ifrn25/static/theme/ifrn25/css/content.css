@@ -356,6 +356,9 @@
                             min-height: 100px;
                             max-height: 350px;
                             width: 100%;
+                            max-width: 1360px;
+                            margin-left: auto;
+                            margin-right: auto;
                             margin-bottom: 1rem;
                             border: none;
                             transition: transform 0.2s;
