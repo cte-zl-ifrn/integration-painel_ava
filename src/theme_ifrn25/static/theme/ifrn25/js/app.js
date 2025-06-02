@@ -386,6 +386,10 @@ const app = Vue.createApp({
             this.activeTab = index;
         },
         async filterCards() {
+            // Modal fecha ao fazer busca no mobile
+            if(this.isMobile()) {
+                this.closeSidebarModal();
+            }
             this.loading = true;
             try {
                 const params = new URLSearchParams({
