@@ -46,10 +46,10 @@
                 .badge{
                     background-color: var(--secondary-light);
                     border-radius: 50%;
-                    font-size: var(--font-heading6);
+                    font: var(--font-heading5);
                     color: var(--secondary-dark);
                     margin-left: .5rem;
-                    padding: 3px 6px;
+                    padding: 1px 6px;
                 }
             }
         }
