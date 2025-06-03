@@ -40,6 +40,7 @@
                     <span class="painel-card-header-env">[[ item.environment ]]</span>
                 </div>
                 <div
+                    @click="toggleVisible(item)"
                     :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
                     <i :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
                     <span>[[ item.visible ? 'Publicado' : 'Rascunho' ]]</span>

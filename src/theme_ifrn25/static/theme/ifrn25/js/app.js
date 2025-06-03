@@ -579,6 +579,25 @@ const app = Vue.createApp({
                 return shortname;
             }
         },
+        toggleVisible(card) {
+            if (confirm("Confirma a operação?")) {
+                const new_status = card.visible ? '0' : '1';
+                axios
+                    .get("/api/v1/set_visible/", {
+                        params: {
+                            ava: card.environment,
+                            courseid: card.id,
+                            visible: new_status,
+                        },
+                    })
+                    .then((response) => {
+                        card.visible = new_status == 1;
+                    })
+                    .catch((error) => {
+                        console.debug(error);
+                    });
+            }
+        },
         toggleFavourite(item) {
             const new_status = item.isfavourite ? 0 : 1;
             const params = new URLSearchParams({
