@@ -300,3 +300,16 @@ Estamos desenvolvendo um novo tema para o Painel AVA, com melhorias visuais e de
 Além disso, as pastas `template` e `static` possuem uma subpasta chamada `novo`, onde estão sendo armazenados os arquivos específicos do novo tema. Isso permite que o desenvolvimento ocorra de forma isolada, sem interferir no tema atual.
 
 Durante o período de transição, ambos os temas estarão disponíveis, permitindo testes e ajustes antes da migração definitiva para o novo design.
+
+
+```css
+/* add ao css do admin */
+.submit-row [type="submit"], .submit-row a {
+    border: 1px solid rgb(var(--color-base-200));
+    padding: 4px 8px;
+    border-radius: 8px;
+    line-height: 100%;
+    margin: 0;
+    height: auto !important;
+}
+```
