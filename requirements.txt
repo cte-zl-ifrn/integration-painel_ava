@@ -1,5 +1,5 @@
 # Core
-Django==5.2.1
+Django==5.2.2
 sc4py==0.1.4
 
 # Models
@@ -7,7 +7,7 @@ django-better-choices==1.17
 # django-polymorphic==3.1.0
 
 # REST
-django-ninja==1.4.1
+django-ninja==1.4.3
 requests==2.32.3
 
 # Session
