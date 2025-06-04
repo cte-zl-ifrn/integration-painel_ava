@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-from settings.indebug import DEBUG
+from settings.indebug import DEBUG, TESTING_MODE
 
 admin.site.site_title = "Painel AVA :.: Administração"
 admin.site.site_header = admin.site.site_title
@@ -29,10 +29,10 @@ urlpatterns = [
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-if DEBUG:
+if DEBUG and not TESTING_MODE:
     try:
-        import debug_toolbar
+        from debug_toolbar.toolbar import debug_toolbar_urls
 
-        urlpatterns.append(path(f"{settings.ROOT_URL_PATH}__debug__/", include(debug_toolbar.urls)))
+        urlpatterns += debug_toolbar_urls()
     except ImportError:
         pass
