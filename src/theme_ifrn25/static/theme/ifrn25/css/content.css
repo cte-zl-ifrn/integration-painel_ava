@@ -460,13 +460,17 @@
                                         gap: 4px;
                                         padding: 4px;
                                         height: 24px;
+                                        transition: all 0.2s ease-out;
                                         span {
-                                            font-family: Noto Sans, Arial, sans-serif;
-                                            font-size: 12px;
+                                            font: var(--font-heading6);
                                         }
                                         i {
                                             font-size: 12px;
                                         }
+                                    }
+
+                                    .painel-card-details-info-published, .painel-card-details-info-unpublished {
+                                        cursor: pointer;
                                     }
 
                                     .painel-card-info-icon, .painel-card-details-info-published {
@@ -474,9 +478,17 @@
                                         color: var(--primary-dark);
                                     }
 
+                                    .painel-card-details-info-published:hover {
+                                        background-color: var(--primary-dark);
+                                        color: var(--primary-light);
+                                    }
+
                                     .painel-card-details-info-unpublished {
                                         background: var(--light);
                                         color: var(--dark);
+                                        &:hover {
+                                            background-color: var(--light-dark);
+                                        }
                                     }
 
                                     .painel-card-details-info-favourite, .painel-card-details-info-unfavourite, .painel-card-details-info-chevron {
@@ -498,7 +510,7 @@
                                         }
                                         &:hover {
                                             color: var(--primary-light);
-                                            background-color: var(--primary);
+                                            background-color: var(--primary-dark);
                                         }
                                     }
                                 }
