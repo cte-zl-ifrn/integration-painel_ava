@@ -73,7 +73,7 @@
                 transition: width 0.2s ease-in;
                 z-index: 50;
                 height: 95%;
-                background: var(--background-color) 0% 0% no-repeat padding-box;
+                background: var(--light-lighter);
                 box-shadow: 3px 3px 6px #00000029;
                 border-radius: 0px 16px 16px 0px;
                 opacity: 1;
@@ -226,6 +226,7 @@
                     .modal-content-body {
                         height: 100%;
                         border-top: 1px solid #CCCCCC;
+                        padding-top: .5rem;
                     }
                 }
             }
@@ -432,7 +433,7 @@
                                         overflow: hidden;
                                         
                                         .painel-progress-bar {
-                                            background: transparent linear-gradient(270deg, #76A7E5 0%, #4174B5 100%) 0% 0% no-repeat padding-box;
+                                            background: linear-gradient(270deg, #9F6EDE 0%, #633594 100%);
                                             border-radius: 50px;
                                             opacity: 1;
                                             height: 100%;

@@ -4,22 +4,22 @@
     flex-direction: column;
     justify-content: start;
 
-    .ava-button-options, .admin-button-options {
-        margin-top: .5rem;
+    .modal-switch-title {
+        font: var(--font-heading3);
     }
-
     .modal-switch-option {
         display: flex;
+        align-items: center;
         position: relative;
         gap: .5rem;
-        margin-bottom: .5rem;
-        margin: .5rem 1rem;
-        font: var(--font-button2);
+        margin-top: .5rem;
+        font: var(--font-heading5);
         cursor: pointer;
         input {
             opacity: 0;
             width: 32px;
             height: 20px;
+            cursor: pointer;
         }
         .slider {
             position: absolute;

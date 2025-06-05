@@ -1,6 +1,6 @@
 #content-container .content .sidebar-modal .modal-content .modal-content-body {
     .modal-content-body-title {
-        font: var(--font-button2);
+        font: var(--font-heading4);
         color: var(--dark-light);
     }
 
