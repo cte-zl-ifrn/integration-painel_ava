@@ -423,6 +423,7 @@ const app = Vue.createApp({
                     environment: diario.ambiente.titulo,
                     progress: diario.progress,
                     visible: diario.visible == 1,
+                    can_set_visibility: diario.can_set_visibility,
                     url: diario.viewurl
                 }));
             } else {
@@ -437,6 +438,7 @@ const app = Vue.createApp({
                     environment: coordenacao.ambiente.titulo,
                     progress: coordenacao.progress,
                     visible: coordenacao.visible == 1,
+                    can_set_visibility: coordenacao.can_set_visibility,
                     url: coordenacao.viewurl
                 }));
             }
@@ -578,6 +580,22 @@ const app = Vue.createApp({
             } else {
                 return shortname;
             }
+        },
+        canToggleVisible(card) {
+            axios
+                .get("/api/v1/set_visible/", {
+                    params: {
+                        ava: card.ambiente.titulo,
+                        courseid: card.id,
+                        visible: card.visible,
+                    },
+                })
+                .then(() => {
+                    return true;
+                })
+                .catch((error) => {
+                    return false;
+                });
         },
         toggleVisible(card) {
             const action = card.visible ? "ocultar" : "publicar";
