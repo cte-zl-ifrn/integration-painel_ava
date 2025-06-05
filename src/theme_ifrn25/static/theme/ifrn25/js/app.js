@@ -422,7 +422,8 @@ const app = Vue.createApp({
                     isfavourite: diario.isfavourite,
                     environment: diario.ambiente.titulo,
                     progress: diario.progress,
-                    visible: diario.visible,
+                    visible: diario.visible == 1,
+                    can_set_visibility: diario.can_set_visibility,
                     url: diario.viewurl
                 }));
             } else {
@@ -436,7 +437,8 @@ const app = Vue.createApp({
                     isfavourite: coordenacao.isfavourite,
                     environment: coordenacao.ambiente.titulo,
                     progress: coordenacao.progress,
-                    visible: coordenacao.visible,
+                    visible: coordenacao.visible == 1,
+                    can_set_visibility: coordenacao.can_set_visibility,
                     url: coordenacao.viewurl
                 }));
             }
@@ -579,6 +581,45 @@ const app = Vue.createApp({
                 return shortname;
             }
         },
+        canToggleVisible(card) {
+            axios
+                .get("/api/v1/set_visible/", {
+                    params: {
+                        ava: card.ambiente.titulo,
+                        courseid: card.id,
+                        visible: card.visible,
+                    },
+                })
+                .then(() => {
+                    return true;
+                })
+                .catch((error) => {
+                    return false;
+                });
+        },
+        toggleVisible(card) {
+            const action = card.visible ? "ocultar" : "publicar";
+
+            this.showConfirmation(action, (confirmed) => {
+                if (confirmed) {
+                    const new_status = card.visible ? '0' : '1';
+                    axios
+                        .get("/api/v1/set_visible/", {
+                            params: {
+                                ava: card.environment,
+                                courseid: card.id,
+                                visible: new_status,
+                            },
+                        })
+                        .then((response) => {
+                            card.visible = new_status == 1;
+                        })
+                        .catch((error) => {
+                            console.debug(error);
+                        });
+                }
+            });
+        },
         toggleFavourite(item) {
             const new_status = item.isfavourite ? 0 : 1;
             const params = new URLSearchParams({
@@ -603,6 +644,45 @@ const app = Vue.createApp({
         },
         goToCourse(item) {
             window.location.href = item.url;
+        },
+        showConfirmation(action, callback) {
+            const modal = document.getElementById("popup-modal");
+            const title = document.getElementById("popup-modal-message-title");
+            const message = document.getElementById("popup-modal-message");
+            const confirmBtn = document.getElementById("modal-confirm");
+            const cancelBtn = document.getElementById("modal-cancel");
+            const modalContent = modal.querySelector(".popup-modal-content");
+
+            title.innerHTML = `Gostaria de <strong>${action}</strong> esse diário?`;
+            if(action == 'publicar') {
+                message.innerHTML = `Ao publicar este diário os alunos terão acesso ao conteúdo`;
+            }
+            if(action == 'ocultar') {
+                message.innerHTML = `Ao ocultar este diário os alunos <strong>não</strong> terão acesso ao conteúdo`;
+            }
+            modal.classList.remove("hidden");
+
+            const closeModal = (confirmed) => {
+                modal.classList.add("hidden");
+                confirmBtn.removeEventListener("click", confirmHandler);
+                cancelBtn.removeEventListener("click", cancelHandler);
+                modal.removeEventListener("click", outsideClickHandler);
+                callback(confirmed);
+            };
+
+            const confirmHandler = () => closeModal(true);
+            const cancelHandler = () => closeModal(false);
+
+            // Fecha ao clicar fora do conteúdo do modal
+            const outsideClickHandler = (event) => {
+                if (!modalContent.contains(event.target)) {
+                    closeModal(false);
+                }
+            };
+
+            confirmBtn.addEventListener("click", confirmHandler);
+            cancelBtn.addEventListener("click", cancelHandler);
+            modal.addEventListener("click", outsideClickHandler);
         }
     }
 });

@@ -294,4 +294,8 @@ def set_favourite_course(username: str, ava: str, courseid: int, favourite: int)
 
 def set_visible_course(username: str, ava: str, courseid: int, visible: int) -> dict:
     ava = get_object_or_404(Ambiente, nome=ava)
+
+    for v in cache.get("keys"):
+        cache.delete(v)
+        
     return get_json_api(ava, "set_visible_course", username=username.lower(), courseid=courseid, visible=visible) or {}
