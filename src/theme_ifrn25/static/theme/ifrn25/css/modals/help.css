@@ -8,6 +8,7 @@
     .modal-content-body-help-link {
         display: inline-block;
         width: 100%;
+        margin-bottom: 0.5rem;
         font: var(--font-button2);
         color: var(--dark);
         padding: .5rem 1rem;

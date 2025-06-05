@@ -1,20 +1,5 @@
 <div id="modal-content-body-profile">
     <div class="ava-button-options">
-        <div class="modal-switch-option custom-control custom-switch">
-            <input 
-                type="checkbox" 
-                class="custom-control-input" 
-                id="menuPositionCheckbox"
-                v-model="isBottom"
-                @change="savePosition"
-            />
-            <span class="slider"></span>
-            <label class="custom-control-label" for="menuPositionCheckbox">
-                Menu na parte inferior
-            </label>
-        </div>
-    </div>
-    <div class="ava-button-options">
         <div class="modal-button-option">
             <a href="https://suap.ifrn.edu.br/comum/minha_conta/">Perfil no SUAP</a>
         </div>
@@ -22,7 +7,6 @@
             <a href="https://aberto.ava.ifrn.edu.br">AVA Aberto</a>
         </div>
     </div>
-    <span class="modal-content-body-profile-divider"></span>
     <div class="ava-button-options">
         <span class="modal-content-body-title">Tema</span>
         <div class="modal-button-option">
@@ -33,7 +17,6 @@
         </div>
     </div>
     {% if personificando %}
-    <span class="modal-content-body-profile-divider"></span>
     <div class="admin-button-options">
         <div class="modal-button-option">
             <a class="dropdown-item" href="{% url 'a4:despersonificar' %}">Voltar a ser {{ user.show_name }}</a>
@@ -41,7 +24,6 @@
     </div>
     {% else %}
     {% if user.is_superuser %}
-    <span class="modal-content-body-profile-divider"></span>
     <div class="admin-button-options">
         <span class="modal-content-body-title">Admins</span>
         {% if admins %}
@@ -61,6 +43,18 @@
     </div>
     {% endif %}
     {% endif %}
+    <span class="modal-content-body-profile-divider"></span>
+    <div class="ava-button-options">
+        <span class="modal-switch-title">Menu na parte inferior</span>
+        <div class="modal-switch-option custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="menuPositionCheckbox" v-model="isBottom"
+                @change="savePosition" />
+            <span class="slider"></span>
+            <label class="custom-control-label" for="menuPositionCheckbox">
+                [[ isBottom ? 'Ativado' : 'Desativado' ]]
+            </label>
+        </div>
+    </div>
     <div class="modal-button-option exit-button">
         <a href="{% url 'a4:logout' %}">Sair</a>
     </div>
