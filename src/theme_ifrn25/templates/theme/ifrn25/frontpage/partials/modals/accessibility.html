@@ -1,9 +1,14 @@
 {% load static %}
 <div id="modal-content-body-profile">
-      
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="dyslexia-friendly">
+            <input
+                type="checkbox" 
+                :checked="{{ user.dyslexia_friendly_font|yesno:'true,false' }}"
+                class="custom-control-input" 
+                id="dyslexia-friendly"
+                @change="togglePreference('dyslexia', 'enabled', $event.target.checked)"
+            >
             <label class="custom-control-label" for="dyslexia-friendly" alt="OpenDyslexic, Dyslexie, Lexend">Fonte amigável a disléxicos</label>
         </div>
     </div>

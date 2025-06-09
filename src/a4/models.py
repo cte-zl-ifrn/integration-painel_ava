@@ -102,6 +102,13 @@ class Usuario(SafeDeleteModel, AbstractUser):
         return "ifrn23"
     
     @property
+    def dyslexia_friendly_font(self) -> bool:
+        try:
+            return self.settings.get("dyslexia", {}).get("enabled", False)
+        except AttributeError:
+            return False
+    
+    @property
     def menu_position(self) -> str:
         if self.settings and "menu_position" in self.settings:
             return self.settings["menu_position"]
