@@ -90,11 +90,11 @@
 
         <div class="tab-content">
             <div class="tab-pane" :class="{ active: activeTab === 0 }">
-                {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="diarios" %}
+                {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="diarios" list_gender="o" %}
             </div>
 
             <div class="tab-pane" :class="{ active: activeTab === 1 }">
-                {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="coordenacoes" %}
+                {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="coordenacoes" list_gender="a" %}
             </div>
 
             <div class="tab-pane" :class="{ active: activeTab === 2 }">

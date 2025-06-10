@@ -62,6 +62,9 @@
 </div>
 
 <div class="no-data" v-if="!loading && {{ list_name }}.length===0">
-    <!-- <img src="/static/theme/ifrn25/img/no-data.svg" alt="No Data"> -->
-    <p>Nenhum dado encontrado.</p>
+    <h3>Atenção</h3>
+    <p>Não existem {{ list_name }} que atendam ao filtro informado. Para mostrar tudo limpe os filtros clicando no botão "Ver tod{{ list_gender }}s
+    {{ list_name }}".</p>
+    <a href="#" class="btn btn-primary">Ver tod{{ list_gender }}s {{ list_name }}</a>
+    <p>É possível que a Secretaria Acadêmica ainda não tenha lhe inserido em diário algum, neste caso, por favor aguarde.</p>
 </div>
