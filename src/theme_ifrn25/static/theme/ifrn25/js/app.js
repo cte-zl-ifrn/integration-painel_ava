@@ -654,7 +654,7 @@ const app = Vue.createApp({
             .then(res => res.json())
             .then(data => {
                 if (data.status === "ok") {
-                    document.body.classList.toggle("dyslexia-font", value);
+                    document.body.classList.toggle(category, value);
                 } else {
                     console.error(data.message);
                 }
