@@ -247,6 +247,8 @@
 
                     .no-data {
                         margin-top: 2rem;
+                        margin-inline: auto;
+                        max-width: 1360px;
                         h3 {
                             font: var(--font-heading2);
                         }
