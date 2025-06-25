@@ -1,5 +1,6 @@
 <div id="modal-content-body-profile">
     <div class="ava-button-options">
+        <span class="modal-content-body-title">Links</span>
         <div class="modal-button-option">
             <a href="https://suap.ifrn.edu.br/comum/minha_conta/">Perfil no SUAP</a>
         </div>
@@ -27,15 +28,15 @@
     <div class="admin-button-options">
         <span class="modal-content-body-title">Admins</span>
         {% if admins %}
-        {% for ava in admins %}
-        <div class="modal-button-option">
-            <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
-        </div>
-        {% endfor %}
+            {% for ava in admins %}
+            <div class="modal-button-option">
+                <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
+            </div>
+            {% endfor %}
         {% else %}
-        <div class="modal-button-option">
-            <a class="dropdown-item" href="{% url 'admin:painel_contrante_changelist' %}">Cadastrar ambiente</a>
-        </div>
+            <div class="modal-button-option">
+                <a class="dropdown-item" href="{% url 'admin:painel_contrante_changelist' %}">Cadastrar ambiente</a>
+            </div>
         {% endif %}
         <div class="modal-button-option">
             <a class="dropdown-item" href="{% url 'admin:index' %}">Painel AVA</a>
@@ -43,6 +44,9 @@
     </div>
     {% endif %}
     {% endif %}
+    <div class="modal-button-option">
+        <span class="modal-content-body-title">Versão {{ app_version }}</span>
+    </div>
     <span class="modal-content-body-profile-divider"></span>
     <div class="ava-button-options">
         <span class="modal-switch-title">Menu na parte inferior</span>
