@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.urls import path, reverse
+from django.templatetags.static import static
 from django.contrib.admin import ModelAdmin, register, site, display
 from django.contrib.auth.models import Group
 from base.admin import BaseModelAdmin
@@ -79,11 +80,7 @@ class UsuarioAdmin(BaseModelAdmin):
 
     @display
     def auth(self, obj):
-        result = (
-            '<img src="/static/admin/img/icon-yes.svg" alt="True"> '
-            if obj.is_active
-            else '<img src="/static/admin/img/icon-no.svg" alt="False"> '
-        )
+        result = '✅ ' if obj.is_active else '❌ '
         result += _("Colaborador") if obj.is_staff else _("Usuário")
         result += " " + _("superusuário") if obj.is_staff else ""
         return mark_safe(result)

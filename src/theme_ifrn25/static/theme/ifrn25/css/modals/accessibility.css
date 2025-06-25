@@ -1,3 +1,8 @@
 #content-container .content .sidebar-modal .modal-content .modal-content-body #modal-content-body-accessibility {
     
 }
+
+input[type="radio"]:checked + .radio-label {
+    background-color: #007bff; /* Cor de fundo para quando o radio está marcado */
+    color: white;              /* Cor do texto para quando o radio está marcado */
+}
