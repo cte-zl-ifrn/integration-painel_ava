@@ -90,7 +90,7 @@ const app = Vue.createApp({
             diarios: [],
             salas: [],
             reutilizaveis: [],
-            loading: false,
+            loading: true,
         };
     },
     watch: {
@@ -644,6 +644,15 @@ const app = Vue.createApp({
         },
         goToCourse(item) {
             window.location.href = item.url;
+        },
+        async goToCourseUrl(item) {
+          this.loading = true;
+
+          await new Promise(resolve => setTimeout(resolve, 1500));
+
+          this.loading = false;
+          
+          return item.url;
         },
         showConfirmation(action, callback) {
             const modal = document.getElementById("popup-modal");
