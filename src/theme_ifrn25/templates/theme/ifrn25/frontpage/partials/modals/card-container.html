@@ -26,7 +26,7 @@
 
 <div class="card-container" v-if="!loading && {{ list_name }}.length > 0">
     <div class="card" v-for="(item, index) in {{ list_name }}" :key="index">
-        <a :href="goToCourseUrl(item)">
+        <a class="text-decoration-none" :href="goToCourseUrl(item)">
             <h2 class="painel-card-title">[[ item.fullname ]]</h2>
             <span class="painel-card-header-shortname">[[ item.shortname ]]</span>
         </a>

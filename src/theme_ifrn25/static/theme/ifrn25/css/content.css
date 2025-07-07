@@ -408,6 +408,7 @@
                             
                             .painel-card-header-shortname {
                                 font:var(--font-button2);
+                                color: var(--escuro-primario);
                             }
 
                             .painel-card-details {

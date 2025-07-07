@@ -645,13 +645,7 @@ const app = Vue.createApp({
         goToCourse(item) {
             window.location.href = item.url;
         },
-        async goToCourseUrl(item) {
-          this.loading = true;
-
-          await new Promise(resolve => setTimeout(resolve, 1500));
-
-          this.loading = false;
-          
+         goToCourseUrl(item) {
           return item.url;
         },
         showConfirmation(action, callback) {
