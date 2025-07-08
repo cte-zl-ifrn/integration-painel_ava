@@ -90,7 +90,7 @@ const app = Vue.createApp({
             diarios: [],
             salas: [],
             reutilizaveis: [],
-            loading: true,
+            loading: false,
         };
     },
     watch: {

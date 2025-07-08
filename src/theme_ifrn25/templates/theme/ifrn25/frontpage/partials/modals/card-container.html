@@ -1,5 +1,5 @@
 <!-- Se estiver carregando, mostra animação/skeleton -->
-<div class="card-container loading" v-if="loading" style="position: relative;">
+<div class="card-container loading" v-if="loading">
     <div class="card-skeleton" v-for="n in 4" :key="n">
         <div class="header-skeleton">
             <div class="title-skeleton"></div>
@@ -18,9 +18,6 @@
             </div>
         </div>
 
-    </div>
-    <div class="loading-block">
-        <i class="fa-solid fa-spinner fa-spin"></i>
     </div>
 </div>
 
