@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
 from django.core.cache import cache
 from django.contrib import auth
+from django.templatetags.static import static
 from a4.models import Usuario
 
 
@@ -123,7 +124,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
                     context={
                         "username": parts[0] if len(parts) > 0  else "[SEU CPF]",
                         "common_name": parts[1] if len(parts) > 0 else "[SEU NOME COMPLETO]",
-                        "tem_foto": "/static/comum/img/default.jpg" in response_text
+                        "tem_foto": static("/comum/img/default.jpg") in response_text
                     }
                 )
             return oauth_error(f"{e}. {response_text}")

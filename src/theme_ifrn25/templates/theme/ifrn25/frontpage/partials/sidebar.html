@@ -3,7 +3,7 @@
     <div class="sidebar-content-header">
         <p class="sidebar-title">Painel AVA</p>
         <button @click="toggleSidebar" :class="{'btn-toggle-sidebar': sidebarContracted}">
-            <img src="/static/theme/ifrn25/img/sidebar-toggle.svg" alt="Toggle Sidebar">
+            <img src="{% static '/theme/ifrn25/img/sidebar-toggle.svg' %}" alt="Toggle Sidebar">
         </button>
     </div>
 
@@ -59,7 +59,7 @@
                     <div v-for="(filter, index) in activeFilters" :key="index" class="sidebar-course-content-filters-list-item">
                         <div class="sidebar-course-content-filters-list-item-divider">
                             <i v-if="filter.icon.startsWith('fa-')" :class="`fa-solid ${filter.icon}`"></i>
-                            <img v-else :src="`/static/theme/ifrn25/img/${filter.icon}-green.svg`" alt=""
+                            <img v-else :src="`{% static '/theme/ifrn25/img/${filter.icon}-green.svg' %}`" alt=""
                                 class="sidebar-course-content-filters-list-item-icon">
                             <span class="sidebar-course-content-filters-list-item-text">
                                 [[ filter.label ]]

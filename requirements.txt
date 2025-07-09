@@ -8,7 +8,7 @@ django-better-choices==1.17
 
 # REST
 django-ninja==1.4.3
-requests==2.32.3
+requests==2.32.4
 
 # Session
 django-redis-sessions==0.6.2
