@@ -4,9 +4,11 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from a4.models import logged_user, Usuario
 from painel.models import Ambiente, Situacao, Theme
 from painel.services import get_json_api
+import json
 
 
 logger = logging.getLogger(__name__)
@@ -39,6 +41,40 @@ def change_theme(request: HttpRequest, theme: str) -> HttpResponse:
     user.settings["theme"]["selected"] = theme
     user.save()
     return redirect("painel:dashboard")
+
+
+@csrf_exempt
+@login_required
+def change_preference(request: HttpRequest, category: str, key: str) -> HttpResponse:
+    if request.method == "POST":
+        user: Usuario = request.user
+
+        try:
+            data = json.loads(request.body)
+            value = data.get("value")
+
+            if value == "true":
+                parsed_value = True
+            elif value == "false":
+                parsed_value = False
+            elif isinstance(value, bool):
+                parsed_value = value
+            else:
+                parsed_value = value
+
+            if user.settings is None:
+                user.settings = {}
+
+            if category not in user.settings:
+                user.settings[category] = {}
+
+            user.settings[category][key] = parsed_value
+            user.save()
+
+            return JsonResponse({"status": "ok"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 
 
 @login_required

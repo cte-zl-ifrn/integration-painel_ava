@@ -3,7 +3,16 @@
 <html lang="pt-br">
 {% include 'theme/ifrn25/frontpage/partials/head.html' %}
 
-<body>
+<body class="
+    {% if user.dyslexia_friendly_font %} dyslexia{% endif %}
+    {% if user.remove_justify_align %} remove_justify_align{% endif %}
+    {% if user.highlight_links %} highlight_links{% endif %}
+    {% if user.stop_animations %} stop_animations{% endif %}
+    {% if user.hidden_illustrative_image %} hidden_illustrative_image{% endif %}
+    {% if user.big_cursor %} big_cursor{% endif %}
+    {% if user.vlibras_active %} vlibras_active{% endif %}
+    {% if user.dyslexia_friendly_font %} dyslexia_font{% endif %}
+">
     <script>
         window.INITIAL_SETTINGS = {
             menuPosition: "{{ request.user.menu_position }}"

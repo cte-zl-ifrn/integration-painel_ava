@@ -642,6 +642,24 @@ const app = Vue.createApp({
                 console.error('Erro ao atualizar favorito:', error);
             });
         },
+        togglePreference(category, key, value) {
+            fetch(`/change_preference/${category}/${key}/`, {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.getCsrfToken,
+                },
+                body: JSON.stringify({ value: value })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    document.body.classList.toggle(category, value);
+                } else {
+                    console.error(data.message);
+                }
+            });
+        },
         goToCourse(item) {
             window.location.href = item.url;
         },

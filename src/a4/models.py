@@ -102,6 +102,57 @@ class Usuario(SafeDeleteModel, AbstractUser):
         return "ifrn23"
     
     @property
+    def dyslexia_friendly_font(self) -> bool:
+        try:
+            return self.settings.get("dyslexia", {}).get("enabled", False)
+        except AttributeError:
+            return False
+    
+    @property
+    def remove_justify_align(self) -> bool:
+        try:
+            return self.settings.get("remove_justify_align", {}).get("enabled", False)
+        except AttributeError:
+            return False
+        
+    @property
+    def highlight_links(self) -> bool:
+        try:
+            return self.settings.get("highlight_links", {}).get("enabled", False)
+        except AttributeError:
+            return False
+        
+    @property
+    def stop_animations(self) -> bool:
+        try:
+            return self.settings.get("stop_animations", {}).get("enabled", False)
+        except AttributeError:
+            return False
+
+    @property
+    def hidden_illustrative_image(self) -> bool:
+        try:
+            return self.settings.get("hidden_illustrative_image", {}).get("enabled", False)
+        except AttributeError:
+            return False
+        
+    @property
+    def big_cursor(self) -> bool:
+        try:
+            return self.settings.get("big_cursor", {}).get("enabled", False)
+        except AttributeError:
+            return False
+
+    @property
+    def vlibras_active(self) -> bool:
+        try:
+            return self.settings.get("vlibras_active", {}).get("enabled", False)
+        except AttributeError:
+            return False
+
+    #TODO: Linhas mais distantes, parágrafos distantes, cor e zoom  
+    
+    @property
     def menu_position(self) -> str:
         if self.settings and "menu_position" in self.settings:
             return self.settings["menu_position"]

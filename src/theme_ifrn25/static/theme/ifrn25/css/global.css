@@ -287,6 +287,19 @@ h6 {
     color: var(--unnamed-color-1d2125);
 }
 
+.btn.btn-primary {
+    background-color: var(--primary);
+    font: var(--font-button1);
+    border-radius: 40px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    padding: .5rem 1rem;
+    margin-bottom: 1rem;
+    &:hover {
+        background-color: var(--primary-dark);
+    }
+}
+
 /* Para esperar carregamento do vue */
 [v-cloak] {
   display: none !important;
