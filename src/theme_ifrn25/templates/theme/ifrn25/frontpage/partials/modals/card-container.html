@@ -23,10 +23,10 @@
 
 <div class="card-container" v-if="!loading && {{ list_name }}.length > 0">
     <div class="card" v-for="(item, index) in {{ list_name }}" :key="index">
-        <div @click="goToCourse(item)" style="cursor: pointer;">
+        <a class="text-decoration-none" :href="goToCourseUrl(item)">
             <h2 class="painel-card-title">[[ item.fullname ]]</h2>
             <span class="painel-card-header-shortname">[[ item.shortname ]]</span>
-        </div>
+        </a>
         <div class="painel-card-details">
             <div class="painel-card-details-progress">
                 <div class="painel-progress-bar-container">
@@ -39,9 +39,7 @@
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span class="painel-card-header-env">[[ item.environment ]]</span>
                 </div>
-                <div
-                    v-if="item.can_set_visibility"
-                    @click="toggleVisible(item)"
+                <div v-if="item.can_set_visibility" @click="toggleVisible(item)"
                     :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
                     <i :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
                     <span>[[ item.visible ? 'Publicado' : 'Rascunho' ]]</span>

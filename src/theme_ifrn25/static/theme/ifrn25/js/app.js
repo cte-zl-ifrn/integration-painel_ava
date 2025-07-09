@@ -645,6 +645,9 @@ const app = Vue.createApp({
         goToCourse(item) {
             window.location.href = item.url;
         },
+         goToCourseUrl(item) {
+          return item.url;
+        },
         showConfirmation(action, callback) {
             const modal = document.getElementById("popup-modal");
             const title = document.getElementById("popup-modal-message-title");
