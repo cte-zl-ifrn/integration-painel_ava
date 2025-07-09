@@ -39,7 +39,10 @@ logging.config.dictConfig(
         },
         "loggers": dict(
             **{"": {"level": "DEBUG", "handlers": ["console"]}},
+            **{"requests": {"level": "DEBUG", "handlers": ["console"]}},
             **{app: {"level": "DEBUG"} for app in INSTALLED_APPS},
         ),
     }
 )
+
+
