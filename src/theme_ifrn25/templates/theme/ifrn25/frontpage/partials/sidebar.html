@@ -55,7 +55,7 @@
                     <i class="fa-solid fa-sliders"></i>
                     <span>FILTRADO POR:</span>
                 </div>
-                <div class="sidebar-course-content-filters-list">
+                <div class="sidebar-course-content-filters-list" @click="toggleModalWithContent('filter')">
                     <div v-for="(filter, index) in activeFilters" :key="index" class="sidebar-course-content-filters-list-item">
                         <div class="sidebar-course-content-filters-list-item-divider">
                             <i v-if="filter.icon.startsWith('fa-')" :class="`fa-solid ${filter.icon}`"></i>
