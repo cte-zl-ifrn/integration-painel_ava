@@ -663,8 +663,19 @@ const app = Vue.createApp({
         goToCourse(item) {
             window.location.href = item.url;
         },
-         goToCourseUrl(item) {
+        goToCourseUrl(item) {
           return item.url;
+        },
+        mostrarGauge(e) {
+            var anchor = (e.target.nodeName == 'A') ? e.target : e.target.parentElement;
+            console.log({"t":anchor});
+            // anchor.style.display = "none";
+            const img = document.createElement('img');
+            img.src = 'https://upload.wikimedia.org/wikipedia/commons/3/36/Lightness_rotate_36f-L_cw.gif';
+            img.className = 'floating-image';
+            img.width = 64;
+            anchor.appendChild(img);
+            setTimeout(() => {img.remove();}, 10000);
         },
         showConfirmation(action, callback) {
             const modal = document.getElementById("popup-modal");
