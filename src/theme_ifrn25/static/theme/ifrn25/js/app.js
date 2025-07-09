@@ -675,7 +675,7 @@ const app = Vue.createApp({
             img.className = 'floating-image';
             img.width = 64;
             anchor.appendChild(img);
-            setTimeout(() => {img.remove();}, 10000);
+            setTimeout(() => {img.remove();}, 5000);
         },
         showConfirmation(action, callback) {
             const modal = document.getElementById("popup-modal");
