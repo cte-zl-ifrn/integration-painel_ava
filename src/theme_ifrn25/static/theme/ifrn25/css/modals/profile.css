@@ -64,6 +64,14 @@
 
     .modal-button-option {
         margin-bottom: .5rem;
+        .dropdown-item {
+            &.selected:hover {
+                background-color: transparent;
+            }
+            i {
+                color: var(--primary);
+            }
+        }
         a {
             display: inline-block;
             width: 100%;
