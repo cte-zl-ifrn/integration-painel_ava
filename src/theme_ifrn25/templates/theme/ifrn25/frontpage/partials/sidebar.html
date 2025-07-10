@@ -2,7 +2,7 @@
 <div id="sidebar-container" :class="{'contracted': sidebarContracted}">
     <div class="sidebar-content-header">
         <p class="sidebar-title">Painel AVA</p>
-        <button @click="toggleSidebar" :class="{'btn-toggle-sidebar': sidebarContracted}">
+        <button @click="toggleSidebar" :class="{'btn-toggle-sidebar': sidebarContracted}" id='btn-toggle-sidebar'>
             <img src="{% static '/theme/ifrn25/img/sidebar-toggle.svg' %}" alt="Toggle Sidebar">
         </button>
     </div>
@@ -16,12 +16,14 @@
                 <span>{{ logged_user.show_name }}</span>
             </div>
             <div class="sidebar-user-content-options">
+                <!--
                 <div class="sidebar-modal-button" @click="toggleModalWithContent('accessibility')"
                     :class="{'active': modalType === 'accessibility'}">
                     <i class="fa-solid fa-universal-access"></i>
                     <span>Acessibilidade</span>
                 </div>
-                <div class="sidebar-modal-button" @click="toggleModalWithContent('help')"
+                -->
+                <div class="sidebar-modal-button" @click="toggleModalWithContent('help')" id="btn-toggle-help"
                     :class="{'active': modalType === 'help'}">
                     <i class="fa-solid fa-circle-question"></i>
                     <span>Ajuda</span>

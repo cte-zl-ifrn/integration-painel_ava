@@ -531,6 +531,8 @@ const app = Vue.createApp({
             else {
                 this.ambientes = [];
             }
+            this.userTour01();
+
         },
         removeFilter(filterType) {
             if (filterType === 'situacao') return; // Impede remoção do filtro padrão
@@ -715,6 +717,64 @@ const app = Vue.createApp({
             confirmBtn.addEventListener("click", confirmHandler);
             cancelBtn.addEventListener("click", cancelHandler);
             modal.addEventListener("click", outsideClickHandler);
+        },
+
+        userTour01() {
+            if (localStorage.getItem("completou-user-tour01") != "true") {
+                const wt = new WebTour();
+                const dicaPadrao = "<p style='text-align: center'><b>Você SEMPRE pode clicar na área destacada para testar.</b></p>";
+                const steps = [
+                    {
+                        element: ".topbar",
+                        title: "Aqui estão suas salas",
+                        content: "<p>Você pode acessar seus diários, salas de coordenação, salas de práticas e reutilizáveis.</p><p>Clique em cada aba para ver a lista de salas.</p>" + dicaPadrao,
+                        placement: "bottom-start",
+                    },
+                    {
+                        element: ".sidebar-course-content-filter-modal-button-area",
+                        title: "Filtros",
+                        content: "<p>Não localizou a sala? Experimente alterar os filtros.</p>",
+                        placement: "bottom-start",
+                    },
+                    {
+                        element: ".sidebar-user-content-profile",
+                        title: "Menu do usuário",
+                        content: "<p>Links rápidos, trocar para o tema anterior, alterar preferências e sair. Está tudo aqui, pensado em você!</p>",
+                        placement: "top-start",
+                    },
+                    {
+                        element: "#btn-toggle-help",
+                        title: "Ainda precisa de ajuda?",
+                        content: "<ul>" +
+                                "<li>Acesse nossa <b>Central de Ajuda</b> para tirar dúvidas das mais diversas.</li>" +
+                                "<li>Tenha seus direitos protegidos pela <b>Ouvidoria</b> do IFRN.</li>" +
+                                "<li>Use nossa lista de <b>contatos</b> caso necessite ligar ou telefonar para nós.</li>" +
+                                "<li>Necessita de um atendimento para uma demanda? Use uma das nossas <b>Centrais de Atendimento</b> no SUAP.</li>" +
+                                "</ul>",
+                        placement: "top-start",
+                    },
+                ];
+                console.log({"this.diarios": this.diarios});
+                console.log({"this.diarios": this.diarios.length});
+                if (this.diarios.length > 0) {
+                    steps.splice(1, 0, {
+                        element: ".text-decoration-none",
+                        title: "Sua sala de aula",
+                        content: "<p>Você pode acessar seuas salas clicando no <b>nome da sala ou no identificador</b> da sala.</p>" +
+                                "<p>Aprenda nos próximos passos como usar os filtros para encontrar salas específicas, passadas, planejadas ou favoritas.</p>",
+                        placement: "bottom-start",
+                    });
+                    steps.splice(2, 0, {
+                        element: ".painel-card-details-info-unfavourite, .painel-card-details-info-favourite",
+                        title: "Favorite uma sala",
+                        content: "<p>Você tem muitas salas? Favorite as que você vais estudar mais neste semestre, então acesse elas <b>filtrando pelas favoritas<b>.",
+                        placement: "bottom-end",
+                    });
+                }
+                wt.setSteps(steps);
+                wt.start();
+                localStorage.setItem("completou-user-tour01", true);
+            }
         }
     }
 });
