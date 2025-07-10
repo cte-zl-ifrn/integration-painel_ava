@@ -49,6 +49,7 @@ def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
     if response.ok:
         return content
     else:
+        logger.error(f"Error fetching {url}: {response.status_code} - {response.reason}\n{content}")
         exc = HTTPException("%s - %s" % (response.status_code, response.reason))
         exc.status = response.status_code
         exc.reason = response.reason
