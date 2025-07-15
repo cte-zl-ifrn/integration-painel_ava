@@ -846,6 +846,14 @@ const app = Vue.createApp({
                         },
                         onNext: () => {
                             localStorage.setItem("completou-user-tour01", true);
+                            try {
+                                const elemento = document.getElementById('btn-toggle-profile');
+                                if (elemento && elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }                            
                         },
                     },
                 ];
