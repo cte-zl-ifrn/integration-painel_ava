@@ -6,3 +6,35 @@ input[type="radio"]:checked + .radio-label {
     background-color: #007bff; /* Cor de fundo para quando o radio está marcado */
     color: white;              /* Cor do texto para quando o radio está marcado */
 }
+
+@font-face {
+  font-family: 'opendyslexic';
+  src: url('https://ava-painel-statics.pages.dev/vendors/OpenDyslexic/OpenDyslexic-Regular.otf') format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+    font-family: 'opendyslexic';
+    src: url('https://ava-painel-statics.pages.dev/vendors/OpenDyslexic/OpenDyslexic-Italic.woff2') format('opentype');
+    font-style: italic;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'opendyslexic';
+    src: url('https://ava-painel-statics.pages.dev/vendors/OpenDyslexic/OpenDyslexic-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+} 
+
+@font-face {
+    font-family: 'opendyslexic';
+    src: url('https://ava-painel-statics.pages.dev/vendors/OpenDyslexic/OpenDyslexic-Bold-Italic.otf') format('opentype');
+    font-weight: bold;
+    font-style: italic;
+} 
+
+body.dyslexia_font {
+    --font-family: "opendyslexic", sans-serif;
+}

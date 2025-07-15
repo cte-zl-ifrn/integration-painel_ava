@@ -104,7 +104,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     @property
     def dyslexia_friendly_font(self) -> bool:
         try:
-            return self.settings.get("dyslexia", {}).get("enabled", False)
+            return self.settings.get("dyslexia_font", {}).get("enabled", False)
         except AttributeError:
             return False
     

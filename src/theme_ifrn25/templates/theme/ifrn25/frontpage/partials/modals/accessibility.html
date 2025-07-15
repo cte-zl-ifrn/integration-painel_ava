@@ -8,12 +8,12 @@
                 :checked="{{ user.dyslexia_friendly_font|yesno:'true,false' }}"
                 class="custom-control-input" 
                 id="dyslexia-friendly"
-                @change="togglePreference('dyslexia', 'enabled', $event.target.checked)"
+                @change="togglePreference('dyslexia_font', 'enabled', $event.target.checked)"
             >
             <label class="custom-control-label" for="dyslexia-friendly" alt="OpenDyslexic, Dyslexie, Lexend">Fonte amigável a disléxicos</label>
         </div>
     </div>
-
+<!--
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">
             <input 
@@ -121,7 +121,7 @@
             <input type="radio" class="custom-control-input" name='color-scheme' id="zoom-150">&nbsp;<label class="custom-control-label" for="zoom-120">150%</label>
         </div>
     </div>
-
+-->
 <!--
       <div vw class="enabled">
         <div vw-access-button class="active"></div>
