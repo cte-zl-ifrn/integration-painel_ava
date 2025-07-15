@@ -11,18 +11,16 @@
 
         <div class="sidebar-user-content">
             <div class="sidebar-user-content-profile" @click="toggleModalWithContent('profile')"
-                :class="{'active': modalType === 'profile'}">
+                :class="{'active': modalType === 'profile'}" id="btn-toggle-profile">
                 <img src="{{ logged_user.foto_url }}" alt="Imagem de perfil" class="profile-image">
                 <span>{{ logged_user.show_name }}</span>
             </div>
             <div class="sidebar-user-content-options">
-                <!--
-                <div class="sidebar-modal-button" @click="toggleModalWithContent('accessibility')"
+                <div class="sidebar-modal-button" @click="toggleModalWithContent('accessibility')" id="btn-toggle-accessibility"
                     :class="{'active': modalType === 'accessibility'}">
                     <i class="fa-solid fa-universal-access"></i>
                     <span>Acessibilidade</span>
                 </div>
-                -->
                 <div class="sidebar-modal-button" @click="toggleModalWithContent('help')" id="btn-toggle-help"
                     :class="{'active': modalType === 'help'}">
                     <i class="fa-solid fa-circle-question"></i>
@@ -46,7 +44,7 @@
         <div class="sidebar-course-content">
             <div class="sidebar-course-content-filter-modal-button-area">
                 <div class="sidebar-modal-button" @click="toggleModalWithContent('filter')"
-                    :class="{'active': modalType === 'filter'}">
+                    :class="{'active': modalType === 'filter'}" id='btn-toggle-filter'>
                     <i class="fa-solid fa-filter"></i>
                     <span class="sidebar-modal-button-text-contracted">FILTRO</span>
                     <span>Adicionar filtros</span>

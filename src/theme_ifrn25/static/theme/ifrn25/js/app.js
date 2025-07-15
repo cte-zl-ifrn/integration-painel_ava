@@ -721,7 +721,6 @@ const app = Vue.createApp({
 
         userTour01() {
             if (localStorage.getItem("completou-user-tour01") != "true") {
-                const wt = new WebTour();
                 const dicaPadrao = "<p style='text-align: center'><b>Você SEMPRE pode clicar na área destacada para testar.</b></p>";
                 const steps = [
                     {
@@ -731,16 +730,73 @@ const app = Vue.createApp({
                         placement: "bottom-start",
                     },
                     {
-                        element: ".sidebar-course-content-filter-modal-button-area",
+                        element: "#btn-toggle-sidebar",
+                        title: "Gaveta de menus",
+                        content: '<p>Seus menus estão todos de gaveta que você pode abrir e fechar o quanto quiser.</p><p>Clique em <button id="btn-toggle-sidebar-usertour" onclick="document.getElementById(\'btn-toggle-sidebar\').click();" style="background-color: var(--verde-escuro);color: #fff;border-radius: 5px;padding: 0 5px;">&lt;&gt;</button> para alternar.</p>',
+                        placement: "bottom-start",
+                        onNext: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-filter');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        }
+                    },
+                    {
+                        element: "#btn-toggle-filter",
                         title: "Filtros",
                         content: "<p>Não localizou a sala? Experimente alterar os filtros.</p>",
                         placement: "bottom-start",
+                        onPrevious: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-filter');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        },
+                        onNext: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-accessibility');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        },
                     },
                     {
-                        element: ".sidebar-user-content-profile",
-                        title: "Menu do usuário",
-                        content: "<p>Links rápidos, trocar para o tema anterior, alterar preferências e sair. Está tudo aqui, pensado em você!</p>",
+                        element: "#btn-toggle-accessibility",
+                        title: "Acessibilidade",
+                        content: "<p>Aqui você pode deixar a fonte mais acessível para disléxicos.</p><p>Continuamos trabalhando para adicionar recursos de acessibilidade.</p>",
                         placement: "top-start",
+                        onPrevious: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-filter');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        },
+
+                        onNext: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-help');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        }
                     },
                     {
                         element: "#btn-toggle-help",
@@ -752,10 +808,47 @@ const app = Vue.createApp({
                                 "<li>Necessita de um atendimento para uma demanda? Use uma das nossas <b>Centrais de Atendimento</b> no SUAP.</li>" +
                                 "</ul>",
                         placement: "top-start",
+                        onPrevious: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-accessibility');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        },
+                        onNext: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-profile');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        }
+                    },
+                    {
+                        element: "#btn-toggle-profile",
+                        title: "Menu do usuário",
+                        content: "<p>Links rápidos, trocar para o tema anterior, alterar preferências e sair. Está tudo aqui, pensado em você!</p>",
+                        placement: "top-start",
+                        onPrevious: () => {
+                            try {
+                                const elemento = document.getElementById('btn-toggle-help');
+                                if (elemento && !elemento.classList.contains('active')) {
+                                    elemento.click();
+                                }
+                            } catch (e) {
+                                console.error('Erro ao clicar no elemento:', e);
+                            }
+                        },
+                        onNext: () => {
+                            localStorage.setItem("completou-user-tour01", true);
+                        },
                     },
                 ];
-                console.log({"this.diarios": this.diarios});
-                console.log({"this.diarios": this.diarios.length});
                 if (this.diarios.length > 0) {
                     steps.splice(1, 0, {
                         element: ".text-decoration-none",
@@ -771,9 +864,13 @@ const app = Vue.createApp({
                         placement: "bottom-end",
                     });
                 }
-                wt.setSteps(steps);
-                wt.start();
-                localStorage.setItem("completou-user-tour01", true);
+                try {
+                    const wt = new WebTour();
+                    wt.setSteps(steps);
+                    wt.start();
+                } catch (e) {
+                    console.error('Erro ao adicionar passos do tour:', e);
+                }
             }
         }
     }
@@ -784,7 +881,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         app.mount('#app');
         console.log('Aplicação Vue montada com sucesso');
-        } catch (e) {
+    } catch (e) {
         console.error('Erro ao montar a aplicação Vue:', e);
     }
 });
