@@ -26,6 +26,17 @@
         </div>
     </div>
 
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input 
+                type="checkbox"
+                v-model="preferences.vlibras_active"
+                class="custom-control-input"
+                id="vlibras-active" 
+                @change="togglePreference('vlibras_active', 'enabled', $event.target.checked)">
+            <label class="custom-control-label" for="vlibras-active">Habilitar VLibras</label>
+        </div>
+    </div>
 <!--
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">
@@ -62,16 +73,6 @@
                 class="custom-control-input" id="hidden-illustrative-image"
                 @change="togglePreference('hidden_illustrative_image', 'enabled', $event.target.checked)">
             <label class="custom-control-label" for="hidden-illustrative-image">Ocultar imagens ilustrativas</label>
-        </div>
-    </div>
-
-
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input type="checkbox" :checked="{{ user.vlibras_active|yesno:'true,false' }}" class="custom-control-input"
-                id="vlibras-active" @change="togglePreference('vlibras_active', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="vlibras-active">Habilitar VLibras</label>
         </div>
     </div>
 
@@ -128,17 +129,5 @@
             <input type="radio" class="custom-control-input" name='color-scheme' id="zoom-150">&nbsp;<label class="custom-control-label" for="zoom-120">150%</label>
         </div>
     </div>
--->
-<!--
-      <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
-        </div>
-      </div>
-      <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-      <script>
-            new window.VLibras.Widget('https://vlibras.gov.br/app');
-      </script>
 -->
 </div>

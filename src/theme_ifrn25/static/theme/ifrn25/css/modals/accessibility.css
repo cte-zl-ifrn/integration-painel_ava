@@ -42,3 +42,13 @@ body.dyslexia_font {
 body.big_cursor * {
     cursor: url(https://cdn.userway.org/widgetapp/images/arrow_w.svg), auto;
 }
+
+div[vw].enabled {
+    display: none !important;
+    margin: 0 !important;
+    top: 65% !important;
+}
+
+.vlibras_active div[vw].enabled {
+    display: block !important;
+}
