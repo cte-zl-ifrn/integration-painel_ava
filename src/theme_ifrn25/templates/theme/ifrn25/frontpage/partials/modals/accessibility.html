@@ -5,7 +5,7 @@
         <div class="custom-control custom-switch">
             <input
                 type="checkbox" 
-                :checked="{{ user.dyslexia_friendly_font|yesno:'true,false' }}"
+                v-model="preferences.dyslexia_font"
                 class="custom-control-input" 
                 id="dyslexia-friendly"
                 @change="togglePreference('dyslexia_font', 'enabled', $event.target.checked)"

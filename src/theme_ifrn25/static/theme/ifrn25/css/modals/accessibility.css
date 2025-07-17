@@ -36,5 +36,5 @@ input[type="radio"]:checked + .radio-label {
 } 
 
 body.dyslexia_font {
-    --font-family: "opendyslexic", sans-serif;
+    --font-family: "opendyslexic", sans-serif !important;
 }
