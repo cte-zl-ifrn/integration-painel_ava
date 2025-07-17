@@ -54,6 +54,9 @@ const app = Vue.createApp({
                 { label: 'Favoritos', value: 'favorites' },
                 { label: 'Privado', value: 'private' }
             ],
+            preferences: {
+                dyslexia_font: false,
+            },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
                 // { id: 2, receiver: '', sender: 'Messi', content: 'Conteúdo da mensagem 22222222222222222222222222222222222222222222222222', date: '2023-01-02 14:00', read: true, favorite: true, group: 'Grupo A', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxLoJONSCCuN_JBwM_xVD5hloPBf4pHB9R7A&s' },
@@ -191,11 +194,17 @@ const app = Vue.createApp({
         }
     },
     mounted() {
+        this.getPreferences();
         this.loadFilters();
         this.filterCards();
         this.sidebarContracted = this.isMobile();
     },
     methods: {
+        getPreferences() {
+            if (document.body.classList.contains('dyslexia_font')) {
+                this.preferences.dyslexia_font = true;
+            }
+        },
         async savePosition() {
             const pos = this.isBottom ? 'bottom' : 'top';
             const app = document.getElementById('app');
