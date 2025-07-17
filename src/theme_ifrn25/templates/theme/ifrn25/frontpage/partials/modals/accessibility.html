@@ -13,6 +13,19 @@
             <label class="custom-control-label" for="dyslexia-friendly" alt="OpenDyslexic, Dyslexie, Lexend">Fonte amigável a disléxicos</label>
         </div>
     </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input 
+                type="checkbox" 
+                v-model="preferences.big_cursor"
+                class="custom-control-input"
+                id="big-cursor" 
+                @change="togglePreference('big_cursor', 'enabled', $event.target.checked)">
+            <label class="custom-control-label" for="big-cursor">Cursor do mouse grande</label>
+        </div>
+    </div>
+
 <!--
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">
@@ -52,13 +65,7 @@
         </div>
     </div>
 
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input type="checkbox" :checked="{{ user.big_cursor|yesno:'true,false' }}" class="custom-control-input"
-                id="big-cursor" @change="togglePreference('big_cursor', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="big-cursor">Cursor do mouse grande</label>
-        </div>
-    </div>
+
 
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">

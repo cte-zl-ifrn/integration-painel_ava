@@ -38,3 +38,7 @@ input[type="radio"]:checked + .radio-label {
 body.dyslexia_font {
     --font-family: "opendyslexic", sans-serif !important;
 }
+
+body.big_cursor * {
+    cursor: url(https://cdn.userway.org/widgetapp/images/arrow_w.svg), auto;
+}

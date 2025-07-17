@@ -56,6 +56,7 @@ const app = Vue.createApp({
             ],
             preferences: {
                 dyslexia_font: false,
+                big_cursor: false,
             },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
@@ -203,6 +204,9 @@ const app = Vue.createApp({
         getPreferences() {
             if (document.body.classList.contains('dyslexia_font')) {
                 this.preferences.dyslexia_font = true;
+            }
+            if (document.body.classList.contains('big_cursor')) {
+                this.preferences.big_cursor = true;
             }
         },
         async savePosition() {
