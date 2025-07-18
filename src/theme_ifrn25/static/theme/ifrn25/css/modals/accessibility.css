@@ -52,13 +52,13 @@ body.big_cursor * {
   color: var(--dark);
 }
 
-.highlight_links [data-highlight]:focus {
+body.highlight_links [data-highlight]:focus {
   outline: 3px solid #f90;
   outline-offset: 2px;
 }
 
 /* Hover opcional para reforçar ainda mais */
-.highlight_links [data-highlight]:hover {
+body.highlight_links [data-highlight]:hover {
   background-color: rgba(255, 255, 0, 0.5);
 }
 
@@ -70,4 +70,26 @@ div[vw].enabled {
 
 .vlibras_active div[vw].enabled {
     display: block !important;
+}
+
+body.stop_animations *,
+body.stop_animations *::before,
+body.stop_animations *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+  transition-timing-function: step-end !important;
+  transition-duration: 0s !important;
+  animation-timing-function: step-end !important;
+  animation-iteration-count: 1 !important;
+  animation-duration: 0s !important;
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
