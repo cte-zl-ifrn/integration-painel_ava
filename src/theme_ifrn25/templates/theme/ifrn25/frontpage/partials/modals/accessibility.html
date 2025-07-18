@@ -37,6 +37,17 @@
             <label class="custom-control-label" for="vlibras-active">Habilitar VLibras</label>
         </div>
     </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <input 
+                type="checkbox" 
+                v-model="preferences.highlight_links"
+                class="custom-control-input"
+                id="highlight-links" @change="togglePreference('highlight_links', 'enabled', $event.target.checked)">
+            <label class="custom-control-label" for="highlight-links">Destacar links</label>
+        </div>
+    </div>
 <!--
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">
@@ -48,14 +59,6 @@
                 @change="togglePreference('remove_justify_align', 'enabled', $event.target.checked)"
             >
             <label class="custom-control-label" for="remove-justify">Remover alinhamento justificado</label>
-        </div>
-    </div>
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input type="checkbox" :checked="{{ user.highlight_links|yesno:'true,false' }}" class="custom-control-input"
-                id="highlight-links" @change="togglePreference('highlight_links', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="highlight-links">Destacar links</label>
         </div>
     </div>
 

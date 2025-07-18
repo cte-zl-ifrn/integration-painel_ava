@@ -63,6 +63,6 @@
 <div class="no-data" v-if="!loading && {{ list_name }}.length===0">
     <h3>Nenhum resultado encontrado nesta aba.</h3>
     <p>Ajuste os filtros ou clique em "Limpar filtros" para ver todos os itens.</p>
-    <button class="btn btn-primary" @click="resetFilters()">Limpar filtros</button>
+    <button class="btn btn-primary" @click="resetFilters()" data-highlight>Limpar filtros</button>
     <p>É possível que a Secretaria Acadêmica ainda não tenha lhe inserido em diário algum, neste caso, por favor aguarde.</p>
 </div>
