@@ -95,3 +95,11 @@ body.stop_animations *::after {
     scroll-behavior: auto !important;
   }
 }
+
+body.hidden_illustrative_image img:not([alt]), 
+body.hidden_illustrative_image img[alt=""] {
+  visibility: hidden !important;
+}
+body.hidden_illustrative_image * {
+  background-image: none !important;
+}

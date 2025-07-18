@@ -60,6 +60,7 @@ const app = Vue.createApp({
                 vlibras_active: true,
                 highlight_links: false,
                 stop_animations: false,
+                hidden_illustrative_image: false,
             },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
@@ -220,7 +221,9 @@ const app = Vue.createApp({
             if (document.body.classList.contains('stop_animations')) {
                 this.preferences.stop_animations = true;
             }
-            
+            if (document.body.classList.contains('hidden_illustrative_image')) {
+                this.preferences.hidden_illustrative_image = true;
+            }    
         },
         async savePosition() {
             const pos = this.isBottom ? 'bottom' : 'top';
