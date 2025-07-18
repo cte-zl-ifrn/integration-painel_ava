@@ -43,6 +43,25 @@ body.big_cursor * {
     cursor: url(https://cdn.userway.org/widgetapp/images/arrow_w.svg), auto;
 }
 
+.highlight_links [data-highlight] {
+  background-color: rgba(255, 255, 100, 1);
+  border: 2px solid #f90;
+  font-weight: bold;
+  text-shadow: 0 0 2px #fff;
+  padding: 0.25em 0.5em;
+  color: var(--dark);
+}
+
+.highlight_links [data-highlight]:focus {
+  outline: 3px solid #f90;
+  outline-offset: 2px;
+}
+
+/* Hover opcional para reforçar ainda mais */
+.highlight_links [data-highlight]:hover {
+  background-color: rgba(255, 255, 0, 0.5);
+}
+
 div[vw].enabled {
     display: none !important;
     margin: 0 !important;
