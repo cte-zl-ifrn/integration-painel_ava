@@ -65,7 +65,9 @@ body.highlight_links [data-highlight]:hover {
 div[vw].enabled {
     display: none !important;
     margin: 0 !important;
-    top: 65% !important;
+    top: 60% !important;
+    left: 8px !important;
+    right: initial !important;
 }
 
 .vlibras_active div[vw].enabled {
