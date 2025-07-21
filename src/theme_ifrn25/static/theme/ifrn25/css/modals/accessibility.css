@@ -103,3 +103,12 @@ body.hidden_illustrative_image img[alt=""] {
 body.hidden_illustrative_image * {
   background-image: none !important;
 }
+
+body.remove_justify_align p,
+body.remove_justify_align span,
+body.remove_justify_align li,
+body.remove_justify_align blockquote,
+body.remove_justify_align td,
+body.remove_justify_align div {
+  text-align: start !important;
+}
