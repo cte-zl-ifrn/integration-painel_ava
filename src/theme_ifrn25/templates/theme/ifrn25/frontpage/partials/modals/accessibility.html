@@ -73,12 +73,12 @@
             <label class="custom-control-label" for="hidden-illustrative-image">Ocultar imagens ilustrativas</label>
         </div>
     </div>
-<!--
+
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">
             <input 
                 type="checkbox" 
-                :checked="{{ user.remove_justify_align|yesno:'true,false' }}"
+                v-model="preferences.remove_justify_align"
                 class="custom-control-input" 
                 id="remove-justify"
                 @change="togglePreference('remove_justify_align', 'enabled', $event.target.checked)"
@@ -87,6 +87,7 @@
         </div>
     </div>
 
+<!--
     <div class="drawer-item" id="settingsvisual">
         <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" id="high-line-height">
