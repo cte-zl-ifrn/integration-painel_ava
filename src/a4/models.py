@@ -146,11 +146,18 @@ class Usuario(SafeDeleteModel, AbstractUser):
     @property
     def vlibras_active(self) -> bool:
         try:
-            return self.settings.get("vlibras_active", {}).get("enabled", False)
+            return self.settings.get("vlibras_active", {}).get("enabled", True)
         except AttributeError:
             return False
-
-    #TODO: Linhas mais distantes, parágrafos distantes, cor e zoom  
+    
+    @property
+    def high_line_height(self) -> bool:
+        try:
+            return self.settings.get("high_line_height", {}).get("enabled", False)
+        except AttributeError:
+            return False
+    
+    #TODO: parágrafos distantes, cor e zoom  
     
     @property
     def menu_position(self) -> str:
