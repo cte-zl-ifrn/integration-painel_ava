@@ -112,3 +112,18 @@ body.remove_justify_align td,
 body.remove_justify_align div {
   text-align: start !important;
 }
+
+body.high_line_height {
+  --font-paragraph1: 400 1rem/1.8 var(--font-family);
+  --font-paragraph2: 400 0.875rem/1.8 var(--font-family);
+}
+body.high_line_height p,
+body.high_line_height li,
+body.high_line_height td,
+body.high_line_height th,
+body.high_line_height blockquote {
+  line-height: 1.8 !important;
+}
+body.high_line_height p {
+  margin-bottom: 2rem !important;
+}

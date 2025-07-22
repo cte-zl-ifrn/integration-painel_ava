@@ -1,7 +1,7 @@
 {% load static %}
 <div id="sidebar-container" :class="{'contracted': sidebarContracted}">
     <div class="sidebar-content-header">
-        <p class="sidebar-title">Painel AVA</p>
+        <h1 class="sidebar-title">Painel AVA</h1>
         <button @click="toggleSidebar" :class="{'btn-toggle-sidebar': sidebarContracted}" id='btn-toggle-sidebar'>
             <img src="{% static '/theme/ifrn25/img/sidebar-toggle.svg' %}" alt="Toggle Sidebar">
         </button>
