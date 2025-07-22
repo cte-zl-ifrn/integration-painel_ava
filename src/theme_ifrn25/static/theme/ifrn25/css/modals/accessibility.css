@@ -124,3 +124,6 @@ body.high_line_height th,
 body.high_line_height blockquote {
   line-height: 1.8 !important;
 }
+body.high_line_height p {
+  margin-bottom: 2rem !important;
+}
