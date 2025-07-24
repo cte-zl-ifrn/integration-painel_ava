@@ -99,6 +99,21 @@
             <label class="custom-control-label" for="high-line-height">Aumentar espaçamento do texto</label>
         </div>
     </div>
+
+    <div class="drawer-item" id="settingsvisual">
+        <div class="custom-control custom-switch">
+            <label for="zoom-level">Zoom da página:</label>
+            <select 
+                id="zoom-level" 
+                v-model="zoom_level" 
+                @change="togglePreference('zoom_level', 'selected', zoom_level)">
+                <option :value="100">Normal (100%)</option>
+                <option :value="125">Médio (125%)</option>
+                <option :value="150">Grande (150%)</option>
+                <option :value="175">Muito grande (175%)</option>
+            </select>
+        </div>
+    </div>
 <!--
 
     <div class="drawer-item" id="settingsvisual">

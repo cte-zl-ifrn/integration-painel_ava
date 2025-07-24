@@ -3,7 +3,7 @@
 <html lang="pt-br">
 {% include 'theme/ifrn25/frontpage/partials/head.html' %}
 
-<body class="
+<body class="zoom-{{ user.zoom_level }}
     {% if user.remove_justify_align %} remove_justify_align{% endif %}
     {% if user.highlight_links %} highlight_links{% endif %}
     {% if user.stop_animations %} stop_animations{% endif %}
