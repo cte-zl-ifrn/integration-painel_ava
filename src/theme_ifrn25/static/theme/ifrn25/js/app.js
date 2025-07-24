@@ -63,7 +63,7 @@ const app = Vue.createApp({
                 hidden_illustrative_image: false,
                 remove_justify_align: false,
                 high_line_height: false,
-                zoom_level: "100",
+                zoom_level: '100',
             },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
@@ -249,11 +249,12 @@ const app = Vue.createApp({
             }
         },
         getCsrfToken() {
-            // simples helper para pegar o cookie 'csrftoken'
-            return document.cookie.split(';')
+            const token = document.cookie
+                .split(';')
                 .map(c => c.trim())
-                .find(c => c.startsWith('csrftoken='))
-                .split('=')[1];
+                .find(c => c.startsWith('csrftoken='));
+
+            return token ? token.split('=')[1] : '';
         },
         initSplide() {
             if (this.splideInstance) {
