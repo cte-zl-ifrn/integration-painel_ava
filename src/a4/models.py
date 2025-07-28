@@ -156,8 +156,15 @@ class Usuario(SafeDeleteModel, AbstractUser):
             return self.settings.get("high_line_height", {}).get("enabled", False)
         except AttributeError:
             return False
-    
-    #TODO: parágrafos distantes, cor e zoom  
+
+    @property
+    def zoom_level(self) -> int:
+        try:
+            return self.settings.get("zoom_level", {}).get("selected", 100)
+        except AttributeError:
+            return 100
+
+    #TODO: cor e zoom  
     
     @property
     def menu_position(self) -> str:

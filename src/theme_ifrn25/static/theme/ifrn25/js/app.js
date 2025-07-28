@@ -63,6 +63,7 @@ const app = Vue.createApp({
                 hidden_illustrative_image: false,
                 remove_justify_align: false,
                 high_line_height: false,
+                zoom_level: '100',
             },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
@@ -248,11 +249,12 @@ const app = Vue.createApp({
             }
         },
         getCsrfToken() {
-            // simples helper para pegar o cookie 'csrftoken'
-            return document.cookie.split(';')
+            const token = document.cookie
+                .split(';')
                 .map(c => c.trim())
-                .find(c => c.startsWith('csrftoken='))
-                .split('=')[1];
+                .find(c => c.startsWith('csrftoken='));
+
+            return token ? token.split('=')[1] : '';
         },
         initSplide() {
             if (this.splideInstance) {
@@ -686,17 +688,29 @@ const app = Vue.createApp({
                 method: "POST",
                 headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": this.getCsrfToken,
+                "X-CSRFToken": this.getCsrfToken(),
                 },
                 body: JSON.stringify({ value: value })
             })
             .then(res => res.json())
             .then(data => {
-                if (data.status === "ok") {
-                    document.body.classList.toggle(category, value);
-                } else {
+                if (data.status !== "ok") {
                     console.error(data.message);
+                    return;
                 }
+
+                if (category === "zoom_level") {
+                    document.body.classList.forEach(cls => {
+                        if (cls.startsWith("zoom-")) {
+                            document.body.classList.remove(cls);
+                        }
+                    });
+                    document.body.classList.add(`zoom-${value}`);
+                    return;
+                }
+
+                document.body.classList.toggle(category, value === true);
+
             });
         },
         goToCourse(item) {
