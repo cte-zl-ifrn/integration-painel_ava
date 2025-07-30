@@ -33,7 +33,60 @@ input[type="radio"]:checked + .radio-label {
     src: url('https://ava-painel-statics.pages.dev/vendors/OpenDyslexic/OpenDyslexic-Bold-Italic.otf') format('opentype');
     font-weight: bold;
     font-style: italic;
-} 
+}
+
+.accessiblity-options {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.custom-checkbox-access {
+  font: var(--font-button2);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    border-color: var(--primary);
+  }
+}
+.checkbox-access-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: .5rem;
+  border: 1px solid transparent;
+  border-radius: 72px;
+  background-color: var(--light);
+  padding: .5rem 1rem;
+  width: 100%;
+  cursor: pointer;
+  .label-container {
+    display: flex;
+    align-items: center;
+  }
+  .icon-id {
+    margin-right: .25rem;
+  }
+  .icon-checked {
+    display: none;
+  }
+}
+.checkbox-access-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  &:checked + .checkbox-access-label {
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+  }
+  &:checked + .checkbox-access-label .icon-checked {
+    display: block;
+    color: var(--primary);
+  }
+}
 
 body.dyslexia_font {
     --font-family: "opendyslexic", sans-serif !important;
