@@ -148,17 +148,17 @@
             </label>
         </div>
 
-        <div class="custom-control custom-switch">
-            <label for="zoom-level">Zoom da página:</label>
-            <select 
-                id="zoom-level" 
-                v-model="zoom_level" 
-                @change="togglePreference('zoom_level', 'selected', zoom_level)">
-                <option :value="100">Normal (100%)</option>
-                <option :value="125">Médio (125%)</option>
-                <option :value="150">Grande (150%)</option>
-                <option :value="175">Muito grande (175%)</option>
-            </select>
+        <div :class="['selector-cycle-access', { active: preferences.zoom_level > 100}]">
+            <label for="cycle-toggle">Zoom:</label>
+            <button id="cycle-toggle" @click="cycleAccessibility" class="cycle-btn">
+                <i class="fa-solid fa-magnifying-glass icon-id"></i>
+                [[ preferences.zoom_level ]]%
+                <div class="cycle-indicators">
+                    <span v-for="(level, index) in preferences.zoom_options.filter(l => l > 100)" :key="level"
+                        :class="['cycle-indicator', { active: level <= preferences.zoom_level }]"></span>
+                </div>
+
+            </button>
         </div>
 
 <!--
