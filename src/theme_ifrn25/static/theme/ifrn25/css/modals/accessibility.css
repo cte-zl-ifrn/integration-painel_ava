@@ -58,7 +58,7 @@ input[type="radio"]:checked + .radio-label {
   border: 1px solid transparent;
   border-radius: 72px;
   background-color: var(--light);
-  padding: .5rem 1rem;
+  padding: .75rem 1rem;
   width: 100%;
   cursor: pointer;
   .label-container {
@@ -66,6 +66,7 @@ input[type="radio"]:checked + .radio-label {
     align-items: center;
   }
   .icon-id {
+    color: var(--dark);
     margin-right: .25rem;
   }
   .icon-checked {
