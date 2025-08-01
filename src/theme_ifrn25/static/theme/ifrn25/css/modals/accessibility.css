@@ -139,23 +139,22 @@ body.big_cursor * {
     cursor: url(https://cdn.userway.org/widgetapp/images/arrow_w.svg), auto;
 }
 
-.highlight_links [data-highlight] {
-  background-color: rgba(255, 255, 100, 1);
-  border: 2px solid #f90;
-  font-weight: bold;
-  text-shadow: 0 0 2px #fff;
+.highlight_links a[href] {
+  background-color: var(--dark) !important;
+  border: 2px solid #f90 !important;
+  color: rgba(255, 255, 100, 1) !important;
   padding: 0.25em 0.5em;
-  color: var(--dark);
+  border-radius: 10px;
+  &:hover {
+    background-color: var(--dark) !important;
+  }
+  &:focus {
+    outline: 3px solid #f90;
+    outline-offset: 2px;
+  }
 }
-
-body.highlight_links [data-highlight]:focus {
-  outline: 3px solid #f90;
-  outline-offset: 2px;
-}
-
-/* Hover opcional para reforçar ainda mais */
-body.highlight_links [data-highlight]:hover {
-  background-color: rgba(255, 255, 0, 0.5);
+.highlight_links a[href] * {
+  color: rgba(255, 255, 100, 1) !important;
 }
 
 div[vw].enabled {
