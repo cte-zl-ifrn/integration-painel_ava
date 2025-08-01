@@ -1,119 +1,166 @@
 {% load static %}
-<div id="modal-content-body-profile">
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
+<div class="accessiblity-options">
+        <div class="custom-checkbox-access">
             <input
                 type="checkbox" 
                 v-model="preferences.dyslexia_font"
-                class="custom-control-input" 
+                class="checkbox-access-input" 
                 id="dyslexia-friendly"
                 @change="togglePreference('dyslexia_font', 'enabled', $event.target.checked)"
             >
-            <label class="custom-control-label" for="dyslexia-friendly" alt="OpenDyslexic, Dyslexie, Lexend">Fonte amigável a disléxicos</label>
+            <label class="checkbox-access-label" for="dyslexia-friendly" alt="OpenDyslexic, Dyslexie, Lexend">
+                <span class="label-container">
+                    <svg class="icon-id" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                        <path fill="#2B2B2B"
+                            d="M3.86 4.258c.261-.274 1.293-.326 1.58-.175.475.248 3.363 7.83 4.026 8.87-.573-.077-1.829.164-2.255-.093-.381-.229-.227-1.316-.648-1.399-.446-.09-3.976-.019-4.101.132-.269.33-.167 1.309-.222 1.361-.092.083-1.846-.055-2.24 0l3.86-8.696Zm6.283 2.488c.71-1.33 5.856-.78 5.857.85v4.981c-.628.24-1.286-.382-1.577-.394-.695-.03-1.635.72-3.294.287-2.208-.58-2.06-3.885.747-4.25.728-.096 4.024.303 2.4-.857-1.03-.733-4.584.233-4.133-.617Zm3.859 2.43c-.862-.036-3.678-.227-3.374 1.056.28 1.175 4.239.937 3.374-1.056ZM4.98 6.168c-.408-.364-.42.114-.52.299-.192.358-1.378 3.393-1.22 3.518h2.987c-.192-.51-1.086-3.672-1.248-3.817h.001Z" />
+                    </svg>
+                    Fonte amigável a disléxicos
+                </span>                
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
         </div>
-    </div>
 
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input 
-                type="checkbox" 
-                v-model="preferences.big_cursor"
-                class="custom-control-input"
-                id="big-cursor" 
-                @change="togglePreference('big_cursor', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="big-cursor">Cursor do mouse grande</label>
-        </div>
-    </div>
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input 
-                type="checkbox"
-                v-model="preferences.vlibras_active"
-                class="custom-control-input"
-                id="vlibras-active" 
-                @change="togglePreference('vlibras_active', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="vlibras-active">Habilitar VLibras</label>
-        </div>
-    </div>
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input 
-                type="checkbox" 
-                v-model="preferences.highlight_links"
-                class="custom-control-input"
-                id="highlight-links" 
-                @change="togglePreference('highlight_links', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="highlight-links">Destacar links</label>
-        </div>
-    </div>
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input 
-                type="checkbox" 
-                v-model="preferences.stop_animations"
-                class="custom-control-input"
-                id="stop-animations" 
-                @change="togglePreference('stop_animations', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="stop-animations">Parar animações</label>
-        </div>
-    </div>
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <input 
-                type="checkbox"
-                v-model="preferences.hidden_illustrative_image"
-                class="custom-control-input" 
-                id="hidden-illustrative-image"
-                @change="togglePreference('hidden_illustrative_image', 'enabled', $event.target.checked)">
-            <label class="custom-control-label" for="hidden-illustrative-image">Ocultar imagens ilustrativas</label>
-        </div>
-    </div>
-
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
+        <div class="custom-checkbox-access">
             <input 
                 type="checkbox" 
                 v-model="preferences.remove_justify_align"
-                class="custom-control-input" 
+                class="checkbox-access-input" 
                 id="remove-justify"
                 @change="togglePreference('remove_justify_align', 'enabled', $event.target.checked)"
             >
-            <label class="custom-control-label" for="remove-justify">Remover alinhamento justificado</label>
+            <label class="checkbox-access-label" for="remove-justify">
+                <span class="label-container">
+                    <i class="fa-solid fa-align-left icon-id"></i>
+                    Alinhar texto à esquerda
+                </span>
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
         </div>
-    </div>
+        
+        <div class="custom-checkbox-access">
+            <input 
+                type="checkbox" 
+                v-model="preferences.highlight_links"
+                class="checkbox-access-input"
+                id="highlight-links" 
+                @change="togglePreference('highlight_links', 'enabled', $event.target.checked)">
+            <label class="checkbox-access-label" for="highlight-links">
+                <span class="label-container">
+                    <i class="fa-solid fa-highlighter icon-id"></i>
+                    Destacar links
+                </span> 
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
+        </div>
 
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
+        <div class="custom-checkbox-access">
+            <input 
+                type="checkbox" 
+                v-model="preferences.stop_animations"
+                class="checkbox-access-input"
+                id="stop-animations" 
+                @change="togglePreference('stop_animations', 'enabled', $event.target.checked)">
+            <label class="checkbox-access-label" for="stop-animations">
+                <span class="label-container">
+                    <i class="fa-solid fa-circle-pause icon-id"></i>
+                    Parar animações
+                </span>            
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
+        </div>
+
+        <div class="custom-checkbox-access">
+            <input 
+                type="checkbox"
+                v-model="preferences.hidden_illustrative_image"
+                class="checkbox-access-input" 
+                id="hidden-illustrative-image"
+                @change="togglePreference('hidden_illustrative_image', 'enabled', $event.target.checked)">
+            <label class="checkbox-access-label" for="hidden-illustrative-image">
+                <span class="label-container">
+                    <svg class="icon-id" xmlns="http://www.w3.org/2000/svg" width="16" height="14" fill="none">
+                        <path fill="#2B2B2B"
+                            d="M11.524 5.731c5.46-.627 6.13 7.35.87 7.753-5.26.403-5.937-7.17-.87-7.753ZM11.234.5c.507 0 1.203.602 1.203 1.353V4.41a5.544 5.544 0 0 0-3.303.828c-.186.113-.894.705-.96.718-.164.028-.421-.457-.96-.154-.44.246-1.47 2.334-1.847 2.843-.077.099-.126.034-.216-.091-.333-.47-.654-1.387-1.46-1.053-.513.212-1.517 1.83-1.844 2.457-.28.537-.156.93.437.93l4.516.046.8 1.689H1.39v-.003c-.613 0-1.383-.75-1.383-1.343L0 1.95C0 .945.82.52 1.744.52 4.8.52 8.25.5 11.234.5Zm-.607 7.386c-.113.016-.28.105-.32.215-.323.505 1.102 1.258 1.054 1.529-.27.412-1.437 1.024-.988 1.574.45.55 1.311-.779 1.665-1 .416.267 1.076 1.419 1.616 1.042.74-.518-.997-1.365-.94-1.68.236-.397 1.457-1.047 1.02-1.52-.54-.582-1.276.663-1.696.943-.34-.238-.984-1.165-1.41-1.107v.004ZM3.707 5.27c1.72-.174 1.46-2.852-.416-2.566-1.617.248-1.36 2.747.417 2.566Z" />
+                    </svg>
+                    <span>Ocultar imagens ilustrativas</span>
+                </span>
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
+        </div>
+
+        <div class="custom-checkbox-access">
+            <input 
+                type="checkbox" 
+                v-model="preferences.big_cursor"
+                class="checkbox-access-input"
+                id="big-cursor" 
+                @change="togglePreference('big_cursor', 'enabled', $event.target.checked)">
+            <label class="checkbox-access-label" for="big-cursor">
+                <span class="label-container">
+                    <i class="fa-solid fa-arrow-pointer icon-id"></i>
+                    Cursor do mouse grande
+                </span>
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
+        </div>
+
+
+        <div class="custom-checkbox-access">
+            <input 
+                type="checkbox"
+                v-model="preferences.vlibras_active"
+                class="checkbox-access-input"
+                id="vlibras-active" 
+                @change="togglePreference('vlibras_active', 'enabled', $event.target.checked)">
+            <label class="checkbox-access-label" for="vlibras-active">
+                <span class="label-container">
+                    <i class="fa-solid fa-hands-asl-interpreting icon-id"></i>
+                    Habilitar VLibras
+                </span>
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
+        </div>
+
+        <div class="custom-checkbox-access">
             <input 
                 type="checkbox" 
                 v-model="preferences.high_line_height"
-                class="custom-control-input" 
+                class="checkbox-access-input" 
                 id="high-line-height"
                 @change="togglePreference('high_line_height', 'enabled', $event.target.checked)"
             >    
-            <label class="custom-control-label" for="high-line-height">Aumentar espaçamento do texto</label>
+            <label class="checkbox-access-label" for="high-line-height">
+                <span class="label-container">
+                    <svg class="icon-id" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                        <g clip-path="url(#a)">
+                            <path fill="#2B2B2B"
+                                d="M2.183 1.353c.523-.403.943-.5 1.507-.103.32.223 1.803 1.721 2.046 2.048.62.836.05 1.905-.98 1.683-.342-.074-.48-.214-.773-.503v7.021c.227-.226.43-.406.774-.48 1.026-.222 1.6.846.98 1.682-.244.327-1.73 1.826-2.047 2.05-.564.395-.984.299-1.507-.104C1.756 14.32.12 12.652.026 12.202c-.233-1.126 1.277-1.632 1.96-.703V4.504c-.686.93-2.196.423-1.962-.703.094-.454 1.732-2.118 2.159-2.448Zm12.94 10.652c1.17 0 1.17 1.979 0 1.979-1.91 0-4.34.004-6.283.004-1.103 0-1.13-1.972-.007-1.972v.003l6.29-.014Zm0-4.996c1.17 0 1.17 1.979 0 1.979L8.84 8.99c-1.103 0-1.13-1.971-.007-1.971v.004l6.29-.014Zm0-4.996c1.17 0 1.17 1.978 0 1.978l-6.283.003c-1.103 0-1.13-1.971-.007-1.971v.003l6.29-.013Z" />
+                        </g>
+                        <defs>
+                            <clipPath id="a">
+                                <path fill="#fff" d="M0 0h16v16H0z" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                    Linhas mais distantes
+                </span>
+                <i class="fa-regular fa-circle-check icon-checked"></i>
+            </label>
         </div>
-    </div>
 
-    <div class="drawer-item" id="settingsvisual">
-        <div class="custom-control custom-switch">
-            <label for="zoom-level">Zoom da página:</label>
-            <select 
-                id="zoom-level" 
-                v-model="zoom_level" 
-                @change="togglePreference('zoom_level', 'selected', zoom_level)">
-                <option :value="100">Normal (100%)</option>
-                <option :value="125">Médio (125%)</option>
-                <option :value="150">Grande (150%)</option>
-                <option :value="175">Muito grande (175%)</option>
-            </select>
+        <div :class="['selector-cycle-access', { active: preferences.zoom_level > 100}]">
+            <label for="cycle-toggle">Zoom:</label>
+            <button id="cycle-toggle" @click="cycleAccessibility" class="cycle-btn">
+                <i class="fa-solid fa-magnifying-glass icon-id"></i>
+                [[ preferences.zoom_level ]]%
+                <div class="cycle-indicators">
+                    <span v-for="(level, index) in preferences.zoom_options.filter(l => l > 100)" :key="level"
+                        :class="['cycle-indicator', { active: level <= preferences.zoom_level }]"></span>
+                </div>
+
+            </button>
         </div>
-    </div>
+
 <!--
 
     <div class="drawer-item" id="settingsvisual">

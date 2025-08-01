@@ -64,6 +64,7 @@ const app = Vue.createApp({
                 remove_justify_align: false,
                 high_line_height: false,
                 zoom_level: '100',
+                zoom_options: ['100', '120', '130', '150', '160'],
             },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
@@ -232,7 +233,12 @@ const app = Vue.createApp({
             }
             if (document.body.classList.contains('high_line_height')) {
                 this.preferences.high_line_height = true;
-            }    
+            }
+
+            const zoom = document.body.getAttribute('data-zoom');
+            if (zoom) {
+                this.preferences.zoom_level = zoom;
+            }   
         },
         async savePosition() {
             const pos = this.isBottom ? 'bottom' : 'top';
@@ -700,18 +706,18 @@ const app = Vue.createApp({
                 }
 
                 if (category === "zoom_level") {
-                    document.body.classList.forEach(cls => {
-                        if (cls.startsWith("zoom-")) {
-                            document.body.classList.remove(cls);
-                        }
-                    });
-                    document.body.classList.add(`zoom-${value}`);
+                    document.body.setAttribute("data-zoom", value);
                     return;
                 }
 
                 document.body.classList.toggle(category, value === true);
-
             });
+        },
+        cycleAccessibility() {
+            const currentIndex = this.preferences.zoom_options.indexOf(this.preferences.zoom_level);
+            const nextIndex = (currentIndex + 1) % this.preferences.zoom_options.length;
+            this.preferences.zoom_level = this.preferences.zoom_options[nextIndex];
+            this.togglePreference('zoom_level', 'selected', this.preferences.zoom_level);
         },
         goToCourse(item) {
             window.location.href = item.url;

@@ -33,7 +33,103 @@ input[type="radio"]:checked + .radio-label {
     src: url('https://ava-painel-statics.pages.dev/vendors/OpenDyslexic/OpenDyslexic-Bold-Italic.otf') format('opentype');
     font-weight: bold;
     font-style: italic;
-} 
+}
+
+.accessiblity-options {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.custom-checkbox-access {
+  font: var(--font-button2);
+}
+.checkbox-access-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: .5rem;
+  border: 1px solid transparent;
+  border-radius: 72px;
+  background-color: var(--light);
+  padding: .75rem 1rem;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    border-color: var(--primary);
+  }
+  .label-container {
+    display: flex;
+    align-items: center;
+  }
+  .icon-id {
+    color: var(--dark);
+    margin-right: .25rem;
+  }
+  .icon-checked {
+    display: none;
+  }
+}
+.checkbox-access-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  &:checked + .checkbox-access-label {
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+  }
+  &:checked + .checkbox-access-label .icon-checked {
+    display: block;
+    color: var(--primary);
+  }
+}
+
+.selector-cycle-access {
+  font: var(--font-button2);
+  &.active .cycle-btn {
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+  }
+  .cycle-btn {
+    display: block;
+    background-color: var(--light);
+    border: 1px solid transparent;
+    border-radius: 72px;
+    padding: .75rem 1rem;
+    width: 100%;
+    font: var(--font-button2);
+    color: var(--dark);
+    margin-top: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      border-color: var(--primary);
+    }
+    .icon-id {
+      color: var(--dark);
+    }
+  }
+
+  .cycle-indicators {
+    display: flex;
+    gap: .25rem;
+    margin-top: 0.25rem;
+    .cycle-indicator {
+      height: 4px;
+      width: 100%;
+      background-color: var(--light-dark);
+      border-radius: 4px;
+      &.active {
+        background-color: var(--primary);
+      }
+    }
+  }
+
+}
 
 body.dyslexia_font {
     --font-family: "opendyslexic", sans-serif !important;
@@ -43,23 +139,22 @@ body.big_cursor * {
     cursor: url(https://cdn.userway.org/widgetapp/images/arrow_w.svg), auto;
 }
 
-.highlight_links [data-highlight] {
-  background-color: rgba(255, 255, 100, 1);
-  border: 2px solid #f90;
-  font-weight: bold;
-  text-shadow: 0 0 2px #fff;
+.highlight_links a[href] {
+  background-color: var(--dark) !important;
+  border: 2px solid #f90 !important;
+  color: rgba(255, 255, 100, 1) !important;
   padding: 0.25em 0.5em;
-  color: var(--dark);
+  border-radius: 10px;
+  &:hover {
+    background-color: var(--dark) !important;
+  }
+  &:focus {
+    outline: 3px solid #f90;
+    outline-offset: 2px;
+  }
 }
-
-body.highlight_links [data-highlight]:focus {
-  outline: 3px solid #f90;
-  outline-offset: 2px;
-}
-
-/* Hover opcional para reforçar ainda mais */
-body.highlight_links [data-highlight]:hover {
-  background-color: rgba(255, 255, 0, 0.5);
+.highlight_links a[href] * {
+  color: rgba(255, 255, 100, 1) !important;
 }
 
 div[vw].enabled {
@@ -128,27 +223,34 @@ body.high_line_height p {
   margin-bottom: 2rem !important;
 }
 
-body.zoom-125 #app {
-  transform: scale(1.25);
+body[data-zoom="120"] #app {
+  transform: scale(1.2);
   transform-origin: top left;
-  width: calc(100% / 1.25);
-  height: calc(100% / 1.25);
+  width: calc(100% / 1.2);
+  height: calc(100% / 1.2);
 }
-body.zoom-150 #app {
+body[data-zoom="130"] #app {
+  transform: scale(1.3);
+  transform-origin: top left;
+  width: calc(100% / 1.3);
+  height: calc(100% / 1.3);
+}
+body[data-zoom="150"] #app {
   transform: scale(1.5);
   transform-origin: top left;
   width: calc(100% / 1.5);
   height: calc(100% / 1.5);
 }
-body.zoom-175 #app {
-  transform: scale(1.75);
+body[data-zoom="160"] #app {
+  transform: scale(1.6);
   transform-origin: top left;
-  width: calc(100% / 1.75);
-  height: calc(100% / 1.75);
+  width: calc(100% / 1.6);
+  height: calc(100% / 1.6);
 }
-body.zoom-125 #app #content-container,
-body.zoom-150 #app #content-container,
-body.zoom-175 #app #content-container {
-  width: calc(100% / 1);
-  height: calc(100% / 1);
+body[data-zoom="120"] #app #content-container,
+body[data-zoom="130"] #app #content-container,
+body[data-zoom="150"] #app #content-container,
+body[data-zoom="160"] #app #content-container {
+  width: 100%;
+  height: 100%;
 }
