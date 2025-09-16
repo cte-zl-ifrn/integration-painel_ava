@@ -861,7 +861,7 @@ const app = Vue.createApp({
                         content: "<ul>" +
                                 "<li>Acesse nossa <b>Central de Ajuda</b> para tirar dúvidas das mais diversas.</li>" +
                                 "<li>Tenha seus direitos protegidos pela <b>Ouvidoria</b> do IFRN.</li>" +
-                                "<li>Use nossa lista de <b>contatos</b> caso necessite ligar ou telefonar para nós.</li>" +
+                                "<li>Use nossa lista de <b>contatos</b> caso precise entrar em contato por telefone.</li>" +
                                 "<li>Necessita de um atendimento para uma demanda? Use uma das nossas <b>Centrais de Atendimento</b> no SUAP.</li>" +
                                 "</ul>",
                         placement: "top-start",
@@ -918,14 +918,14 @@ const app = Vue.createApp({
                     steps.splice(1, 0, {
                         element: ".text-decoration-none",
                         title: "Sua sala de aula",
-                        content: "<p>Você pode acessar seuas salas clicando no <b>nome da sala ou no identificador</b> da sala.</p>" +
+                        content: "<p>Você pode acessar suas salas clicando no <b>nome da sala ou no identificador</b> da sala.</p>" +
                                 "<p>Aprenda nos próximos passos como usar os filtros para encontrar salas específicas, passadas, planejadas ou favoritas.</p>",
                         placement: "bottom-start",
                     });
                     steps.splice(2, 0, {
                         element: ".painel-card-details-info-unfavourite, .painel-card-details-info-favourite",
                         title: "Favorite uma sala",
-                        content: "<p>Você tem muitas salas? Favorite as que você vais estudar mais neste semestre, então acesse elas <b>filtrando pelas favoritas<b>.",
+                        content: "<p>Você tem muitas salas? Favorite as que você vai estudar mais neste semestre, então acesse elas <b>filtrando pelas favoritas<b>.",
                         placement: "bottom-end",
                     });
                 }
