@@ -63,11 +63,16 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                background: var(--verde-escuro);
+                background: var(--primary-dark);
                 border-radius: 8px;
-
+                transition: all 0.2s ease-in;
+                
                 &.btn-toggle-sidebar {
                     background: none;
+                    
+                    &:hover {
+                        background-color: var(--primary-dark);
+                    }
                     
                     img {
                         width: 16px;
@@ -93,14 +98,19 @@
 
             .sidebar-user-content-profile {
                 width: 100%;
-                background: var(--branco-primario);
+                background: var(--general-white);
                 border-radius: 1rem;
                 padding: .5rem 1rem;
                 display: flex;
                 justify-content: start;
                 align-items: center;
-                /* margin-bottom: 1rem; */
                 cursor: pointer;
+                transition: all 0.2s ease-in;
+
+                &:hover {
+                    background-color: var(--primary-dark);
+                    color: var(--general-white);
+                }
 
                 span {
                     font: var(--font-heading4);
