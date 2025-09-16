@@ -726,15 +726,26 @@ const app = Vue.createApp({
           return item.url;
         },
         mostrarGauge(e) {
-            var anchor = (e.target.nodeName == 'A') ? e.target : e.target.parentElement;
-            console.log({"t":anchor});
-            // anchor.style.display = "none";
-            const img = document.createElement('img');
-            img.src = 'https://upload.wikimedia.org/wikipedia/commons/3/36/Lightness_rotate_36f-L_cw.gif';
-            img.className = 'floating-image';
-            img.width = 64;
-            anchor.appendChild(img);
-            setTimeout(() => {img.remove();}, 5000);
+            const overlay = document.createElement('div');
+            overlay.className = 'loading-overlay';
+
+            const spinner = document.createElement('div');
+            spinner.className = 'loading-spinner';
+
+            const text = document.createElement('div');
+            text.className = 'loading-text';
+            text.textContent = 'Carregando, aguarde...';
+
+            // insere dentro do overlay
+            overlay.appendChild(spinner);
+            overlay.appendChild(text);
+
+            // adiciona overlay ao body
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                overlay.remove();
+            }, 3000);
         },
         showConfirmation(action, callback) {
             const modal = document.getElementById("popup-modal");
