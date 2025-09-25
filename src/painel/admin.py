@@ -5,7 +5,6 @@ from django.utils.safestring import mark_safe
 from base.admin import BaseModelAdmin
 from painel.models import Contrante, Ambiente, Curso, Popup, Theme, AddedTheme
 from painel.resources import AmbienteResource
-from unfold.admin import StackedInline, TabularInline
 
 ####
 # Inlines

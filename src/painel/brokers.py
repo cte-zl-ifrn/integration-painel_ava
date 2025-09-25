@@ -1,17 +1,13 @@
 from django.utils.translation import gettext as _
 import http
 import logging
-import json
-import hashlib
 from django.utils.timezone import now
 from django.http import HttpRequest
 from django.core.exceptions import ValidationError
-from django.contrib import auth
 from django.contrib.auth.hashers import make_password, check_password
 from django.conf import settings
 from a4.models import Usuario
-from cryptography.fernet import Fernet
-from painel.constants import CRYPTOGRAPHY_KEY, JWT_SECRET
+from painel.constants import JWT_SECRET
 import jwt
 import datetime
 from datetime import timezone

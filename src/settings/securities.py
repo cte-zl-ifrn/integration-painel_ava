@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from sc4py.env import env, env_as_bool, env_as_list, env_as_int
 
-# from corsheaders.signals import check_request_enabled
-
-
 # def cors_allow_mysites(sender, request, **kwargs):
 #     return False
 #     return MySite.objects.filter(host=request.headers["origin"]).exists()
@@ -32,12 +29,12 @@ AUTH_PASSWORD_VALIDATORS = env_as_list("DJANGO_AUTH_PASSWORD_VALIDATORS", [])
 
 
 CSRF_COOKIE_AGE = env_as_int("DJANGO_CSRF_COOKIE_AGE", 60 * 60 * 24 * 365)
-CSRF_COOKIE_DOMAIN = env("DJANGO_CSRF_COOKIE_DOMAIN", None)
+CSRF_COOKIE_DOMAIN = env("DJANGO_CSRF_COOKIE_DOMAIN", 'painel')
 CSRF_COOKIE_HTTPONLY = env_as_bool("DJANGO_CSRF_COOKIE_HTTPONLY", True)
 CSRF_COOKIE_NAME = env("DJANGO_CSRF_COOKIE_NAME", "csrftoken")
 CSRF_COOKIE_PATH = env("DJANGO_CSRF_COOKIE_PATH", "/")
 CSRF_COOKIE_SAMESITE = env("DJANGO_CSRF_COOKIE_SAMESITE", "Lax")
-CSRF_COOKIE_SECURE = env_as_bool("DJANGO_CSRF_COOKIE_SECURE", True)
+CSRF_COOKIE_SECURE = env_as_bool("DJANGO_CSRF_COOKIE_SECURE", False)
 CSRF_USE_SESSIONS = env_as_bool("DJANGO_CSRF_USE_SESSIONS", False)
 CSRF_FAILURE_VIEW = env("DJANGO_CSRF_FAILURE_VIEW", "django.views.csrf.csrf_failure")
 CSRF_HEADER_NAME = env("DJANGO_CSRF_HEADER_NAME", "HTTP_X_CSRFTOKEN")

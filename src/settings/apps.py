@@ -27,24 +27,13 @@ MY_APPS = env_as_list(
 THIRD_APPS = env_as_list(
     "THIRD_APPS",
     [
-        # 'markdownx',
         "django_extensions",
         "import_export",
         "simple_history",
         "safedelete",
         "sass_processor",
-        "django_json_widget",
-        # "django_admin_json_editor",
-        # "corsheaders",
-        "adminlte3",
+        # "adminlte3",
         # "adminlte3/admin",
-        "unfold",  # before django.contrib.admin
-        "unfold.contrib.filters",  # optional, if special filters are needed
-        "unfold.contrib.forms",  # optional, if special form elements are needed
-        "unfold.contrib.inlines",  # optional, if special inlines are needed
-        "unfold.contrib.import_export",  # optional, if django-import-export package is used
-        "unfold.contrib.guardian",  # optional, if django-guardian package is used
-        "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
     ],
 )
 

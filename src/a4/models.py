@@ -34,14 +34,6 @@ class TipoUsuario(Choices):
     DESCONHECIDO = Choices.Value(_("Desconhecido"), value=None)
 
 
-TipoUsuario.kv = [{"id": p, "label": p.display} for p in TipoUsuario.values()]
-TipoUsuario.COLABORADORES_KEYS = [
-    TipoUsuario.DOCENTE,
-    TipoUsuario.TECNICO,
-    TipoUsuario.PRESTADOR,
-]
-
-
 class UsuarioManager(SafeDeleteManager, UserManager):
     pass
 
