@@ -8,7 +8,6 @@ from django.db.models import BooleanField, URLField, CharField, DateTimeField, M
 from django.core.cache import cache
 from django_better_choices import Choices
 from simple_history.models import HistoricalRecords
-from djrichtextfield.models import RichTextField
 
 
 logger = logging.getLogger(__name__)
@@ -53,8 +52,8 @@ class Contrante(ActiveMixin, Model):
     url_logo = URLField(_("URL da logo"), max_length=256)
     titulo = CharField(_("título do painel"), max_length=256)
     nome_contratante = CharField(_("nome do contrante"), max_length=256)
-    observacoes = RichTextField(_("observações"), null=True, blank=True)
-    rodape = RichTextField(_("rodapé"), null=True, blank=True)
+    observacoes = TextField(_("observações"), null=True, blank=True)
+    rodape = TextField(_("rodapé"), null=True, blank=True)
     css_personalizado = TextField(_("CSS personalizado"), null=True, blank=True)
     menu_personalizado = TextField(_("menu personalizado"), null=True, blank=True)
     regex_coordenacao = TextField(_("regex coordenação"), null=True, blank=True)
@@ -190,7 +189,7 @@ class Popup(ActiveMixin, Model):
     contratante = ForeignKey(Contrante, on_delete=PROTECT, null=True, blank=False)
     titulo = CharField(_("título"), max_length=256)
     url = URLField(_("url"), max_length=256)
-    mensagem = RichTextField(_("mensagem"))
+    mensagem = TextField(_("mensagem"))
     start_at = DateTimeField(_("inicia em"))
     end_at = DateTimeField(_("termina em"))
     active = BooleanField(_("ativo?"), default=True)

@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import djrichtextfield.models
 import painel.models
 import simple_history.models
 
@@ -39,7 +38,7 @@ class Migration(migrations.Migration):
                 ("url", models.URLField(max_length=256, verbose_name="url")),
                 (
                     "mensagem",
-                    djrichtextfield.models.RichTextField(verbose_name="mensagem"),
+                    models.TextField(verbose_name="mensagem"),
                 ),
                 ("start_at", models.DateTimeField(verbose_name="inicia em")),
                 ("end_at", models.DateTimeField(verbose_name="termina em")),
@@ -71,7 +70,7 @@ class Migration(migrations.Migration):
                 ("url", models.URLField(max_length=256, verbose_name="url")),
                 (
                     "mensagem",
-                    djrichtextfield.models.RichTextField(verbose_name="mensagem"),
+                    models.TextField(verbose_name="mensagem"),
                 ),
                 ("start_at", models.DateTimeField(verbose_name="inicia em")),
                 ("end_at", models.DateTimeField(verbose_name="termina em")),
