@@ -3,7 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpRequest, HttpResponse
 from django.core.exceptions import ValidationError
 from a4.models import logged_user
-from .services import get_diarios, set_favourite_course, set_visible_course
+from .services import get_diarios, set_favourite_course, set_visible_course, set_user_preference
 from painel.brokers import SuapBroker, TokenBroker
 import json
 
@@ -70,6 +70,18 @@ def set_favourite(request: HttpRequest, response: HttpResponse, ava: str, course
 @api.get("/set_visible/")
 def set_visible(request: HttpRequest, ava: str, courseid: int, visible: int):
     return set_visible_course(logged_user(request).username, ava, courseid, visible)
+
+
+@api.api_operation(["GET", "OPTIONS"], "/set_user_preference/")
+def set_user_preference_endpoint(request: HttpRequest, response: HttpResponse, ava: str, name: str, value: str):
+    if request.method == "OPTIONS":
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    elif request.method == "GET":
+        response["Access-Control-Allow-Origin"] = "*"
+        return set_user_preference(logged_user(request).username, ava=ava, name=name, value=value)
 
 
 @api.api_operation(["POST", "OPTIONS"], "/authenticate/")

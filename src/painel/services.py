@@ -300,3 +300,14 @@ def set_visible_course(username: str, ava: str, courseid: int, visible: int) -> 
         cache.delete(v)
         
     return get_json_api(ava, "set_visible_course", username=username.lower(), courseid=courseid, visible=visible) or {}
+
+
+def set_user_preference(username: str, ava: str, name: str, value: str) -> dict:
+    ava = get_object_or_404(Ambiente, nome=ava)
+
+    keys = cache.get("keys") or []
+
+    for v in keys:
+        cache.delete(v)
+        
+    return get_json_api(ava, "set_user_preference", username=username.lower(), name=name, value=value) or {}
