@@ -131,7 +131,7 @@ input[type="radio"]:checked + .radio-label {
 
 }
 
-body.dyslexia_font {
+body.dyslexia_friendly {
     --font-family: "opendyslexic", sans-serif !important;
 }
 
@@ -199,12 +199,12 @@ body.hidden_illustrative_image * {
   background-image: none !important;
 }
 
-body.remove_justify_align p,
-body.remove_justify_align span,
-body.remove_justify_align li,
-body.remove_justify_align blockquote,
-body.remove_justify_align td,
-body.remove_justify_align div {
+body.remove_justify p,
+body.remove_justify span,
+body.remove_justify li,
+body.remove_justify blockquote,
+body.remove_justify td,
+body.remove_justify div {
   text-align: start !important;
 }
 
