@@ -55,13 +55,13 @@ const app = Vue.createApp({
                 { label: 'Privado', value: 'private' }
             ],
             preferences: {
-                dyslexia_font: false,
+                dyslexia_friendly: false,
                 big_cursor: false,
                 vlibras_active: true,
                 highlight_links: false,
                 stop_animations: false,
                 hidden_illustrative_image: false,
-                remove_justify_align: false,
+                remove_justify: false,
                 high_line_height: false,
                 zoom_level: '100',
                 zoom_options: ['100', '120', '130', '150', '160'],
@@ -210,8 +210,8 @@ const app = Vue.createApp({
     },
     methods: {
         getPreferences() {
-            if (document.body.classList.contains('dyslexia_font')) {
-                this.preferences.dyslexia_font = true;
+            if (document.body.classList.contains('dyslexia_friendly')) {
+                this.preferences.dyslexia_friendly = true;
             }
             if (document.body.classList.contains('big_cursor')) {
                 this.preferences.big_cursor = true;
@@ -228,8 +228,8 @@ const app = Vue.createApp({
             if (document.body.classList.contains('hidden_illustrative_image')) {
                 this.preferences.hidden_illustrative_image = true;
             }
-            if (document.body.classList.contains('remove_justify_align')) {
-                this.preferences.remove_justify_align = true;
+            if (document.body.classList.contains('remove_justify')) {
+                this.preferences.remove_justify = true;
             }
             if (document.body.classList.contains('high_line_height')) {
                 this.preferences.high_line_height = true;
@@ -690,27 +690,34 @@ const app = Vue.createApp({
             });
         },
         togglePreference(category, key, value) {
-            fetch(`/change_preference/${category}/${key}/`, {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.getCsrfToken(),
-                },
-                body: JSON.stringify({ value: value })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status !== "ok") {
-                    console.error(data.message);
-                    return;
-                }
+            const params = new URLSearchParams({
+                category: category,
+                key: key,
+                value: value
+            });
 
-                if (category === "zoom_level") {
-                    document.body.setAttribute("data-zoom", value);
-                    return;
-                }
+            fetch(`/api/v1/set_user_preference/?${params.toString()}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error("Erro ao atualizar preferência:", data.error.message);
+                        return;
+                    }
 
-                document.body.classList.toggle(category, value === true);
+                    // Atualiza a UI conforme a preferência
+                    if (category === "zoom_level") {
+                        document.body.setAttribute("data-zoom", value);
+                    } else {
+                        document.body.classList.toggle(key, value === true || value === "true");
+                    }
+                })
+                .catch(error => {
+                    console.error("Erro na requisição:", error);
             });
         },
         cycleAccessibility() {

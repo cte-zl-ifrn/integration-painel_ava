@@ -3,10 +3,10 @@
         <div class="custom-checkbox-access">
             <input
                 type="checkbox" 
-                v-model="preferences.dyslexia_font"
+                v-model="preferences.dyslexia_friendly"
                 class="checkbox-access-input" 
                 id="dyslexia-friendly"
-                @change="togglePreference('dyslexia_font', 'enabled', $event.target.checked)"
+                @change="togglePreference('accessibility', 'dyslexia_friendly', $event.target.checked)"
             >
             <label class="checkbox-access-label" for="dyslexia-friendly" alt="OpenDyslexic, Dyslexie, Lexend">
                 <span class="label-container">
@@ -23,10 +23,10 @@
         <div class="custom-checkbox-access">
             <input 
                 type="checkbox" 
-                v-model="preferences.remove_justify_align"
+                v-model="preferences.remove_justify"
                 class="checkbox-access-input" 
                 id="remove-justify"
-                @change="togglePreference('remove_justify_align', 'enabled', $event.target.checked)"
+                @change="togglePreference('accessibility', 'remove_justify', $event.target.checked)"
             >
             <label class="checkbox-access-label" for="remove-justify">
                 <span class="label-container">
@@ -43,7 +43,7 @@
                 v-model="preferences.highlight_links"
                 class="checkbox-access-input"
                 id="highlight-links" 
-                @change="togglePreference('highlight_links', 'enabled', $event.target.checked)">
+                @change="togglePreference('accessibility', 'highlight_links', $event.target.checked)">
             <label class="checkbox-access-label" for="highlight-links">
                 <span class="label-container">
                     <i class="fa-solid fa-highlighter icon-id"></i>
@@ -59,7 +59,7 @@
                 v-model="preferences.stop_animations"
                 class="checkbox-access-input"
                 id="stop-animations" 
-                @change="togglePreference('stop_animations', 'enabled', $event.target.checked)">
+                @change="togglePreference('accessibility', 'stop_animations', $event.target.checked)">
             <label class="checkbox-access-label" for="stop-animations">
                 <span class="label-container">
                     <i class="fa-solid fa-circle-pause icon-id"></i>
@@ -75,7 +75,7 @@
                 v-model="preferences.hidden_illustrative_image"
                 class="checkbox-access-input" 
                 id="hidden-illustrative-image"
-                @change="togglePreference('hidden_illustrative_image', 'enabled', $event.target.checked)">
+                @change="togglePreference('accessibility', 'hidden_illustrative_image', $event.target.checked)">
             <label class="checkbox-access-label" for="hidden-illustrative-image">
                 <span class="label-container">
                     <svg class="icon-id" xmlns="http://www.w3.org/2000/svg" width="16" height="14" fill="none">
@@ -94,7 +94,7 @@
                 v-model="preferences.big_cursor"
                 class="checkbox-access-input"
                 id="big-cursor" 
-                @change="togglePreference('big_cursor', 'enabled', $event.target.checked)">
+                @change="togglePreference('accessibility', 'big_cursor', $event.target.checked)">
             <label class="checkbox-access-label" for="big-cursor">
                 <span class="label-container">
                     <i class="fa-solid fa-arrow-pointer icon-id"></i>
@@ -111,7 +111,7 @@
                 v-model="preferences.vlibras_active"
                 class="checkbox-access-input"
                 id="vlibras-active" 
-                @change="togglePreference('vlibras_active', 'enabled', $event.target.checked)">
+                @change="togglePreference('accessibility', 'vlibras_active', $event.target.checked)">
             <label class="checkbox-access-label" for="vlibras-active">
                 <span class="label-container">
                     <i class="fa-solid fa-hands-asl-interpreting icon-id"></i>
@@ -127,7 +127,7 @@
                 v-model="preferences.high_line_height"
                 class="checkbox-access-input" 
                 id="high-line-height"
-                @change="togglePreference('high_line_height', 'enabled', $event.target.checked)"
+                @change="togglePreference('accessibility', 'high_line_height', $event.target.checked)"
             >    
             <label class="checkbox-access-label" for="high-line-height">
                 <span class="label-container">

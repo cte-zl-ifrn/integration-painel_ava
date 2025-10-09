@@ -1,6 +1,6 @@
 from ninja import NinjaAPI
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.core.exceptions import ValidationError
 from a4.models import logged_user
 from .services import get_diarios, set_favourite_course, set_visible_course, set_user_preference
@@ -73,7 +73,7 @@ def set_visible(request: HttpRequest, ava: str, courseid: int, visible: int):
 
 
 @api.api_operation(["GET", "OPTIONS"], "/set_user_preference/")
-def set_user_preference_endpoint(request: HttpRequest, response: HttpResponse, ava: str, name: str, value: str):
+def set_user_preference_endpoint(request: HttpRequest, response: HttpResponse, category: str, key: str, value: str):
     if request.method == "OPTIONS":
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
@@ -81,7 +81,54 @@ def set_user_preference_endpoint(request: HttpRequest, response: HttpResponse, a
         return response
     elif request.method == "GET":
         response["Access-Control-Allow-Origin"] = "*"
-        return set_user_preference(logged_user(request).username, ava=ava, name=name, value=value)
+        user = logged_user(request)
+        username = user.username
+
+        # --- 1. Atualiza localmente no painel ---
+        try:
+            if user.settings is None:
+                user.settings = {}
+
+            if category not in user.settings:
+                user.settings[category] = {}
+
+            parsed_value = (
+                True if str(value).lower() == "true"
+                else False if str(value).lower() == "false"
+                else value
+            )
+
+            user.settings[category][key] = parsed_value
+            user.save()
+            print(f"[OK] Preferência '{key}' atualizada localmente para {parsed_value}")
+        except Exception as e:
+            print(f"[ERRO] Falha ao salvar preferência local '{key}': {e}")
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+        # --- 2. Propaga para todos os ambientes Moodle ---
+        from painel.models import Ambiente
+
+        ambientes = Ambiente.objects.all()
+        erros = []
+
+        name = f"theme_suap_{category}_{key}"
+
+        for amb in ambientes:
+            try:
+                print(f"[SYNC] Enviando preferência para {amb.nome}...")
+                set_user_preference(username, ava=amb.nome, name=name, value=value)
+            except Exception as e:
+                print(f"[ERRO] Falha ao sincronizar com {amb.nome}: {e}")
+                erros.append(amb.nome)
+
+        if erros:
+            return JsonResponse({
+                "status": "partial",
+                "message": f"Preferência salva localmente, mas falhou em {len(erros)} ambientes.",
+                "failed": erros
+            })
+
+        return JsonResponse({"status": "ok"})
 
 
 @api.api_operation(["POST", "OPTIONS"], "/authenticate/")
