@@ -710,7 +710,7 @@ const app = Vue.createApp({
                     }
 
                     // Atualiza a UI conforme a preferência
-                    if (category === "zoom_level") {
+                    if (key === "zoom_level") {
                         document.body.setAttribute("data-zoom", value);
                     } else {
                         document.body.classList.toggle(key, value === true || value === "true");
@@ -724,7 +724,7 @@ const app = Vue.createApp({
             const currentIndex = this.preferences.zoom_options.indexOf(this.preferences.zoom_level);
             const nextIndex = (currentIndex + 1) % this.preferences.zoom_options.length;
             this.preferences.zoom_level = this.preferences.zoom_options[nextIndex];
-            this.togglePreference('zoom_level', 'selected', this.preferences.zoom_level);
+            this.togglePreference('accessibility', 'zoom_level', this.preferences.zoom_level);
         },
         goToCourse(item) {
             window.location.href = item.url;
