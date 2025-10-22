@@ -2,7 +2,7 @@ from ninja import NinjaAPI
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.core.exceptions import ValidationError
-from a4.models import logged_user
+from a4.models import logged_user, Usuario
 from .services import get_diarios, set_favourite_course, set_visible_course, set_user_preference
 from painel.brokers import SuapBroker, TokenBroker
 import json
@@ -73,7 +73,14 @@ def set_visible(request: HttpRequest, ava: str, courseid: int, visible: int):
 
 
 @api.api_operation(["GET", "OPTIONS"], "/set_user_preference/")
-def set_user_preference_endpoint(request: HttpRequest, response: HttpResponse, category: str, key: str, value: str):
+def set_user_preference_endpoint(
+    request: HttpRequest, 
+    response: HttpResponse, 
+    category: str, 
+    key: str, 
+    value: str,
+    username: str = None
+):
     if request.method == "OPTIONS":
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
@@ -81,11 +88,19 @@ def set_user_preference_endpoint(request: HttpRequest, response: HttpResponse, c
         return response
     elif request.method == "GET":
         response["Access-Control-Allow-Origin"] = "*"
-        user = logged_user(request)
+
+        if username:
+            user = Usuario.cached(username) or Usuario.objects.filter(username=username).first()
+            if not user:
+                return JsonResponse({"status": "error", "message": f"Usuário '{username}' não encontrado"}, status=404)
+        else:
+            user = logged_user(request)
+
         username = user.username
 
-        # --- 1. Atualiza localmente no painel ---
+        # --- Atualização local ---
         try:
+            user.refresh_from_db(fields=["settings"])
             if user.settings is None:
                 user.settings = {}
 
@@ -99,13 +114,13 @@ def set_user_preference_endpoint(request: HttpRequest, response: HttpResponse, c
             )
 
             user.settings[category][key] = parsed_value
-            user.save()
+            user.save(update_fields=["settings"])
             print(f"[OK] Preferência '{key}' atualizada localmente para {parsed_value}")
         except Exception as e:
             print(f"[ERRO] Falha ao salvar preferência local '{key}': {e}")
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
-        # --- 2. Propaga para todos os ambientes Moodle ---
+        # --- Propaga para todos os ambientes Moodle ---
         from painel.models import Ambiente
 
         ambientes = Ambiente.objects.all()
