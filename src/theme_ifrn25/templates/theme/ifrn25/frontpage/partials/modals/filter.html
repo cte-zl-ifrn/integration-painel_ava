@@ -58,7 +58,7 @@
     </div>
 
     <div class="filter-select-area">
-        <img src="{% static '/theme/ifrn25/img/cursos.svg' %}" alt="">
+        <img src="{% static 'theme/ifrn25/img/cursos.svg' %}" alt="">
         <v-select v-model="filters.curso" :options="cursos" :reduce="item => item.id" label="label"
             placeholder="Cursos...">
             <template #selected-option="{ label }">
@@ -68,7 +68,7 @@
     </div>
 
     <div class="filter-select-area">
-        <img src="{% static '/theme/ifrn25/img/ambientes.svg' %}" alt="">
+        <img src="{% static 'theme/ifrn25/img/ambientes.svg' %}" alt="">
         <v-select v-model="filters.ambiente" :options="ambientes" :reduce="item => item.id" label="label"
             placeholder="Ambientes...">
             <template #selected-option="{ label }">

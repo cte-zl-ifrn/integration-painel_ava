@@ -3,7 +3,7 @@
     <div class="sidebar-content-header">
         <h1 class="sidebar-title">Painel AVA</h1>
         <button @click="toggleSidebar" :class="{'btn-toggle-sidebar': sidebarContracted}" id='btn-toggle-sidebar'>
-            <img src="{% static '/theme/ifrn25/img/sidebar-toggle.svg' %}" alt="Toggle Sidebar">
+            <img src="{% static 'theme/ifrn25/img/sidebar-toggle.svg' %}" alt="Toggle Sidebar">
         </button>
     </div>
 
@@ -16,8 +16,8 @@
                 <span>{{ logged_user.show_name }}</span>
             </div>
             <div class="sidebar-user-content-options">
-                <div class="sidebar-modal-button" @click="toggleModalWithContent('accessibility')" id="btn-toggle-accessibility"
-                    :class="{'active': modalType === 'accessibility'}">
+                <div class="sidebar-modal-button" @click="toggleModalWithContent('accessibility')"
+                    id="btn-toggle-accessibility" :class="{'active': modalType === 'accessibility'}">
                     <i class="fa-solid fa-universal-access"></i>
                     <span>Acessibilidade</span>
                 </div>
@@ -56,10 +56,11 @@
                     <span>FILTRADO POR:</span>
                 </div>
                 <div class="sidebar-course-content-filters-list" @click="toggleModalWithContent('filter')">
-                    <div v-for="(filter, index) in activeFilters" :key="index" class="sidebar-course-content-filters-list-item">
+                    <div v-for="(filter, index) in activeFilters" :key="index"
+                        class="sidebar-course-content-filters-list-item">
                         <div class="sidebar-course-content-filters-list-item-divider">
                             <i v-if="filter.icon.startsWith('fa-')" :class="`fa-solid ${filter.icon}`"></i>
-                            <img v-else :src="`{% static '/theme/ifrn25/img/${filter.icon}-green.svg' %}`" alt=""
+                            <img v-else :src="`{% static 'theme/ifrn25/img/${filter.icon}-green.svg' %}`" alt=""
                                 class="sidebar-course-content-filters-list-item-icon">
                             <span class="sidebar-course-content-filters-list-item-text">
                                 [[ filter.label ]]
