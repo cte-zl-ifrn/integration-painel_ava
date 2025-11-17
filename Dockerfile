@@ -1,6 +1,6 @@
 FROM python:3.13.7-slim-trixie AS production-build-stage
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update \
     && apt-get -y install curl vim \
@@ -28,7 +28,7 @@ RUN /app/venv/bin/pip uninstall -y -r /app/requirements-build.txt
 ########################################################################
 FROM python:3.13.3-slim-bookworm AS development-build-stage
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 RUN useradd -ms /usr/sbin/nologin app
 COPY --chown=app:app --from=production-build-stage /app /app
