@@ -19,7 +19,7 @@ build-and-push:
         - echo "Building the code for $CI_COMMIT_REF_NAME ..."
         - echo "APP_VERSION = '$CI_PIPELINE_ID.$CI_COMMIT_SHORT_SHA'" >> src/settings/apps.py
         - cat src/settings/apps.py
-        - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
+        - echo "$DOCKER_REGISTRY_PASS" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
     script:
         - docker build -t ctezlifrn/avapainel:$CI_COMMIT_REF_NAME .
         - docker push ctezlifrn/avapainel:$CI_COMMIT_REF_NAME
