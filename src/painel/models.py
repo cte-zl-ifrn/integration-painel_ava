@@ -36,6 +36,7 @@ class ActiveMixin:
 
 class Theme(ActiveMixin, Model):
     nome = CharField(_("nome do theme"), max_length=255)
+    apelido = CharField(_("apelido"), max_length=255)
     active = BooleanField(_("ativo?"), default=True)
 
     class Meta:

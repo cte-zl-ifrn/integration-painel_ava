@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def __get_theme_prefix(request: HttpRequest) -> str:
     instance = Theme.objects.filter(nome=request.user.theme_selected, active=True).first()
     if instance is None:
-        return "theme/ifrn23"
+        return "theme/ifrn25"
 
     return f"theme/{request.user.theme_selected}"
 

@@ -91,7 +91,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     def theme_selected(self) -> str:
         if self.settings is not None and "theme" in self.settings and "selected" in self.settings["theme"]:
             return self.settings["theme"]["selected"]
-        return "ifrn23"
+        return "ifrn25"
     
     @property
     def dyslexia_friendly_font(self) -> bool:
