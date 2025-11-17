@@ -4,7 +4,10 @@ from painel import get_installed_themes
 def create_localhost_themes(apps, schema_editor):
     Theme = apps.get_model('painel', 'Theme')
     for nome, apelido in get_installed_themes():
-        Theme.objects.create(nome=nome, apelido=apelido, active=True)
+        try:
+            Theme.objects.update_or_create(nome=nome, default=dict(apelido=apelido, active=True))
+        except:
+            print(f"Erro ao atualizar/criar {nome}")
 
 
 def create_localhost_contratante(apps, schema_editor):
@@ -21,7 +24,7 @@ def create_localhost_contratante(apps, schema_editor):
         css_personalizado = "",
         menu_personalizado = "",
         regex_coordenacao = "",
-        default_theme = Theme.objects.get(nome='ifrn25'),
+        default_theme = Theme.objects.filter(nome='ifrn25').first(),
         useraway_active = False,
         useraway_account = None,
         vlibras_active = None,
@@ -45,4 +48,3 @@ def create_localhost_contratante(apps, schema_editor):
             theme = Theme.objects.get(nome=nome),
             active = True
         )
-    
