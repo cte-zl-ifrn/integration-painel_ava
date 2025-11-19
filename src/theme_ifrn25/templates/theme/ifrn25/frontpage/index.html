@@ -12,7 +12,7 @@
     {% if user.vlibras_active %} vlibras_active{% endif %}
     {% if user.dyslexia_friendly %} dyslexia_friendly{% endif %}
     {% if user.high_line_height %} high_line_height{% endif %}
-    {% if user.color_mode %} color_mode{% endif %}
+    color-mode-{{ user.color_mode|default:'default' }}
 " data-zoom="{{ user.zoom_level }}">
     <script>
         window.INITIAL_SETTINGS = {
