@@ -65,6 +65,8 @@ const app = Vue.createApp({
                 high_line_height: false,
                 zoom_level: '100',
                 zoom_options: ['100', '120', '130', '150', '160'],
+                color_mode: 'default',
+                color_mode_options: ['default', 'high_contrast', 'low_contrast', 'colorblind', 'grayscale'],
             },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
@@ -726,6 +728,29 @@ const app = Vue.createApp({
             const nextIndex = (currentIndex + 1) % this.preferences.zoom_options.length;
             this.preferences.zoom_level = this.preferences.zoom_options[nextIndex];
             this.togglePreference('accessibility', 'zoom_level', this.preferences.zoom_level);
+        },
+        cycleColorMode() {
+            const modes = this.preferences.color_mode_options;
+            const current = this.preferences.color_mode;
+
+            const currentIndex = modes.indexOf(current);
+            const nextIndex = (currentIndex + 1) % modes.length;
+
+            const next = modes[nextIndex];
+            this.preferences.color_mode = next;
+
+            // Salva no Moodle / backend
+            this.togglePreference('accessibility', 'color_mode', next);
+        },
+        colorModeLabel(mode) {
+            switch (mode) {
+                case 'default': return 'Padrão';
+                case 'high_contrast': return 'Alto contraste';
+                case 'low_contrast': return 'Contraste reduzido';
+                case 'colorblind': return 'Amigável a daltônicos';
+                case 'grayscale': return 'Escala de cinza';
+                default: return mode;
+            }
         },
         goToCourse(item) {
             window.location.href = item.url;

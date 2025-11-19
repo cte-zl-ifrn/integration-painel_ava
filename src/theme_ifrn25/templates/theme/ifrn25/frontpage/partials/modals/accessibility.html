@@ -161,6 +161,18 @@
             </button>
         </div>
 
+        <div :class="['selector-cycle-access', { active: preferences.color_mode !== 'default' }]">
+            <label for="color-mode-toggle">Modo de cor:</label>
+            <button id="color-mode-toggle" @click="cycleColorMode" class="cycle-btn">
+                <i class="fa-solid fa-palette icon-id"></i>
+                [[ colorModeLabel(preferences.color_mode) ]]
+                <div class="cycle-indicators">
+                    <span v-for="mode in preferences.color_mode_options.filter(m => m !== 'default')" :key="mode"
+                        :class="['cycle-indicator', { active: mode === preferences.color_mode }]"></span>
+                </div>
+            </button>
+        </div>
+
 <!--
 
     <div class="drawer-item" id="settingsvisual">
