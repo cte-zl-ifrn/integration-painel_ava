@@ -203,6 +203,7 @@ const app = Vue.createApp({
         }
     },
     mounted() {
+        this.clearGauge();
         this.getPreferences();
         this.loadFilters();
         this.filterCards();
@@ -749,10 +750,14 @@ const app = Vue.createApp({
 
             // adiciona overlay ao body
             document.body.appendChild(overlay);
-
-            setTimeout(() => {
-                overlay.remove();
-            }, 3000);
+        },
+        clearGauge() {
+            window.addEventListener("pageshow", (event) => {
+                if (event.persisted) {
+                    const overlay = document.querySelector('.loading-overlay');
+                    if (overlay) overlay.remove();
+                } 
+            })
         },
         showConfirmation(action, callback) {
             const modal = document.getElementById("popup-modal");
