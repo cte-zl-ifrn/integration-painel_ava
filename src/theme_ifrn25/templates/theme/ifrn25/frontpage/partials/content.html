@@ -28,7 +28,7 @@
     </div>
     <div class="content">
         <div class="sidebar-modal" :class="{'open': modalOpen}">
-            <div class="modal-content">
+            <div class="modal-content" :class="'modal-' + modalType">
 
                 <div class="modal-content-header">
                     <div class="modal-content-header-title">
@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="modal-content-body" v-if="modalType === 'accessibility'" id="modal-accessibility">
+                <div class="modal-content-body" v-if="modalType === 'accessibility'">
                     {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}            
                 </div>
 

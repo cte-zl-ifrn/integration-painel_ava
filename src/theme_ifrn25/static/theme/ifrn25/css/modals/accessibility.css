@@ -235,9 +235,12 @@ body[data-zoom="150"] {
 body[data-zoom="160"] {
   --font-scale: 1.6;
 }
-body #modal-accessibility *{
+body .modal-accessibility *{
   --font-scale: 1 !important;
   font-size: calc(0.875rem * var(--font-scale)) !important;
+}
+.modal-accessibility .modal-content-header *{
+  font-size: calc(1.125rem * var(--font-scale)) !important;
 }
 
 body[data-zoom="120"] #app #content-container,
