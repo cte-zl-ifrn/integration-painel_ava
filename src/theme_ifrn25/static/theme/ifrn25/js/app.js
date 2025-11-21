@@ -242,6 +242,13 @@ const app = Vue.createApp({
             if (zoom) {
                 this.preferences.zoom_level = zoom;
             }   
+
+            const bodyClassList = document.body.classList;
+            const colorModeClass = [...bodyClassList].find(c => c.startsWith('color-mode-'));
+
+            if (colorModeClass) {
+                this.preferences.color_mode = colorModeClass.replace('color-mode-', '');
+            }
         },
         async savePosition() {
             const pos = this.isBottom ? 'bottom' : 'top';
@@ -715,9 +722,23 @@ const app = Vue.createApp({
                     // Atualiza a UI conforme a preferência
                     if (key === "zoom_level") {
                         document.body.setAttribute("data-zoom", value);
-                    } else {
-                        document.body.classList.toggle(key, value === true || value === "true");
+                        return;
+                    } 
+
+                    if (key === "color_mode") {
+                        const modes = this.preferences.color_mode_options;
+
+                        // remove todos
+                        modes.forEach(m => {
+                            document.body.classList.remove(`color-mode-${m}`);
+                        });
+
+                        // adiciona o selecionado
+                        document.body.classList.add(`color-mode-${value}`);
+                        return;
                     }
+                    
+                    document.body.classList.toggle(key, value === true || value === "true");
                 })
                 .catch(error => {
                     console.error("Erro na requisição:", error);

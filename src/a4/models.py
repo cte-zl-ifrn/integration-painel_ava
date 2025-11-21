@@ -170,7 +170,12 @@ class Usuario(SafeDeleteModel, AbstractUser):
         except (AttributeError, ValueError, TypeError):
             return 100
 
-    #TODO: cor
+    @property
+    def color_mode(self) -> str:
+        try:
+            return self.settings.get("accessibility", {}).get("color_mode", "default")
+        except AttributeError:
+            return "default"
     
     @property
     def menu_position(self) -> str:
