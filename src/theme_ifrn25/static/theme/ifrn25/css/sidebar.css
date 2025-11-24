@@ -98,7 +98,7 @@
 
             .sidebar-user-content-profile {
                 width: 100%;
-                background: var(--general-white);
+                background: white;
                 border-radius: 1rem;
                 padding: .5rem 1rem;
                 display: flex;

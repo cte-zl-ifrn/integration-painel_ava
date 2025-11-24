@@ -258,7 +258,7 @@ body.color-mode-low_contrast {
 }
 
 body.color-mode-colorblind {
-    --primary: #1F77B4;           /* Azul médio - substitui verde principal */
+  --primary: #1F77B4;           /* Azul médio - substitui verde principal */
   --primary-dark: #144E75;      /* Azul escuro */
   --primary-light: #D5E8F5;     /* Azul claro pastel */
 
@@ -300,4 +300,58 @@ body.color-mode-grayscale {
   #sidebar-container, .topbar, .content, &.vlibras_active div[vw].enabled {
     filter: grayscale(100%);
   }
+}
+
+body.color-mode-high_contrast {
+  background-color: #000 !important;
+  color: #fff !important;
+  --general-white: #000 !important;
+  a {
+    color: #ff0;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: white;
+  }
+  #sidebar-container, .topbar, .card {
+    background-color: var(--dark) !important;
+    color: white;
+    border: 1px solid var(--dark-light) !important;
+  }
+  .sidebar-user-content-profile {
+    color: var(--dark);
+    &:hover {
+      color: white !important;
+    }
+  }
+  .modal-content-body-filter-clear {
+    color: var(--dark) !important;
+  }
+
+  .topbar .nav-link{
+    color: white !important;
+  }
+
+  .card .painel-card-header-shortname {
+    color: white !important;
+  }
+
+  .sidebar-modal.open {
+    border: 1px solid var(--dark-light);
+  }
+  .sidebar-modal {
+    background-color: var(--dark) !important;
+    .modal-content-header {
+      color: white;
+    }
+    .modal-content-body-help-link, .modal-button-option a:not(.exit-button a) {
+      color: #ff0 !important;
+      &:hover {
+        background-color: var(--general-white) !important;
+      }
+    }
+    .modal-content-body-title, .modal-content:not(.modal-accessibility) {
+      color: white !important;
+    }
+  }
+
 }
