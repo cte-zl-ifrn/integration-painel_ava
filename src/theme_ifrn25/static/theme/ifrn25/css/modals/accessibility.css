@@ -331,9 +331,14 @@ body.color-mode-high_contrast {
     color: white !important;
   }
 
-  .card .painel-card-header-shortname {
-    color: white !important;
-  }
+  .card {
+    .painel-card-header-shortname {
+      color: white !important;
+    }
+    .painel-card-details-progress span {
+      color: white !important;
+    }
+  } 
 
   .sidebar-modal.open {
     border: 1px solid var(--dark-light);
