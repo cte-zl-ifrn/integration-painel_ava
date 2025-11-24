@@ -250,3 +250,54 @@ body[data-zoom="160"] #app #content-container {
   width: 100%;
   height: 100%;
 }
+
+body.color-mode-low_contrast {
+  #sidebar-container, .topbar, .content, &.vlibras_active div[vw].enabled {
+    filter: saturate(0.5);
+  }
+}
+
+body.color-mode-colorblind {
+    --primary: #1F77B4;           /* Azul médio - substitui verde principal */
+  --primary-dark: #144E75;      /* Azul escuro */
+  --primary-light: #D5E8F5;     /* Azul claro pastel */
+
+  --secondary: #FF7F0E;         /* Laranja forte (substitui roxo, melhora contraste) */
+  --secondary-dark: #A85400;
+  --secondary-light: #FFE5C2;
+
+  --success: #1F77B4;           /* Azul igual ao primary (em vez de verde) */
+  --success-dark: #144E75;
+  --success-light: #D5E8F5;
+
+  --danger: #D62728;            /* Vermelho mais escuro, com melhor contraste */
+  --danger-dark: #8B1A1C;
+  --danger-light: #F9D3D4;
+
+  --warning: #FFBF00;           /* Amarelo forte (distingue bem de laranja e azul) */
+  --warning-dark: #B38600;
+  --warning-light: #FFF5CC;
+
+  --info: #17BECF;              /* Ciano — ótimo contraste com os demais tons */
+  --info-dark: #117C8A;
+  --info-light: #D4F4F8;
+
+  --light: #EAEAEA;
+  --light-dark: #C8C8C8;
+  --light-lighter: #F7F7F7;
+
+  --dark: #2B2B2B;
+  --dark-darker: #141414;
+  --dark-light: #858585;
+
+  --general-white: #FFFFFF;
+
+  --bg-green: #FAFDFF;          /* Neutro, sem tendência verde */
+  --bg-green-gradient: linear-gradient(131.57deg, #F7FBFE 7.49%, #FFFFFF 84.71%);
+}
+
+body.color-mode-grayscale {
+  #sidebar-container, .topbar, .content, &.vlibras_active div[vw].enabled {
+    filter: grayscale(100%);
+  }
+}
