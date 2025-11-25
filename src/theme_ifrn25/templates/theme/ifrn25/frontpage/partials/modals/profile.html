@@ -10,12 +10,13 @@
     </div>
     <div class="ava-button-options">
         <span class="modal-content-body-title">Tema</span>
-        <div class="modal-button-option">
-            <a class="dropdown-item" href="{% url "painel:change_theme" theme="ifrn23" %}">Outono de 2023</a>
-        </div>
-        <div class="modal-button-option">
-            <a class="dropdown-item selected"><i class="fa fa-check me-2"></i>Outono de 2025</a>
-        </div>
+        {% for addedTheme in added_themes %}
+            <div class="modal-button-option">
+                <a {% if user.theme_selected != addedTheme.theme.nome %} href="{% url "painel:change_theme" theme=addedTheme.theme.nome %}" class="dropdown-item"{% else %} class="dropdown-item selected"{% endif %}>
+                    {% if user.theme_selected == addedTheme.theme.nome %}<i class="fa fa-check me-2"></i>{% endif %}{{addedTheme.theme.apelido}}
+                </a>
+            </div>
+        {% endfor %}
     </div>
     {% if personificando %}
     <div class="admin-button-options">

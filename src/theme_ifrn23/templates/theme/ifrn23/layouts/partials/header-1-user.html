@@ -72,8 +72,13 @@
             </span>
         </li>
         <li>
-            <a class="dropdown-item"><strong>Outono 2023</strong></a>
-            <a class="dropdown-item" href="{% url "painel:change_theme" theme="ifrn25" %}">Outono de 2025</a>
+            {% for addedTheme in added_themes %}
+                {% if user.theme_selected == addedTheme.theme.nome %}
+                    <a class="dropdown-item"><strong>{{addedTheme.theme.apelido}}</strong></a>
+                {% else %}
+                    <a class="dropdown-item" href="{% url "painel:change_theme" theme=addedTheme.theme.nome %}">{{addedTheme.theme.apelido}}</a>
+                {% endif %}
+            {% endfor %}
         </li>
         {% if personificando %}
             <li>

@@ -3,6 +3,8 @@ from django.apps import AppConfig
 
 
 class ThemeIfrn25Config(AppConfig):
-    name = "theme_ifrn25"
-    verbose_name = "Theme IFRN 25"
-    icon = "fa fa-edit"
+    name: str = "theme_ifrn25"
+    verbose_name: str = "Outono de 2025"
+    icon: str = "fa fa-edit"
+    is_painel_theme: bool = True
+

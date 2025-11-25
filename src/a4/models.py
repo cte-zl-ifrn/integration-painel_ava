@@ -105,7 +105,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
             logging.getLogger(__name__).warning(f"Erro ao obter tema do contrante: {e}")
 
         # fallback final, caso não exista contrante
-        return "ifrn23"
+        return "ifrn25"
     
     @property
     def dyslexia_friendly(self) -> bool:

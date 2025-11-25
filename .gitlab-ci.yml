@@ -3,8 +3,8 @@ stages:
     - deploy
 
 variables:
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
 
 build-and-push:
     stage: build
@@ -19,7 +19,7 @@ build-and-push:
         - echo "Building the code for $CI_COMMIT_REF_NAME ..."
         - echo "APP_VERSION = '$CI_PIPELINE_ID.$CI_COMMIT_SHORT_SHA'" >> src/settings/apps.py
         - cat src/settings/apps.py
-        - docker login -u $DOCKERHUB_REGISTRY_USER -p $DOCKERHUB_REGISTRY_PASSWORD
+        - echo "$DOCKER_REGISTRY_PASS" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
     script:
         - docker build -t ctezlifrn/avapainel:$CI_COMMIT_REF_NAME .
         - docker push ctezlifrn/avapainel:$CI_COMMIT_REF_NAME
@@ -31,8 +31,7 @@ deploy:
     only:
 #        # - proximo
 #        - teste
-#        - producao
-        - NEVER
+        - producao
     before_script:
         - echo "Setting SSH credentiais to $CI_COMMIT_REF_NAME ..."
         - mkdir -p ~/.ssh
