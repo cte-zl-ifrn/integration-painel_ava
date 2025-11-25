@@ -4,14 +4,15 @@
 {% include 'theme/ifrn25/frontpage/partials/head.html' %}
 
 <body class="
-    {% if user.remove_justify_align %} remove_justify_align{% endif %}
+    {% if user.remove_justify %} remove_justify{% endif %}
     {% if user.highlight_links %} highlight_links{% endif %}
     {% if user.stop_animations %} stop_animations{% endif %}
     {% if user.hidden_illustrative_image %} hidden_illustrative_image{% endif %}
     {% if user.big_cursor %} big_cursor{% endif %}
     {% if user.vlibras_active %} vlibras_active{% endif %}
-    {% if user.dyslexia_friendly_font %} dyslexia_font{% endif %}
+    {% if user.dyslexia_friendly %} dyslexia_friendly{% endif %}
     {% if user.high_line_height %} high_line_height{% endif %}
+    color_mode_{{ user.color_mode|default:'default' }}
 " data-zoom="{{ user.zoom_level }}">
     <script>
         window.INITIAL_SETTINGS = {

@@ -91,72 +91,91 @@ class Usuario(SafeDeleteModel, AbstractUser):
     def theme_selected(self) -> str:
         if self.settings is not None and "theme" in self.settings and "selected" in self.settings["theme"]:
             return self.settings["theme"]["selected"]
+        
+        # Fallback para o tema padrão do contrante
+        try:
+            from painel.models import Contrante
+            contrante = Contrante.objects.filter(active=True).first()
+            if contrante and contrante.default_theme:
+                theme_name = getattr(contrante.default_theme, "nome", None)
+                if theme_name:
+                    return theme_name
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Erro ao obter tema do contrante: {e}")
+
+        # fallback final, caso não exista contrante
         return "ifrn25"
     
     @property
-    def dyslexia_friendly_font(self) -> bool:
+    def dyslexia_friendly(self) -> bool:
         try:
-            return self.settings.get("dyslexia_font", {}).get("enabled", False)
+            return self.settings.get("accessibility", {}).get("dyslexia_friendly", False)
         except AttributeError:
             return False
-    
+
     @property
-    def remove_justify_align(self) -> bool:
+    def remove_justify(self) -> bool:
         try:
-            return self.settings.get("remove_justify_align", {}).get("enabled", False)
+            return self.settings.get("accessibility", {}).get("remove_justify", False)
         except AttributeError:
             return False
-        
+
     @property
     def highlight_links(self) -> bool:
         try:
-            return self.settings.get("highlight_links", {}).get("enabled", False)
+            return self.settings.get("accessibility", {}).get("highlight_links", False)
         except AttributeError:
             return False
-        
+
     @property
     def stop_animations(self) -> bool:
         try:
-            return self.settings.get("stop_animations", {}).get("enabled", False)
+            return self.settings.get("accessibility", {}).get("stop_animations", False)
         except AttributeError:
             return False
 
     @property
     def hidden_illustrative_image(self) -> bool:
         try:
-            return self.settings.get("hidden_illustrative_image", {}).get("enabled", False)
+            return self.settings.get("accessibility", {}).get("hidden_illustrative_image", False)
         except AttributeError:
             return False
-        
+
     @property
     def big_cursor(self) -> bool:
         try:
-            return self.settings.get("big_cursor", {}).get("enabled", False)
+            return self.settings.get("accessibility", {}).get("big_cursor", False)
         except AttributeError:
             return False
 
     @property
     def vlibras_active(self) -> bool:
         try:
-            return self.settings.get("vlibras_active", {}).get("enabled", True)
+            return self.settings.get("accessibility", {}).get("vlibras_active", True)
         except AttributeError:
-            return False
-    
+            return True
+
     @property
     def high_line_height(self) -> bool:
         try:
-            return self.settings.get("high_line_height", {}).get("enabled", False)
+            return self.settings.get("accessibility", {}).get("high_line_height", False)
         except AttributeError:
             return False
 
     @property
     def zoom_level(self) -> int:
         try:
-            return self.settings.get("zoom_level", {}).get("selected", 100)
-        except AttributeError:
+            return int(self.settings.get("accessibility", {}).get("zoom_level", 100))
+        except (AttributeError, ValueError, TypeError):
             return 100
 
-    #TODO: cor e zoom  
+    @property
+    def color_mode(self) -> str:
+        try:
+            return self.settings.get("accessibility", {}).get("color_mode", "default")
+        except AttributeError:
+            return "default"
     
     @property
     def menu_position(self) -> str:

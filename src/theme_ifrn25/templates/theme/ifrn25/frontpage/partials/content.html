@@ -28,7 +28,8 @@
     </div>
     <div class="content">
         <div class="sidebar-modal" :class="{'open': modalOpen}">
-            <div class="modal-content">
+            <div class="modal-content" :class="'modal-' + modalType">
+
                 <div class="modal-content-header">
                     <div class="modal-content-header-title">
                         <i :class="'modal-content-header-icon fa-solid ' + modalHeaderIcon"></i>
@@ -44,6 +45,7 @@
                     </div>
                     <i class="fa-solid fa-xmark modal-content-header-icon-x" @click="closeSidebarModal"></i>
                 </div>
+
                 <div class="modal-content-header-messages" v-if="messagesModalOpen">
                     <div class="modal-content-header-messages-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -64,6 +66,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="modal-content-body" v-if="modalType === 'accessibility'">
                     {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}            
                 </div>

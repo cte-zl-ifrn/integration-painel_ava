@@ -98,7 +98,7 @@
 
             .sidebar-user-content-profile {
                 width: 100%;
-                background: var(--general-white);
+                background: white;
                 border-radius: 1rem;
                 padding: .5rem 1rem;
                 display: flex;
@@ -183,7 +183,7 @@
                     .sidebar-course-content-filters-list-item {
                         width: 100%;
                         height: 30px;
-                        background: #DFF4EE 0% 0% no-repeat padding-box;
+                        background: var(--primary-light);
                         border-radius: 20px;
                         opacity: 1;
                         display: flex;
@@ -208,7 +208,7 @@
 
                         i {
                             margin: 4px 5px 4px 0;
-                            color: var(--verde-escuro);
+                            color: var(--primary-dark);
                         }
 
                         span.sidebar-course-content-filters-list-item-text {

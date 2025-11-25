@@ -13,7 +13,6 @@
         }
 
         .topbar {
-            background: var(--branco-primario);
             box-shadow: 0px 3px 6px #00000029;
             border-radius: 8px;
             margin: 16px;
@@ -26,17 +25,17 @@
                 display: flex;
                 align-items: center;
                 font: var(--font-button2);
-                color: var(--verde-tema);
+                color: var(--primary);
                 margin-right: 1.5rem;
                 cursor: pointer;
                 padding: .25rem .75rem;
                 border-radius: 1.5rem;
 
                 &.active {
-                    color: var(--general-white);
+                    color: white;
                     background-color: var(--primary);
                     &:hover {
-                        color: var(--general-white);
+                        color: white;
                         background-color: var(--primary-dark);
                     }
                 }
@@ -59,7 +58,7 @@
             min-height: 0;
             display: flex;
             overflow: hidden;
-            background-color: var(--branco-secundario);
+            background-color: var(--general-white);
             gap: 1rem;
 
             .sidebar-modal.open ~ .tab-content {
@@ -362,7 +361,6 @@
                             flex-direction: column;
                             justify-content: space-between;
                             padding: 16px;
-                            background: var(--branco-primario) 0% 0% no-repeat padding-box;
                             box-shadow: 1px 1px 8px 0px rgba(20, 20, 20, 0.25);
                             border: 1px solid var(--light);
                             border-radius: 8px;
@@ -390,7 +388,6 @@
                             
                             .painel-card-title {
                                 font: var(--font-heading1);
-                                color: var(--escuro-primario);
                                 letter-spacing: 0px;
                                 opacity: 1;
                                 /* cursor: pointer; */
@@ -403,7 +400,7 @@
                             
                             .painel-card-header-shortname {
                                 font:var(--font-button2);
-                                color: var(--escuro-primario);
+                                color: var(--dark);
                             }
 
                             .painel-card-details {

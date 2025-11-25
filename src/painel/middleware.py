@@ -3,12 +3,11 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib import auth
-from a4.models import Usuario
-import requests
 import psycopg
 import psycopg_pool
 from django.utils.deprecation import MiddlewareMixin
 from painel.brokers import TokenBroker
+from painel.models import Ambiente
 
 
 logger = logging.getLogger(__name__)
@@ -46,32 +45,63 @@ class AuthMobileUserMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        NOT_PRESENT = "NOT_PRESENT"
-        dont_have_session = request.session.session_key is None
-        is_to_api = "/api/v1/" in request.path
-        is_not_to_auth = "/authenticate/" not in request.path and "/verify/" not in request.path
-        is_not_options_method = request.method != "OPTIONS"
+        path = getattr(request, 'path', '')
+        method = getattr(request, 'method', '')
+        headers = getattr(request, 'headers', {}) or {}
+        session_key = getattr(getattr(request, 'session', None), 'session_key', None)
 
-        if dont_have_session and is_to_api and is_not_options_method and is_not_to_auth:
-            authorization = request.headers.get("Authorization", f"Token {NOT_PRESENT}").split(" ")
-            if len(authorization) != 2 or (len(authorization) == 2 and authorization[1] == NOT_PRESENT):
+        dont_have_session = session_key is None
+        is_to_api = "/api/v1/" in path
+        is_not_to_auth = "/authenticate/" not in path and "/verify/" not in path
+        is_not_options_method = method != "OPTIONS"
+
+        # Só roda para requests externos à API
+        if dont_have_session and is_to_api and is_not_to_auth and is_not_options_method:
+            auth_header = headers.get("Authorization", "").split(" ")
+            if len(auth_header) != 2 or not auth_header[1]:
                 return JsonResponse(
-                    {"error": {"message": "Invalid or not present authentication token", "code": 428}}, status=428
+                    {"error": {"message": "Invalid or not present authentication token", "code": 428}},
+                    status=428
                 )
-            try:
-                username = token_broker.verify(token=authorization[1])
-            except:
-                return JsonResponse({"error": {"message": "O Login do SUAP retornou um erro", "code": 422}}, status=422)
 
-            # user = Usuario.objects.filter(username=username).first()
+            token = auth_header[1]
+
+            # 1 Verifica se o token pertence a um Ambiente
+            ambiente = Ambiente.objects.filter(token=token).first()
+            if ambiente:
+                request.ambiente = ambiente
+                return self.get_response(request)
+
+            # 2 Caso contrário, tenta autenticar como usuário
+            try:
+                username = token_broker.verify(token=token)
+            except Exception:
+                return JsonResponse(
+                    {"error": {"message": "Invalid authentication token", "code": 403}},
+                    status=403
+                )
+
+            if not username:
+                return JsonResponse(
+                    {"error": {"message": "Invalid authentication token", "code": 403}},
+                    status=403
+                )
+
+            from a4.models import Usuario
             user = Usuario.cached(username)
-            if user is not None:
-                auth.login(request, user)
-                response = self.get_response(request)
-                auth.logout(request)
-                return response
-        else:
-            return self.get_response(request)
+            if not user:
+                return JsonResponse(
+                    {"error": {"message": "Usuário não encontrado", "code": 404}},
+                    status=404
+                )
+
+            auth.login(request, user)
+            response = self.get_response(request)
+            auth.logout(request)
+            return response
+
+        # requests locais ou com sessão seguem o fluxo normal
+        return self.get_response(request)
 
 
 class ExceptionMiddleware:

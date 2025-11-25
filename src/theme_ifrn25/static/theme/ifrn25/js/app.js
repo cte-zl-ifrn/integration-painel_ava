@@ -55,16 +55,18 @@ const app = Vue.createApp({
                 { label: 'Privado', value: 'private' }
             ],
             preferences: {
-                dyslexia_font: false,
+                dyslexia_friendly: false,
                 big_cursor: false,
                 vlibras_active: true,
                 highlight_links: false,
                 stop_animations: false,
                 hidden_illustrative_image: false,
-                remove_justify_align: false,
+                remove_justify: false,
                 high_line_height: false,
                 zoom_level: '100',
                 zoom_options: ['100', '120', '130', '150', '160'],
+                color_mode: 'default',
+                color_mode_options: ['default', 'high_contrast', 'low_contrast', 'colorblind', 'grayscale'],
             },
             messages: [
                 // { id: 1, receiver: 'Ronaldo', sender: '', content: 'Conteúdo da mensagem 1', date: '2023-03-25 12:00', read: false, favorite: true, group: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8E7wlGmOb1_0GI4vqlvieVWlGdkMW5Mv0XQ&s' },
@@ -203,6 +205,7 @@ const app = Vue.createApp({
         }
     },
     mounted() {
+        this.clearGauge();
         this.getPreferences();
         this.loadFilters();
         this.filterCards();
@@ -210,8 +213,8 @@ const app = Vue.createApp({
     },
     methods: {
         getPreferences() {
-            if (document.body.classList.contains('dyslexia_font')) {
-                this.preferences.dyslexia_font = true;
+            if (document.body.classList.contains('dyslexia_friendly')) {
+                this.preferences.dyslexia_friendly = true;
             }
             if (document.body.classList.contains('big_cursor')) {
                 this.preferences.big_cursor = true;
@@ -228,8 +231,8 @@ const app = Vue.createApp({
             if (document.body.classList.contains('hidden_illustrative_image')) {
                 this.preferences.hidden_illustrative_image = true;
             }
-            if (document.body.classList.contains('remove_justify_align')) {
-                this.preferences.remove_justify_align = true;
+            if (document.body.classList.contains('remove_justify')) {
+                this.preferences.remove_justify = true;
             }
             if (document.body.classList.contains('high_line_height')) {
                 this.preferences.high_line_height = true;
@@ -239,6 +242,13 @@ const app = Vue.createApp({
             if (zoom) {
                 this.preferences.zoom_level = zoom;
             }   
+
+            const bodyClassList = document.body.classList;
+            const colorModeClass = [...bodyClassList].find(c => c.startsWith('color_mode_'));
+
+            if (colorModeClass) {
+                this.preferences.color_mode = colorModeClass.replace('color_mode_', '');
+            }
         },
         async savePosition() {
             const pos = this.isBottom ? 'bottom' : 'top';
@@ -690,34 +700,78 @@ const app = Vue.createApp({
             });
         },
         togglePreference(category, key, value) {
-            fetch(`/change_preference/${category}/${key}/`, {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.getCsrfToken(),
-                },
-                body: JSON.stringify({ value: value })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status !== "ok") {
-                    console.error(data.message);
-                    return;
-                }
+            const params = new URLSearchParams({
+                category: category,
+                key: key,
+                value: value
+            });
 
-                if (category === "zoom_level") {
-                    document.body.setAttribute("data-zoom", value);
-                    return;
-                }
+            fetch(`/api/v1/set_user_preference/?${params.toString()}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error("Erro ao atualizar preferência:", data.error.message);
+                        return;
+                    }
 
-                document.body.classList.toggle(category, value === true);
+                    // Atualiza a UI conforme a preferência
+                    if (key === "zoom_level") {
+                        document.body.setAttribute("data-zoom", value);
+                        return;
+                    } 
+
+                    if (key === "color_mode") {
+                        const modes = this.preferences.color_mode_options;
+
+                        // remove todos
+                        modes.forEach(m => {
+                            document.body.classList.remove(`color_mode_${m}`);
+                        });
+
+                        // adiciona o selecionado
+                        document.body.classList.add(`color_mode_${value}`);
+                        return;
+                    }
+                    
+                    document.body.classList.toggle(key, value === true || value === "true");
+                })
+                .catch(error => {
+                    console.error("Erro na requisição:", error);
             });
         },
         cycleAccessibility() {
             const currentIndex = this.preferences.zoom_options.indexOf(this.preferences.zoom_level);
             const nextIndex = (currentIndex + 1) % this.preferences.zoom_options.length;
             this.preferences.zoom_level = this.preferences.zoom_options[nextIndex];
-            this.togglePreference('zoom_level', 'selected', this.preferences.zoom_level);
+            this.togglePreference('accessibility', 'zoom_level', this.preferences.zoom_level);
+        },
+        cycleColorMode() {
+            const modes = this.preferences.color_mode_options;
+            const current = this.preferences.color_mode;
+
+            const currentIndex = modes.indexOf(current);
+            const nextIndex = (currentIndex + 1) % modes.length;
+
+            const next = modes[nextIndex];
+            this.preferences.color_mode = next;
+
+            // Salva no Moodle / backend
+            this.togglePreference('accessibility', 'color_mode', next);
+        },
+        colorModeLabel(mode) {
+            switch (mode) {
+                case 'default': return 'Padrão';
+                case 'high_contrast': return 'Alto contraste';
+                case 'low_contrast': return 'Contraste reduzido';
+                case 'colorblind': return 'Amigável a daltônicos';
+                case 'grayscale': return 'Escala de cinza';
+                default: return mode;
+            }
         },
         goToCourse(item) {
             window.location.href = item.url;
@@ -742,10 +796,14 @@ const app = Vue.createApp({
 
             // adiciona overlay ao body
             document.body.appendChild(overlay);
-
-            setTimeout(() => {
-                overlay.remove();
-            }, 3000);
+        },
+        clearGauge() {
+            window.addEventListener("pageshow", (event) => {
+                if (event.persisted) {
+                    const overlay = document.querySelector('.loading-overlay');
+                    if (overlay) overlay.remove();
+                } 
+            })
         },
         showConfirmation(action, callback) {
             const modal = document.getElementById("popup-modal");
