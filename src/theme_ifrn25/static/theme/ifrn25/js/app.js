@@ -244,10 +244,10 @@ const app = Vue.createApp({
             }   
 
             const bodyClassList = document.body.classList;
-            const colorModeClass = [...bodyClassList].find(c => c.startsWith('color-mode-'));
+            const colorModeClass = [...bodyClassList].find(c => c.startsWith('color_mode_'));
 
             if (colorModeClass) {
-                this.preferences.color_mode = colorModeClass.replace('color-mode-', '');
+                this.preferences.color_mode = colorModeClass.replace('color_mode_', '');
             }
         },
         async savePosition() {
@@ -730,11 +730,11 @@ const app = Vue.createApp({
 
                         // remove todos
                         modes.forEach(m => {
-                            document.body.classList.remove(`color-mode-${m}`);
+                            document.body.classList.remove(`color_mode_${m}`);
                         });
 
                         // adiciona o selecionado
-                        document.body.classList.add(`color-mode-${value}`);
+                        document.body.classList.add(`color_mode_${value}`);
                         return;
                     }
                     

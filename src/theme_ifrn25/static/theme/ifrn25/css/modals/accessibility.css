@@ -251,13 +251,13 @@ body[data-zoom="160"] #app #content-container {
   height: 100%;
 }
 
-body.color-mode-low_contrast {
+body.color_mode_low_contrast {
   #sidebar-container, .topbar, .content, &.vlibras_active div[vw].enabled {
     filter: saturate(0.5);
   }
 }
 
-body.color-mode-colorblind {
+body.color_mode_colorblind {
   --primary: #1F77B4;           /* Azul médio - substitui verde principal */
   --primary-dark: #144E75;      /* Azul escuro */
   --primary-light: #D5E8F5;     /* Azul claro pastel */
@@ -296,13 +296,13 @@ body.color-mode-colorblind {
   --bg-green-gradient: linear-gradient(131.57deg, #F7FBFE 7.49%, #FFFFFF 84.71%);
 }
 
-body.color-mode-grayscale {
+body.color_mode_grayscale {
   #sidebar-container, .topbar, .content, &.vlibras_active div[vw].enabled {
     filter: grayscale(100%);
   }
 }
 
-body.color-mode-high_contrast {
+body.color_mode_high_contrast {
   background-color: #000 !important;
   color: #fff !important;
   --general-white: #000 !important;
