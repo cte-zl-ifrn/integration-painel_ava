@@ -107,6 +107,28 @@ class Usuario(SafeDeleteModel, AbstractUser):
         # fallback final, caso não exista contrante
         return "ifrn25"
     
+    def has_seen_tour(self, tour_key: str = "tour01_completed") -> bool:
+        """
+        Verifica se o usuário já completou um tour específico.
+        Usa o campo `settings` (JSONField) como storage de flags.
+        """
+        try:
+            return bool(self.settings and self.settings.get("ui_flags", {}).get(tour_key, False))
+        except AttributeError:
+            return False
+        
+    def set_seen_tour(self, tour_key: str = "tour01_completed", value: bool = True) -> None:
+        """
+        Marca/desmarca a flag do tour no campo settings e salva o usuário.
+        """
+        if self.settings is None:
+            self.settings = {}
+        ui_flags = self.settings.get("ui_flags", {})
+        ui_flags[tour_key] = bool(value)
+        self.settings["ui_flags"] = ui_flags
+        # salvo só o campo settings para ser mais eficiente
+        self.save(update_fields=["settings"])
+    
     @property
     def dyslexia_friendly(self) -> bool:
         try:
