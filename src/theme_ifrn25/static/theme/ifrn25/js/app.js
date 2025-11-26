@@ -814,6 +814,8 @@ const app = Vue.createApp({
             const modalContent = modal.querySelector(".popup-modal-content");
 
             title.innerHTML = `Gostaria de <strong>${action}</strong> esse diário?`;
+            confirmBtn.innerText = action;
+            
             if(action == 'publicar') {
                 message.innerHTML = `Ao publicar este diário os alunos terão acesso ao conteúdo`;
             }
