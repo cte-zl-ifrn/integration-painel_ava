@@ -82,3 +82,26 @@ def checkgrades(request: HttpRequest, id_ambiente: int, id_diario: int) -> HttpR
                 etapas[nota] = nota
     context = {"diario": diario, "alunos": alunos, "etapas": etapas.keys()}
     return render(request, __get_theme_prefix(request) + "/diario/checkgrades.html", context=context)
+
+@login_required
+def completed_tour(request: HttpRequest) -> HttpResponse:
+    user: Usuario = request.user
+    if user.settings is None:
+        user.settings = {}
+    if "tour" not in user.settings:
+        user.settings["tour"] = {}
+    user.settings["tour"]["completed"] = True
+    user.save()
+    return JsonResponse({"status": "ok"})
+
+
+@login_required
+def get_tour_status(request: HttpRequest) -> HttpResponse:
+    user: Usuario = request.user 
+    
+    if user.settings and "tour" in user.settings and "completed" in user.settings["tour"]:
+        completed = user.settings["tour"]["completed"]
+    else:
+        completed = False  
+    
+    return JsonResponse({"completed_tour": completed})
