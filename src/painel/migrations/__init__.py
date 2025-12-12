@@ -5,9 +5,9 @@ def create_localhost_themes(apps, schema_editor):
     Theme = apps.get_model('painel', 'Theme')
     for nome, apelido in get_installed_themes():
         try:
-            Theme.objects.update_or_create(nome=nome, default=dict(apelido=apelido, active=True))
-        except:
-            print(f"Erro ao atualizar/criar {nome}")
+            Theme.objects.update_or_create(nome=nome, defaults=dict(apelido=apelido, active=True))
+        except Exception as e:
+            print(f"Erro ao atualizar/criar {nome}. Mensagem: {e}")
 
 
 def create_localhost_contratante(apps, schema_editor):
