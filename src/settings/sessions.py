@@ -14,13 +14,5 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = env_as_bool("DJANGO_SESSION_EXPIRE_AT_BROWSER_
 SESSION_FILE_PATH = env("DJANGO_SESSION_FILE_PATH", None)
 SESSION_SAVE_EVERY_REQUEST = env_as_bool("DJANGO_SESSION_SAVE_EVERY_REQUEST", False)
 SESSION_SERIALIZER = env("DJANGO_SESSION_SERIALIZER", "django.contrib.sessions.serializers.JSONSerializer")
-SESSION_ENGINE = env("DJANGO_SESSION_ENGINE", "redis_sessions.session")
-SESSION_REDIS = {
-    "host": env("DJANGO_SESSION_REDIS_HOST", "cache"),
-    "port": env_as_int("DJANGO_SESSION_REDIS_PORT", 6379),
-    "db": env_as_int("DJANGO_SESSION_REDIS_DB", 0),
-    "password": env("DJANGO_SESSION_REDIS_PASSWORD", None),
-    "prefix": env("DJANGO_SESSION_REDIS_PREFIX", "%s_session" % SESSION_KEY),
-    "socket_timeout": env("DJANGO_SESSION_REDIS_SOCKET_TIMEOUT", 0.1),
-    "retry_on_timeout": env("DJANGO_SESSION_REDIS_RETRY_ON_TIMEOUT", False),
-}
+SESSION_ENGINE = env("DJANGO_SESSION_ENGINE", "django.contrib.sessions.backends.cache")
+SESSION_CACHE_ALIAS = "default"
