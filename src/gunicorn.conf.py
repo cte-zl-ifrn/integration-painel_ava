@@ -2,7 +2,7 @@ import multiprocessing
 import os
 
 wsgi_app = "wsgi:application"
-bind_port = os.getenv("VIRTUAL_PORT", "80")
+bind_port = os.getenv("VIRTUAL_PORT", "8000")
 bind = f"0.0.0.0:{bind_port}"
 default_web_concurrency = multiprocessing.cpu_count() * int(os.getenv("WORKER_PER_CPU", 2)) + 1
 workers = int(os.getenv("WEB_CONCURRENCY", default_web_concurrency))

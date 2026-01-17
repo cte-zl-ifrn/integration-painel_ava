@@ -1,40 +1,41 @@
 # Core
-Django==5.2.6
+Django==5.2.10
 sc4py==0.1.4
 
 # Models
 django-better-choices==1.18
+# django-polymorphic==4.10.2
 
+# Rule engine
+jsonschema==4.26.0
+rule-engine==4.5.3
 
 # REST
-django-ninja==1.4.3
+httpie==3.2.4
 requests==2.32.5
+django-ninja==1.5.3
 
-# Session
-django-redis-sessions==0.6.2
-redis==6.2.0
-#valkey[libvalkey]==6.1.0
+# Cache and Session
+django-valkey==0.4.0
+valkey==6.1.1
 
 # Security
-cryptography==45.0.3
+cryptography==46.0.3
 pyjwt==2.10.1
 
 # Audit
-django-simple-history==3.10.1
+django-simple-history==3.11.0
 django-safedelete==1.4.1
 
 # UI
-django-import-export==4.3.9
-django-compressor==4.5.1
-django-sass-processor==1.4.2
-# django-theme-adminlte3==3.2.0.12
-# django-admin-autocomplete-filter==0.7.1
 whitenoise==6.11.0
+django-import-export==4.4.0
+django-json-widget==2.1.1
+# django-richtextfield==1.6.2
 
 # Database
-psycopg[binary,pool]==3.2.10
-
+psycopg[binary,pool]==3.3.2
 
 # Production
-sentry-sdk[django,rq]==2.39.0
+sentry-sdk[django,rq]==2.49.0
 gunicorn==23.0.0
