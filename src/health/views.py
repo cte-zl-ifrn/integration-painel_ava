@@ -1,29 +1,43 @@
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.db import connection
+from django.core.cache import cache
+from urllib.request import urlopen
 
 
-def health(request: HttpRequest) -> HttpResponse:
-    debug = "FAIL (are active)" if settings.DEBUG else "OK"
+def liveness(request: HttpRequest) -> HttpResponse:
+    return HttpResponse('<img src="https://www.cjsr.com/wp-content/uploads/2017/06/itsalive.jpg" />')
 
+def readiness(request: HttpRequest) -> JsonResponse:
     try:
         connection.connect()
-        connection_result = "OK"
     except:
-        connection_result = "FAIL"
+        db_result = False
+    else:
+        db_result = True
+        
+    try:
+        cache.set('check_health', 'OK', 2)
+    except:
+        cache_result = False
+    else:
+        cache_result = cache.get('check_health') == "OK"
+        
+    try:
+        resp = urlopen("https://suap.ifrn.edu.br/comum/solicitar_trocar_senha/", timeout=2)
+    except:
+        suap_result = False
+    else:
+        suap_result = resp.getcode() == 200
 
-    return HttpResponse(
-        f"""
-        <pre>
-            Reverse proxy: OK.
-            Django: OK.
-            Database: {connection_result}.
-            Redis: Not tested.
-            SUAP: Not tested.
-            LDAP: Not tested.
-            Debug: {debug}.
-        </pre>
-        """
+    return JsonResponse(
+        {
+            "Database": db_result,
+            "Cache": cache_result,
+            "SUAP": suap_result,
+            "Debug": settings.DEBUG,
+            "ALL": db_result and cache_result and suap_result and settings.DEBUG, 
+        }
     )
 
 def force_fail(request: HttpRequest) -> HttpResponse:
