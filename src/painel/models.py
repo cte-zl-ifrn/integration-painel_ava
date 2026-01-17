@@ -4,7 +4,7 @@ import logging
 from django.utils.timezone import now
 from django.utils.safestring import mark_safe
 from django.forms import ValidationError
-from django.db.models import BooleanField, URLField, CharField, DateTimeField, Model, TextField, ForeignKey, PROTECT
+from django.db.models import BooleanField, URLField, CharField, DateTimeField, Model, TextField, ForeignKey, EmailField, PROTECT
 from django.core.cache import cache
 from django_better_choices import Choices
 from simple_history.models import HistoricalRecords
@@ -228,6 +228,7 @@ class Popup(ActiveMixin, Model):
     def activePopup():
         return next(iter(Popup.cached()), None)
 
+
 class AddedTheme(ActiveMixin, Model):
     contratante = ForeignKey(Contrante, on_delete=PROTECT)
     theme = ForeignKey(Theme, on_delete=PROTECT)
@@ -240,3 +241,42 @@ class AddedTheme(ActiveMixin, Model):
 
     def __str__(self):
         return f"{self.theme} - {self.contratante} - {self.active_icon}"
+
+
+class ArquivoBackup(Model):
+    nome_curso = CharField(_("nome do curso"), max_length=2560)
+    nome_arquivo = CharField(_("nome do arquivo"), max_length=2560)
+    url_com_dados = URLField(_("URL com dados"), max_length=2560, unique=True)
+    url_sem_dados = URLField(_("URL sem dados"), max_length=2560, unique=True)
+
+    class Meta:
+        verbose_name = _("backup")
+        verbose_name_plural = _("backups")
+
+    def __str__(self):
+        return f"{self.nome_curso} - {self.nome_arquivo}"
+
+
+class DonoBackup(Model):
+    username = CharField(_("username"), max_length=256, unique=True)
+    nome = CharField(_("dono de backup"), max_length=2560)
+    email = EmailField(_("e-mail"), max_length=2560, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("dono")
+        verbose_name_plural = _("donos")
+
+    def __str__(self):
+        return self.username
+
+
+class DonoArquivoBackup(Model):
+    arquivo_backup = ForeignKey(ArquivoBackup, on_delete=PROTECT)
+    dono_backup = ForeignKey(DonoBackup, on_delete=PROTECT)
+
+    class Meta:
+        verbose_name = _("dono de backup")
+        verbose_name_plural = _("donos de backups")
+
+    def __str__(self):
+        return f"{self.arquivo_backup} por '{self.dono_backup}'"
