@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.cache import cache
 import requests
 from http.client import HTTPException
-from .models import Ambiente, Curso
+from .models import Ambiente, Curso, ArquivoBackup
 
 
 logger = logging.getLogger(__name__)
@@ -274,6 +274,15 @@ def get_diarios(
             except:
                 pass
     results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
+
+    results["reutilizaveis"] = [
+        {
+            'id': x.id,
+            'name': x.nome_arquivo,
+            'description': x.nome_curso,
+        }
+        for x in ArquivoBackup.objects.filter(donoarquivobackup__dono_backup__username=username)
+    ]
 
     cache.set(cache_key, results)
     logger.debug(f"Putting cache for: {cache_key}")
