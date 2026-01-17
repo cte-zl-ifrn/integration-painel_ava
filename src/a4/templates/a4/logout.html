@@ -1,32 +1,34 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        {% block head %} {% include "theme/ifrn23/layouts/partials/head.html %} {% endblock head %}
-    </head>
-    <body>
-        <header>
-            <img alt="Logo do IFRN" src="{% static 'theme/ifrn23/img/logo.png' %}" width="132" height="40" />
-        </header>
-        <main>
-            <h1>Quase lá!</h1>
-            <p>
-                <a class="btn btn-primary" href="https://suap.ifrn.edu.br/accounts/logout/">Sair completamente</a>
-            </p>
-            <p>
-                <i>Para sua segurança clique em "Sair completamente" pois o SUAP não tem uma "sair completamente".</i>
-            </p>
-            <div style="border-top: 2px solid #ddd; margin-top: 30px; padding-top: 15px">
-                <p>Eu desisti de sair.</p>
-                <p>
-                    <a class="btn btn-secondary" href='{% url "painel:dashboard" %}'>Voltar ao painel</a>
-                </p>
-            </div>
-        </main>
-        {% block foot_pre %} {% include "theme/ifrn23/layouts/partials/foot_pre.html" %} {% endblock foot_pre %}
 
-        {% block foot_custom %} {% endblock foot_custom %}
+<head>
+</head>
 
-        {% block foot_pos %} {% include "theme/ifrn23/layouts/partials/foot_pos.html" %} {% endblock foot_pos %}
-    </body>
+<body>
+    <header>
+        <img alt="Logo do IFRN" src="{% static 'theme/ifrn23/img/logo.png' %}" width="132" height="40" />
+    </header>
+    <main>
+        <h1>Quase lá!</h1>
+        <p>
+            <a class="btn btn-primary" href="https://suap.ifrn.edu.br/accounts/logout/">Sair completamente</a>
+        </p>
+        <p>
+            <i>Para sua segurança clique em "Sair completamente" pois o SUAP não tem uma "sair completamente".</i>
+        </p>
+        <div style="border-top: 2px solid #ddd; margin-top: 30px; padding-top: 15px">
+            <p>Eu desisti de sair.</p>
+            <p>
+                <a class="btn btn-secondary" href='{% url "painel:dashboard" %}'>Voltar ao painel</a>
+            </p>
+        </div>
+    </main>
+    {% block foot_pre %} {% include "theme/ifrn23/layouts/partials/foot_pre.html" %} {% endblock foot_pre %}
+
+    {% block foot_custom %} {% endblock foot_custom %}
+
+    {% block foot_pos %} {% include "theme/ifrn23/layouts/partials/foot_pos.html" %} {% endblock foot_pos %}
+</body>
+
 </html>
