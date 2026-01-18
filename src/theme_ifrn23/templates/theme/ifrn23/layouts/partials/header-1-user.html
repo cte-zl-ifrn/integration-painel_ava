@@ -72,11 +72,11 @@
             </span>
         </li>
         <li>
-            {% for addedTheme in added_themes %}
-                {% if user.theme_selected == addedTheme.theme.nome %}
-                    <a class="dropdown-item"><strong>{{addedTheme.theme.apelido}}</strong></a>
+            {% for activeTheme in active_themes %}
+                {% if user.theme_selected == activeTheme.nome %}
+                    <a class="dropdown-item"><strong>{{activeTheme.apelido}}</strong></a>
                 {% else %}
-                    <a class="dropdown-item" href="{% url "painel:change_theme" theme=addedTheme.theme.nome %}">{{addedTheme.theme.apelido}}</a>
+                    <a class="dropdown-item" href="{% url "painel:change_theme" theme=activeTheme.nome %}">{{activeTheme.apelido}}</a>
                 {% endif %}
             {% endfor %}
         </li>

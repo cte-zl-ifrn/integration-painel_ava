@@ -1,23 +1,10 @@
 <nav id="page-menu">
         <div v-if="screenWidth > 767" class="nav nav-tabs" role="tablist">
-                <button class="nav-link active"
-                        id="nav-diarios-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#nav-diarios"
-                        type="button"
-                        role="tab"
-                        aria-controls="nav-diarios"
-                        aria-selected="true"
-                        >Meus diários</button>
-                <button class="nav-link"
-                        id="nav-coordenacoes-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#nav-coordenacoes"
-                        type="button"
-                        role="tab"
-                        aria-controls="nav-coordenacoes"
-                        aria-selected="false"
-                        >Coordenações</button>
+                <button class="nav-link active" id="nav-diarios-tab" data-bs-toggle="tab" data-bs-target="#nav-diarios"
+                        type="button" role="tab" aria-controls="nav-diarios" aria-selected="true">Meus diários</button>
+                <button class="nav-link" id="nav-coordenacoes-tab" data-bs-toggle="tab"
+                        data-bs-target="#nav-coordenacoes" type="button" role="tab" aria-controls="nav-coordenacoes"
+                        aria-selected="false">Coordenações</button>
                 <!-- <button class="nav-link"
                         id="nav-praticas-tab"
                         data-bs-toggle="tab"
@@ -44,21 +31,18 @@
                         <option value="diarios">Meus diários</option>
                         <option value="coordenacoes">Coordenações</option>
                 </select>
-                <div id="search-mobile" >
+                <div id="search-mobile">
                         <form>
-                                <input type="text" placeholder="Busque por nomes, códigos, #id..."
-                                name="q"
-                                id="q"
-                                v-model="q"
-                                @keydown.enter="filterCards($event)">
-                                <button type="submit" id="btn-search" >
+                                <input type="text" placeholder="Busque por nomes, códigos, #id..." name="q" id="q"
+                                        v-model="q" @keydown.enter="filterCards($event)">
+                                <button type="submit" id="btn-search">
                                         <i class="icon icon-search" aria-hidden="true"></i>
                                 </button>
                         </form>
                         <button id="btn-filter" @click="openPopup">
                                 <div>
                                         <i class="icon icon-filtro" aria-hidden="true"></i>
-                                        <span >Filtros</span>
+                                        <span>Filtros</span>
                                 </div>
 
                         </button>
@@ -66,7 +50,7 @@
                         <!-- div para aplicar o backdrop-filter -->
                         <div @click="closePopup" class="divBackdop-filter"></div>
 
-                        <div v-if="isPopupOpen" id="popupFilter"  >
+                        <div v-if="isPopupOpen" id="popupFilter">
                                 <span @click="closePopup" class="close">&times;</span>
                                 {% include "theme/ifrn23/frontpage/partials/sidebar-filters.html" %}
                         </div>

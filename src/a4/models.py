@@ -90,21 +90,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     @property
     def theme_selected(self) -> str:
         if self.settings is not None and "theme" in self.settings and "selected" in self.settings["theme"]:
-            return self.settings["theme"]["selected"]
-        
-        # Fallback para o tema padrão do contrante
-        try:
-            from painel.models import Contrante
-            contrante = Contrante.objects.filter(active=True).first()
-            if contrante and contrante.default_theme:
-                theme_name = getattr(contrante.default_theme, "nome", None)
-                if theme_name:
-                    return theme_name
-        except Exception as e:
-            import logging
-            logging.getLogger(__name__).warning(f"Erro ao obter tema do contrante: {e}")
-
-        # fallback final, caso não exista contrante
+            return self.settings["theme"]["selected"]        
         return "ifrn25"
     
     @property

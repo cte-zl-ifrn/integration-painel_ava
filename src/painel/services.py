@@ -11,7 +11,8 @@ from django.conf import settings
 from django.core.cache import cache
 import requests
 from http.client import HTTPException
-from .models import Ambiente, Curso, ArquivoBackup
+from .models import Ambiente, Curso
+from backup.models import ArquivoBackup
 
 
 logger = logging.getLogger(__name__)
@@ -220,6 +221,7 @@ def get_diarios(
         "diarios": [],
         "coordenacoes": [],
         "praticas": [],
+        "reutilizaveis": [],
     }
 
     has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()
@@ -257,8 +259,6 @@ def get_diarios(
         }
     ] + sorted(results["ambientes"], key=lambda e: e["label"])
 
-    results["coordenacoes"] = sorted(results["coordenacoes"], key=lambda e: e["fullname"])
-    results["praticas"] = sorted(results["praticas"], key=lambda e: e["fullname"])
     codigos = [x["id"] for x in results["cursos"]]
     cursos = {c.codigo: c.nome for c in Curso.cached_by_codigos(codigos)}
     for c in results["cursos"]:
@@ -273,13 +273,23 @@ def get_diarios(
                 curso.save()
             except:
                 pass
-    results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
 
+    results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
+    results["praticas"] = sorted(results["praticas"], key=lambda e: e["fullname"])
+    results["coordenacoes"] = sorted(results["coordenacoes"], key=lambda e: e["fullname"])
     results["reutilizaveis"] = [
         {
             'id': x.id,
-            'name': x.nome_arquivo,
-            'description': x.nome_curso,
+            'shortname': x.nome_arquivo,
+            'fullname': x.curso_nome,
+            'url': x.url_sem_dados,
+            'donos': [
+                {
+                    'username': d.dono_backup.username,
+                    'fullname': d.dono_backup.nome,
+                } 
+                for d in x.donoarquivobackup_set.all()
+            ],
         }
         for x in ArquivoBackup.objects.filter(donoarquivobackup__dono_backup__username=username)
     ]

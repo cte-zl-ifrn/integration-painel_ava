@@ -8,8 +8,8 @@ from sc4py.env import env, env_as_bool, env_as_list, env_as_int
 
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "#warning: changeme")
-LOGIN_URL = env("DJANGO_LOGIN_URL", "http://localhost:8071/login/")
-LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://localhost:8071/")
+LOGIN_URL = env("DJANGO_LOGIN_URL", "http://localhost:8092/login/")
+LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://localhost:8092/")
 LOGOUT_REDIRECT_URL = env("DJANGO_LOGOUT_REDIRECT_URL", "https://suap.ifrn.edu.br/comum/logout/")
 AUTH_USER_MODEL = env("DJANGO_AUTH_USER_MODEL", "a4.Usuario")
 AUTHENTICATION_BACKENDS = env_as_list("vAUTHENTICATION_BACKENDS", ["django.contrib.auth.backends.ModelBackend"])

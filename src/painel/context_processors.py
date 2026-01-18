@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from django.http import HttpRequest
 from django.urls import reverse
 from a4.models import logged_user
-from painel import get_installed_themes, get_added_themes
+from painel import get_installed_themes, get_active_themes
 from painel.models import Ambiente, Popup
 
 
@@ -28,7 +28,7 @@ def layout_settings(request: HttpRequest) -> dict:
         "ambientes": Ambiente.cached(),
         "admins": Ambiente.admins(),
         "installed_themes": get_installed_themes(),
-        "added_themes": get_added_themes(),
+        "active_themes": get_active_themes(),
     }
 
 

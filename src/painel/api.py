@@ -1,15 +1,16 @@
+import json
 from ninja import NinjaAPI
-from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.core.exceptions import ValidationError
 from a4.models import logged_user, Usuario
 from .services import get_diarios, set_favourite_course, set_visible_course, set_user_preference
-from painel.brokers import SuapBroker, TokenBroker
-import json
+from .brokers import SuapBroker, TokenBroker
 
-api = NinjaAPI(docs_decorator=staff_member_required)
+
+api = NinjaAPI()
 suap_broker = SuapBroker()
 token_broker = TokenBroker()
+
 
 @api.api_operation(["GET", "OPTIONS"], "/diarios/")
 def diarios(

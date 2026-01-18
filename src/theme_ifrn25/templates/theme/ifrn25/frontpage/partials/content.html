@@ -16,10 +16,10 @@
                     <div v-if="tabItem.originalIndex === 1 && coordenacoes.length > 0">
                         [[ coordenacoes.length ]]
                     </div>
-                    <div v-if="tabItem.originalIndex === 2">
+                    <div v-if="tabItem.originalIndex === 2 && praticas.length > 0">
                         [[ praticas.length ]]
                     </div>
-                    <div v-if="tabItem.originalIndex === 3">
+                    <div v-if="tabItem.originalIndex === 3 && reutilizaveis.length > 0">
                         [[ reutilizaveis.length ]]
                     </div>
                 </span>
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="modal-content-body" v-if="modalType === 'accessibility'">
-                    {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}            
+                    {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}
                 </div>
 
                 <div class="modal-content-body" v-if="modalType === 'help'">
@@ -106,10 +106,10 @@
                 <div class="card-container" v-if="praticas.length > 0">
                     <div class="card" v-for="(item, index) in praticas" :key="index">
                         <div class="card-body">
-                            <h5 class="card-title">{{ item.name }}</h5>
+                            <h5 class="card-title">[[index]] - [[ item.name ]]</h5>
                             <div class="card-details">
-                                <p><strong>ID:</strong> {{ item.id }}</p>
-                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                                <p><strong>ID:</strong>[[ item.id ]]</p>
+                                <p><strong>Descrição:</strong> [[ item.description ]]</p>
                             </div>
                         </div>
                     </div>
@@ -121,12 +121,14 @@
 
             <div class="tab-pane" :class="{ active: activeTab === 3 }">
                 <div class="card-container" v-if="reutilizaveis.length > 0">
-                    <div class="card" v-for="(item, index) in reutilizaveis" :key="index">
+                    <div class="card" v-for="item in reutilizaveis">
                         <div class="card-body">
-                            <h5 class="card-title">{{ item.name }}</h5>
+                            <a :href="`/api/v1/backup/baixar/${item.id}/`" class="text-decoration-none" target="_blank">
+                                <h5 class="card-title"><strong>[[ item.fullname ]]</strong></h5>
+                            </a>
                             <div class="card-details">
-                                <p><strong>ID:</strong> {{ item.id }}</p>
-                                <p><strong>Descrição:</strong> {{ item.description }}</p>
+                                <p>[[ item.shortname ]]</p>
+                                <ul style="list-style-type:none;"><strong>Podem baixar:</strong><li v-for="dono in item.donos">[[ dono.fullname ]]</li></ul>
                             </div>
                         </div>
                     </div>

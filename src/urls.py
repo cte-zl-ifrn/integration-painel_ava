@@ -5,8 +5,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from settings.indebug import DEBUG, TESTING_MODE
 
+
 admin.site.site_title = "Painel AVA :.: Administração"
 admin.site.site_header = admin.site.site_title
+
 
 urlpatterns = [
     path(
@@ -19,6 +21,7 @@ urlpatterns = [
                 path("", include("a4.urls")),
                 path("", include("health.urls")),
                 path("", include("painel.urls")),
+                path("", include("backup.urls")),
             ]
         ),
     ),

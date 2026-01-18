@@ -19,21 +19,23 @@ MY_APPS = env_as_list(
     [
         "theme_ifrn23",
         "theme_ifrn25",
+        "backup",
         "painel",
         "health",
         "base",
     ],
 )
+
 THIRD_APPS = env_as_list(
     "THIRD_APPS",
     [
-        "django_extensions",
         "import_export",
         "simple_history",
         "safedelete",
+        "admin_auto_filters",
+        
+        "django_extensions",
         "sass_processor",
-        # "adminlte3",
-        # "adminlte3/admin",
     ],
 )
 
@@ -43,6 +45,11 @@ except ImportError:
     print("django_extensions not installed, removing from INSTALLED_APPS")
     THIRD_APPS.remove("django_extensions")
 
+try:
+    import sass_processor
+except ImportError:
+    print("sass_processor not installed, removing from INSTALLED_APPS")
+    THIRD_APPS.remove("sass_processor")
 
 DJANGO_APPS = env_as_list(
     "DJANGO_APPS",
@@ -57,9 +64,7 @@ DJANGO_APPS = env_as_list(
 )
 HACK_APPS = env_as_list(
     "HACK_APPS",
-    [
-        "a4",
-    ],
+    ["a4"],
 )
 INSTALLED_APPS = MY_APPS + THIRD_APPS + DJANGO_APPS + HACK_APPS
 

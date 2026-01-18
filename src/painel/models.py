@@ -48,39 +48,10 @@ class Theme(ActiveMixin, Model):
         return f"{self.nome} - {self.active_icon}"
 
 
-class Contrante(ActiveMixin, Model):
-    url = URLField(_("URL"), max_length=256)
-    url_logo = URLField(_("URL da logo"), max_length=256)
-    titulo = CharField(_("título do painel"), max_length=256)
-    nome_contratante = CharField(_("nome do contrante"), max_length=256)
-    observacoes = TextField(_("observações"), null=True, blank=True)
-    rodape = TextField(_("rodapé"), null=True, blank=True)
-    css_personalizado = TextField(_("CSS personalizado"), null=True, blank=True)
-    menu_personalizado = TextField(_("menu personalizado"), null=True, blank=True)
-    regex_coordenacao = TextField(_("regex coordenação"), null=True, blank=True)
-    default_theme = ForeignKey(Theme, on_delete=PROTECT, null=True, blank=False)
-    useraway_active = BooleanField(_("ativar userway?"), default=False)
-    useraway_account = TextField(_("código do userway"), null=True, blank=True)
-    vlibras_active = TextField(_("ativar vlibras"), null=True, blank=True)
-    active = BooleanField(_("ativo?"), default=True)
-
-    history = HistoricalRecords()
-
-    class Meta:
-        verbose_name = _("contrante")
-        verbose_name_plural = _("contrantes")
-        ordering = ["titulo"]
-
-    def __str__(self):
-        return f"{self.titulo} ({self.url})"
-
-
 class Ambiente(ActiveMixin, Model):
     def _c(color: str):
         return f"""<span style='background: {color}; color: #fff; padding: 1px 5px;
                                 font-size: 95%; border-radius: 4px;'>{color}</span>"""
-
-    contratante = ForeignKey(Contrante, on_delete=PROTECT, null=True, blank=False)
     nome = CharField(_("nome do ambiente"), max_length=255)
     url = CharField(_("URL"), max_length=255)
     token = CharField(_("token"), max_length=255)
@@ -153,7 +124,6 @@ class Ambiente(ActiveMixin, Model):
 
 
 class Curso(Model):
-    contratante = ForeignKey(Contrante, on_delete=PROTECT, null=True, blank=False)
     codigo = CharField(_("código do curso"), max_length=255, unique=True)
     nome = CharField(_("nome do curso"), max_length=255)
 
@@ -187,7 +157,6 @@ class Curso(Model):
 
 
 class Popup(ActiveMixin, Model):
-    contratante = ForeignKey(Contrante, on_delete=PROTECT, null=True, blank=False)
     titulo = CharField(_("título"), max_length=256)
     url = URLField(_("url"), max_length=256)
     mensagem = TextField(_("mensagem"))
@@ -227,56 +196,3 @@ class Popup(ActiveMixin, Model):
     @staticmethod
     def activePopup():
         return next(iter(Popup.cached()), None)
-
-
-class AddedTheme(ActiveMixin, Model):
-    contratante = ForeignKey(Contrante, on_delete=PROTECT)
-    theme = ForeignKey(Theme, on_delete=PROTECT)
-    active = BooleanField(_("ativo?"), default=True)
-
-    class Meta:
-        verbose_name = _("tema autorizado")
-        verbose_name_plural = _("temas autorizados")
-        unique_together = ("contratante", "theme")
-
-    def __str__(self):
-        return f"{self.theme} - {self.contratante} - {self.active_icon}"
-
-
-class ArquivoBackup(Model):
-    nome_curso = CharField(_("nome do curso"), max_length=2560)
-    nome_arquivo = CharField(_("nome do arquivo"), max_length=2560)
-    url_com_dados = URLField(_("URL com dados"), max_length=2560, unique=True)
-    url_sem_dados = URLField(_("URL sem dados"), max_length=2560, unique=True)
-
-    class Meta:
-        verbose_name = _("backup")
-        verbose_name_plural = _("backups")
-
-    def __str__(self):
-        return f"{self.nome_curso} - {self.nome_arquivo}"
-
-
-class DonoBackup(Model):
-    username = CharField(_("username"), max_length=256, unique=True)
-    nome = CharField(_("dono de backup"), max_length=2560)
-    email = EmailField(_("e-mail"), max_length=2560, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _("dono")
-        verbose_name_plural = _("donos")
-
-    def __str__(self):
-        return self.username
-
-
-class DonoArquivoBackup(Model):
-    arquivo_backup = ForeignKey(ArquivoBackup, on_delete=PROTECT)
-    dono_backup = ForeignKey(DonoBackup, on_delete=PROTECT)
-
-    class Meta:
-        verbose_name = _("dono de backup")
-        verbose_name_plural = _("donos de backups")
-
-    def __str__(self):
-        return f"{self.arquivo_backup} por '{self.dono_backup}'"

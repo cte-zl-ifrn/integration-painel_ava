@@ -99,11 +99,11 @@ const app = Vue.createApp({
             disciplinas: [],
             cursos: [],
             ambientes: [],
-            coordenacoes: [],
-            praticas: [],
-            diarios: [],
             salas: [],
+            diarios: [],
+            coordenacoes: [],
             reutilizaveis: [],
+            praticas: [],
             loading: false,
         };
     },
@@ -496,48 +496,35 @@ const app = Vue.createApp({
                     can_set_visibility: coordenacao.can_set_visibility,
                     url: coordenacao.viewurl
                 }));
-            }
-            else {
+            } else {
                 this.coordenacoes = [];
             }
-            // if (data.praticas && Array.isArray(data.praticas)) {
-            //     this.praticas = data.praticas.map(sala => ({
-            //         id: sala.id,
-            //         fullname: sala.fullname,
-            //         shortname: sala.shortname,
-            //         isfavourite: sala.isfavourite,
-            //         environment: sala.ambiente.titulo,
-            //         progress: sala.progress,
-            //         visible: sala.visible,
-            //         url: sala.viewurl
-            //     }));
-            // }
-            // else {
-            //     this.praticas = [];
-            // }
-            // if (data.reutilizaveis && Array.isArray(data.reutilizaveis)) {
-            //     this.reutilizaveis = data.reutilizaveis.map(sala => ({
-            //         id: sala.id,
-            //         fullname: sala.fullname,
-            //         shortname: sala.shortname,
-            //         isfavourite: sala.isfavourite,
-            //         environment: sala.ambiente.titulo,
-            //         progress: sala.progress,
-            //         visible: sala.visible,
-            //         url: sala.viewurl
-            //     }));
-            // }
-            // else {
-            //     this.reutilizaveis = [];
-            // }
+            if (data.praticas && Array.isArray(data.praticas)) {
+                this.praticas = data.praticas.map(sala => ({
+                    id: sala.id,
+                    fullname: sala.fullname,
+                    shortname: sala.shortname,
+                    isfavourite: sala.isfavourite,
+                    environment: sala.ambiente.titulo,
+                    progress: sala.progress,
+                    visible: sala.visible,
+                    url: sala.viewurl
+                }));
+            } else {
+                this.praticas = [];
+            }
+            if (data.reutilizaveis && Array.isArray(data.reutilizaveis)) {
+                this.reutilizaveis = data.reutilizaveis;
+            } else {
+                this.reutilizaveis = [];
+            }
 
             // if (data.modulos && Array.isArray(data.modulos)) {
             //     this.modulos = data.modulos.map(modulo => ({
             //         id: modulo.id,
             //         label: modulo.label
             //     }));
-            // }
-            // else {
+            // } else {
             //     this.modulos = [];
             // }
 

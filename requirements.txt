@@ -31,6 +31,7 @@ django-safedelete==1.4.1
 whitenoise==6.11.0
 django-import-export==4.4.0
 django-json-widget==2.1.1
+django-admin-autocomplete-filter==0.7.1
 # django-richtextfield==1.6.2
 
 # Database

@@ -19,11 +19,11 @@ export default {
             disciplinas: [],
             cursos: [],
             ambientes: [],
-            coordenacoes: [],
-            praticas: [],
             diarios: [],
-            salas: [],
+            praticas: [],
+            coordenacoes: [],
             reutilizaveis: [],
+            salas: [],
             has_error: false,
             is_filtering: true,
             activeParagraph: null,
@@ -57,21 +57,21 @@ export default {
         window.addEventListener("resize", this.handleResize);
 
         const options = document.querySelectorAll('#ambiente option');
-            // Itera sobre cada elemento <option>
-            options.forEach(option => {
-                // Obtém o valor do atributo de dados "data-label"
-                const label = option.getAttribute('data-label');
-                console.log(label)
-                // Obtém o ícone correspondente ao label
-                const icon = this.getIcon(label);
+        // Itera sobre cada elemento <option>
+        options.forEach(option => {
+            // Obtém o valor do atributo de dados "data-label"
+            const label = option.getAttribute('data-label');
+            console.log(label)
+            // Obtém o ícone correspondente ao label
+            const icon = this.getIcon(label);
 
-                // Cria um elemento <span> para o ícone
-                const iconSpan = document.createElement('span');
-                iconSpan.textContent = icon;
+            // Cria um elemento <span> para o ícone
+            const iconSpan = document.createElement('span');
+            iconSpan.textContent = icon;
 
-                // Insere o elemento <span> antes do texto do <option>
-                option.prepend(iconSpan);
-            });
+            // Insere o elemento <span> antes do texto do <option>
+            option.prepend(iconSpan);
+        });
 
 
     },
@@ -105,7 +105,7 @@ export default {
             }
         },
         getDisciplinaName(disciplinaId) {
-             if (!disciplinaId || disciplinaId === "Disciplinas...") {
+            if (!disciplinaId || disciplinaId === "Disciplinas...") {
                 return null;
             }
             let disciplinaSelect = this.disciplinas.find(disciplina => disciplina.id.toString() === disciplinaId.toString());
@@ -114,7 +114,7 @@ export default {
             }
         },
         getAmbienteName(ambienteId) {
-             if (!ambienteId || ambienteId === "Ambientes...") {
+            if (!ambienteId || ambienteId === "Ambientes...") {
                 return null;
             }
             let ambienteSelect = this.ambientes.find(ambiente => ambiente.id.toString() === ambienteId.toString());
@@ -131,9 +131,9 @@ export default {
 
                     return $(
                         "<span " +
-                            style +
-                            ">" +
-                            "<i class='icon icon-calendario-semestre'></i> " + data.text  +"</span> "
+                        style +
+                        ">" +
+                        "<i class='icon icon-calendario-semestre'></i> " + data.text + "</span> "
                     );
                 },
             });
@@ -155,7 +155,7 @@ export default {
             });
             $("#ambiente").select2({
                 placeholder: "Ambientes...",
-                templateSelection: function(data) {
+                templateSelection: function (data) {
                     let style = 'style="color: #7D848B; "';
                     return $("<span " + style + ">" + "<i class='icon icon-moodle'></i> " + data.text + "</span>");
                 },
@@ -164,7 +164,7 @@ export default {
                 templateSelection: function (data) {
 
                     const style = 'style="padding: 0 5px 0 0px; color: #7D848B; "';
-                    return $("<span " + style + ">" + data.text  + "</span> ");
+                    return $("<span " + style + ">" + data.text + "</span> ");
                 },
             });
         },
@@ -184,18 +184,20 @@ export default {
             let courseList = document.getElementById("course-list");
             let navDiario = document.getElementById("nav-diarios");
             let navCoordenacoes = document.getElementById("nav-coordenacoes");
+            let navReutilizaveis = document.getElementById("nav-reutilizaveis");
 
             if (selectedValue == "diarios") {
                 navCoordenacoes.classList.remove("show", "active");
+                navReutilizaveis.classList.remove("show", "active");
                 navDiario.classList.add("show", "active");
             } else if (selectedValue == "coordenacoes") {
                 var courseShortnames = document.getElementsByClassName("course-shortname");
                 for (var i = 0; i < courseShortnames.length; i++) {
                     courseShortnames[i].style.paddingLeft = "10px";
                 }
-
                 navDiario.classList.remove("show", "active");
                 navCoordenacoes.classList.add("show", "active");
+                navReutilizaveis.classList.add("show", "active");
             }
         },
 
@@ -229,11 +231,11 @@ export default {
 
                     return $(
                         "<span " +
-                            style +
-                            ">" +
-                            "<i class='icon icon-calendario-semestre'></i> " +
-                            data.text +
-                            "</span> "
+                        style +
+                        ">" +
+                        "<i class='icon icon-calendario-semestre'></i> " +
+                        data.text +
+                        "</span> "
                     );
                 },
             });

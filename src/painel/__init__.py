@@ -17,9 +17,7 @@ def get_installed_themes() -> list[str]:
     return themes
 
 
-def get_added_themes() -> list[str]:
-    from django.apps import apps
-    from painel.models import Contrante
-
-    # Percorrer a lista de applications do django e retornar o name de todas que tenham a propriedade is_painel_theme e ela seja igual a True
-    return Contrante.objects.first().addedtheme_set.all()
+def get_active_themes() -> list[str]:
+    from painel.models import Theme
+    
+    return Theme.objects.filter(active=True)

@@ -10,10 +10,10 @@
     </div>
     <div class="ava-button-options">
         <span class="modal-content-body-title">Tema</span>
-        {% for addedTheme in added_themes %}
+        {% for activeTheme in active_themes %}
             <div class="modal-button-option">
-                <a {% if user.theme_selected != addedTheme.theme.nome %} href="{% url "painel:change_theme" theme=addedTheme.theme.nome %}" class="dropdown-item"{% else %} class="dropdown-item selected"{% endif %}>
-                    {% if user.theme_selected == addedTheme.theme.nome %}<i class="fa fa-check me-2"></i>{% endif %}{{addedTheme.theme.apelido}}
+                <a {% if user.theme_selected != activeTheme.nome %} href="{% url "painel:change_theme" theme=activeTheme.nome %}" class="dropdown-item"{% else %} class="dropdown-item selected"{% endif %}>
+                    {% if user.theme_selected == activeTheme.nome %}<i class="fa fa-check me-2"></i>{% endif %}{{activeTheme.apelido}}
                 </a>
             </div>
         {% endfor %}
