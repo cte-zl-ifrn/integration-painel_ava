@@ -4,7 +4,6 @@ sc4py==0.1.4
 
 # Models
 django-better-choices==1.18
-# django-polymorphic==4.10.2
 
 # Rule engine
 jsonschema==4.26.0
