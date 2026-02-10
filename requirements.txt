@@ -19,7 +19,7 @@ django-valkey==0.4.0
 valkey==6.1.1
 
 # Security
-cryptography==46.0.3
+cryptography==46.0.5
 pyjwt==2.10.1
 
 # Audit
