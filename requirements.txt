@@ -1,5 +1,5 @@
 # Core
-Django==5.2.11
+Django==5.2.12
 sc4py==0.1.4
 
 # Models
