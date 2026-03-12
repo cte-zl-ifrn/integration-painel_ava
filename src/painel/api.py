@@ -8,9 +8,6 @@ from .brokers import SuapBroker, TokenBroker
 
 
 api = NinjaAPI()
-suap_broker = SuapBroker()
-token_broker = TokenBroker()
-
 
 @api.api_operation(["GET", "OPTIONS"], "/diarios/")
 def diarios(
@@ -155,6 +152,7 @@ def authenticate(request: HttpRequest, response: HttpResponse) -> dict:
         response["Access-Control-Allow-Origin"] = "*"
         return response
     elif request.method == "POST":
+        suap_broker = SuapBroker()
         response["Access-Control-Allow-Origin"] = "*"
         body = json.loads(request.body.decode("utf-8"))
         username = body.get("username")
@@ -171,7 +169,7 @@ def authenticate(request: HttpRequest, response: HttpResponse) -> dict:
             return error_response
         user_data = suap_broker.get_user_data()
         expiration_days = 14
-        token = token_broker.generate(username, expiration_days)
+        token = TokenBroker().generate(username, expiration_days)
         return {
             "data": user_data,
             "token": token,
@@ -195,7 +193,7 @@ def verify(request: HttpRequest, response: HttpResponse) -> dict:
             )
             error_response["Access-Control-Allow-Origin"] = "*"
             return error_response
-        username = token_broker.verify(token=token)
+        username = TokenBroker().verify(token=token)
         if username == "":
             error_response = api.create_response(
                 request,
