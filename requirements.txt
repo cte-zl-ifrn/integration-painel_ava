@@ -20,7 +20,7 @@ valkey==6.1.1
 
 # Security
 cryptography==46.0.5
-pyjwt==2.10.1
+pyjwt==2.12.0
 
 # Audit
 django-simple-history==3.11.0
