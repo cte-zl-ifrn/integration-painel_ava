@@ -9,7 +9,10 @@ if DEBUG and not TESTING_MODE:
     try:
         MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
         INSTALLED_APPS = env_as_list("DEV_APPS", ["debug_toolbar"]) + INSTALLED_APPS
-        DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda request: request.get_host() in ["painel"]}
+        DEBUG_TOOLBAR_CONFIG = {
+            "SHOW_TOOLBAR_CALLBACK": lambda request: request.get_host() in ["painel"],
+            "DISABLE_PANELS": {"debug_toolbar.panels.profiling.ProfilingPanel"},
+        }
     except ImportError:
         print("debug_toolbar not installed, removing from INSTALLED_APPS")
 
