@@ -33,6 +33,7 @@ const app = Vue.createApp({
                 { desktop: 'Salas de Coordenação', mobile: 'Coordenações' },
                 { desktop: 'Práticas', mobile: 'Práticas' },
                 { desktop: 'Reutilizar', mobile: 'Reutilizar' },
+                { desktop: 'Cursos com Autoinscrição', mobile: 'Autoinscrições' },
             ],
             filters: {
                 situacao: 'inprogress',
@@ -103,6 +104,7 @@ const app = Vue.createApp({
             diarios: [],
             coordenacoes: [],
             reutilizaveis: [],
+            vitrine_autoinscricoes: [],
             praticas: [],
             loading: false,
         };
@@ -147,6 +149,10 @@ const app = Vue.createApp({
                     }
                     // Aba 3 (Reutilizar) só é visível se reutilizaveis.length > 0
                     if (tabItem.originalIndex === 3 && this.reutilizaveis.length > 0) {
+                        return true;
+                    }
+                    // Aba 4 (cursos com autoinscrições) só é visível se vitrine_autoinscricoes.length > 0
+                    if (tabItem.originalIndex === 4 && this.vitrine_autoinscricoes.length > 0) {
                         return true;
                     }
 
@@ -517,6 +523,19 @@ const app = Vue.createApp({
                 this.reutilizaveis = data.reutilizaveis;
             } else {
                 this.reutilizaveis = [];
+            }
+
+            if (data.vitrine_autoinscricoes && Array.isArray(data.vitrine_autoinscricoes)) {
+                this.vitrine_autoinscricoes = data.vitrine_autoinscricoes.map(curso => ({
+                    id: curso.id,
+                    fullname: curso.fullname,
+                    shortname: curso.shortname,
+                    summary: curso.summary,
+                    is_enrolled: curso.is_enrolled,
+                    environment: curso.ambiente ? curso.ambiente.titulo : ''
+                }));
+            } else {
+                this.vitrine_autoinscricoes = [];
             }
 
             // if (data.modulos && Array.isArray(data.modulos)) {

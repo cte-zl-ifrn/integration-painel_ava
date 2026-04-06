@@ -184,6 +184,16 @@ def get_diarios(
                 if k in result:
                     if k in ["diarios", "coordenacoes", "praticas"]:
                         params["results"][k] += [_merge_course(diario, ambientedict) for diario in result[k] or []]
+
+                    elif k == "vitrine_autoinscricoes":
+                        def _merge_vitrine(curso_vitrine: dict, amb_dict: dict):
+                            # Monta a URL usando a base do ambiente atual
+                            curso_vitrine["enroll_url"] = f"{ambiente.moodle_base_url}/course/enrol.php?id={curso_vitrine['id']}"
+                            # Junta os dados do curso com os dados do ambiente (AVA)
+                            return {**curso_vitrine, **amb_dict}
+
+                        params["results"][k] += [_merge_vitrine(c, ambientedict) for c in result[k] or []]
+
                     else:
                         params["results"][k] += result[k] or []
 
@@ -222,6 +232,7 @@ def get_diarios(
         "coordenacoes": [],
         "praticas": [],
         "reutilizaveis": [],
+        "vitrine_autoinscricoes": [],
     }
 
     has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()

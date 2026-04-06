@@ -22,10 +22,14 @@
                     <div v-if="tabItem.originalIndex === 3 && reutilizaveis.length > 0">
                         [[ reutilizaveis.length ]]
                     </div>
+                    <div v-if="tabItem.originalIndex === 4 && vitrine_autoinscricoes.length > 0">
+                        [[ vitrine_autoinscricoes.length ]]
+                    </div>
                 </span>
             </li>
         </ul>
     </div>
+
     <div class="content">
         <div class="sidebar-modal" :class="{'open': modalOpen}">
             <div class="modal-content" :class="'modal-' + modalType">
@@ -137,6 +141,11 @@
                     <p>Nenhum dado encontrado.</p>
                 </div>
             </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 4 }">
+                {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="vitrine_autoinscricoes" list_gender="o" %}
+            </div>
         </div>
+        
     </div>
 </div>
