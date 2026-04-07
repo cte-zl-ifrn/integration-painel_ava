@@ -22,9 +22,25 @@
     </div>
     
     <div class="curso-actions">
-        <button class="btn btn-success btn-lg">
-            <i class="fa-solid fa-right-to-bracket"></i> Realizar Inscrição
+        {% if request.user.is_authenticated %}
+
+        {% if is_enrolled %}
+        <a href="{{ moodle_url }}/course/view.php?id={{ id_curso }}" target="_blank" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-laptop-code"></i> Acessar Ambiente Virtual
+        </a>
+        {% else %}
+        <button class="btn btn-success btn-lg" onclick="alert('Chamar endpoint enrol_course do Vue!')">
+            <i class="fa-solid fa-right-to-bracket"></i> Quero me inscrever
         </button>
+        {% endif %}
+
+        {% else %}
+
+        <a href="{% url 'a4:login' %}" class="btn btn-warning btn-lg">
+            <i class="fa-solid fa-user-lock"></i> Faça login para se inscrever
+        </a>
+
+        {% endif %}
     </div>
         
 </div>

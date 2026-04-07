@@ -111,13 +111,23 @@ def get_tour_status(request: HttpRequest) -> HttpResponse:
 
 def curso_detalhes(request, id_ambiente, id_curso):
     ambiente = get_object_or_404(Ambiente, id=id_ambiente)
-    
-    # TODO: chamar um novo endpoint no Moodle 'get_course_info' 
+
+    username = request.user.username if request.user.is_authenticated else ""
+
+    curso_data = get_json_api(ambiente, "get_course_info", courseid=id_curso, username=username) or {}
+
+    curso_nome = curso_data.get("fullname", "Detalhes do Curso")
+    curso_summary = curso_data.get("summary", "Nenhuma descrição disponível para este curso.")
+    curso_is_enrolled = curso_data.get("is_enrolled", False)
+
     context = {
         "id_ambiente": id_ambiente,
         "id_curso": id_curso,
         "ambiente_nome": ambiente.nome,
         "moodle_url": ambiente.moodle_base_url,
         "enable_filters": False,
+        "curso_nome": curso_nome,
+        "curso_summary": curso_summary,
+        "is_enrolled": curso_is_enrolled,
     }
     return render(request, "theme/ifrn25/frontpage/partials/curso_detalhes.html", context)
