@@ -1,0 +1,31 @@
+{% extends "theme/ifrn25/frontpage/index.html" %}
+
+{% block content %}
+<div id="content-container" :class="{'expanded': sidebarContracted}">
+
+        
+    <a href="{% url 'painel:dashboard' %}" class="btn btn-outline-secondary mb-4">
+        <i class="fa-solid fa-arrow-left"></i> Voltar para a Vitrine
+    </a>
+    
+    <div class="curso-header">
+        <span class="badge badge-info">{{ ambiente_nome }}</span>
+        <h1>Detalhes do Curso (ID: {{ id_curso }})</h1>
+    </div>
+    
+    <div class="curso-summary my-4">
+        <div class="card">
+            <div class="card-body">
+                {{ curso_summary|safe }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="curso-actions">
+        <button class="btn btn-success btn-lg">
+            <i class="fa-solid fa-right-to-bracket"></i> Realizar Inscrição
+        </button>
+    </div>
+        
+</div>
+{% endblock content %}

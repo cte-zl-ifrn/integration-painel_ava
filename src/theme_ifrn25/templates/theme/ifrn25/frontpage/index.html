@@ -18,10 +18,16 @@
         window.INITIAL_SETTINGS = {
             menuPosition: "{{ request.user.menu_position }}"
         };
+
+        window.PAGE_CONFIG = {
+            enableFilters: {% if enable_filters %} true {% else %} false {% endif %}
+        };
     </script>
     <div id="app" class="{% if request.user.menu_position == 'bottom' %}menu-bottom{% endif %}">
         {% include 'theme/ifrn25/frontpage/partials/sidebar.html' %}
+        {% block content %}
         {% include 'theme/ifrn25/frontpage/partials/content.html' %}
+        {% endblock %}
         <div @click="closeSidebarAndModal" class="mobile-backdrop" :class="{
                 'open': modalOpen,
                 'contracted': sidebarContracted

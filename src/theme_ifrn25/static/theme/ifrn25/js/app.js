@@ -7,6 +7,7 @@ const app = Vue.createApp({
     },
     data() {
         return {
+            enableFilters: window.PAGE_CONFIG?.enableFilters ?? true,
             isBottom: window.INITIAL_SETTINGS.menuPosition === 'bottom',
             sidebarContracted: false,
             modalOpen: false,
@@ -213,8 +214,10 @@ const app = Vue.createApp({
     mounted() {
         this.clearGauge();
         this.getPreferences();
-        this.loadFilters();
-        this.filterCards();
+        if (this.enableFilters) {
+            this.loadFilters();
+            this.filterCards();
+        }
         this.sidebarContracted = this.isMobile();
     },
     methods: {
@@ -532,7 +535,8 @@ const app = Vue.createApp({
                     shortname: curso.shortname,
                     summary: curso.summary,
                     is_enrolled: curso.is_enrolled,
-                    environment: curso.ambiente ? curso.ambiente.titulo : ''
+                    environment: curso.ambiente ? curso.ambiente.titulo : '',
+                    details_url: curso.details_url
                 }));
             } else {
                 this.vitrine_autoinscricoes = [];

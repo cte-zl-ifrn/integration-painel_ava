@@ -24,7 +24,9 @@ def __get_theme_prefix(request: HttpRequest) -> str:
 
 @login_required
 def dashboard(request: HttpRequest) -> HttpResponse:
-    return render(request, __get_theme_prefix(request) + "/frontpage/index.html")
+    return render(request, __get_theme_prefix(request) + "/frontpage/index.html", {
+        "enable_filters": True,
+    })
 
 
 @login_required
@@ -105,3 +107,17 @@ def get_tour_status(request: HttpRequest) -> HttpResponse:
         completed = False  
     
     return JsonResponse({"completed_tour": completed})
+
+
+def curso_detalhes(request, id_ambiente, id_curso):
+    ambiente = get_object_or_404(Ambiente, id=id_ambiente)
+    
+    # TODO: chamar um novo endpoint no Moodle 'get_course_info' 
+    context = {
+        "id_ambiente": id_ambiente,
+        "id_curso": id_curso,
+        "ambiente_nome": ambiente.nome,
+        "moodle_url": ambiente.moodle_base_url,
+        "enable_filters": False,
+    }
+    return render(request, "theme/ifrn25/frontpage/partials/curso_detalhes.html", context)
