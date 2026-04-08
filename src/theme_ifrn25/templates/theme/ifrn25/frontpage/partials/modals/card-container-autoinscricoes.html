@@ -24,28 +24,26 @@
 
 <div class="card-container" v-if="!loading && {{ list_name }}.length > 0">
     <div class="card" v-for="(item, index) in {{ list_name }}" :key="index">
-        <a class="text-decoration-none" :href="item.details_url" v-on:click="mostrarGauge">
+        <a class="text-decoration-none painel-card-header" :href="item.details_url" v-on:click="mostrarGauge">
             <h2 class="painel-card-title">[[ item.fullname ]]</h2>
             <span class="painel-card-header-shortname">[[ item.shortname ]]</span>
         </a>
         <div class="painel-card-details">
-
-        <div v-if="item.is_enrolled" class="painel-card-details-info-published">
-            <i class="fa-regular fa-circle-check"></i>
-            <span>Inscrito</span>
-        </div>
-        <div v-else class="btn-enroll" @click="enrollUser(item)"
-            style="cursor: pointer; color: var(--primary-color); font-weight: bold;">
-            <i class="fa-solid fa-right-to-bracket"></i>
-            <span>Quero me inscrever</span>
-        </div>
-
+            <div v-if="item.is_enrolled" class="card-info-enroll">
+                <i class="fa-regular fa-circle-check"></i>
+                <span class="painel-card-header-env">Inscrito</span>
+            </div>
+            <a v-else class="card-info-enroll" :href="item.details_url">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span class="painel-card-header-env">Inscreva-se</span>
+            </a>
             <div class="painel-card-details-info">
                 <div class="painel-card-info-icon">
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span class="painel-card-header-env">[[ item.environment ]]</span>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

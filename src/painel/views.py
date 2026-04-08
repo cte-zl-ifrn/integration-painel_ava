@@ -119,6 +119,7 @@ def curso_detalhes(request, id_ambiente, id_curso):
     curso_nome = curso_data.get("fullname", "Detalhes do Curso")
     curso_summary = curso_data.get("summary", "Nenhuma descrição disponível para este curso.")
     curso_is_enrolled = curso_data.get("is_enrolled", False)
+    curso_docentes = curso_data.get("docentes", [])
 
     context = {
         "id_ambiente": id_ambiente,
@@ -129,6 +130,7 @@ def curso_detalhes(request, id_ambiente, id_curso):
         "curso_nome": curso_nome,
         "curso_summary": curso_summary,
         "is_enrolled": curso_is_enrolled,
+        "docentes": curso_docentes,
     }
     return render(request, "theme/ifrn25/frontpage/partials/curso_detalhes.html", context)
 
