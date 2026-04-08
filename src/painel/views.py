@@ -131,3 +131,17 @@ def curso_detalhes(request, id_ambiente, id_curso):
         "is_enrolled": curso_is_enrolled,
     }
     return render(request, "theme/ifrn25/frontpage/partials/curso_detalhes.html", context)
+
+
+@login_required
+@require_POST
+def enrol_course(request, id_ambiente, id_curso):
+    ambiente = get_object_or_404(Ambiente, id=id_ambiente)
+    username = request.user.username
+    
+    response = get_json_api(ambiente, "enrol_course", courseid=id_curso, username=username)
+    
+    if not response:
+        return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
+        
+    return JsonResponse(response)

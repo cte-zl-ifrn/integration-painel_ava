@@ -3,45 +3,123 @@
 {% block content %}
 <div id="content-container" :class="{'expanded': sidebarContracted}">
 
+    <div class="content">
+
+        <div class="sidebar-modal" :class="{'open': modalOpen}">
+            <div class="modal-content" :class="'modal-' + modalType">
         
-    <a href="{% url 'painel:dashboard' %}" class="btn btn-outline-secondary mb-4">
-        <i class="fa-solid fa-arrow-left"></i> Voltar para a Vitrine
-    </a>
-    
-    <div class="curso-header">
-        <span class="badge badge-info">{{ ambiente_nome }}</span>
-        <h1>Detalhes do Curso (ID: {{ id_curso }})</h1>
-    </div>
-    
-    <div class="curso-summary my-4">
-        <div class="card">
-            <div class="card-body">
-                {{ curso_summary|safe }}
+                <div class="modal-content-header">
+                    <div class="modal-content-header-title">
+                        <i :class="'modal-content-header-icon fa-solid ' + modalHeaderIcon"></i>
+                        <span>[[ modalTitle ]]</span>
+                    </div>
+                    <div class="modal-content-header-notifications" v-if="notificationsModalOpen">
+                        <i class="fa-regular fa-circle-check modal-content-header-notifications-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-notifications-icon"></i>
+                    </div>
+                    <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                        <i class="fa-solid fa-user-group modal-content-header-messages-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-messages-icon"></i>
+                    </div>
+                    <i class="fa-solid fa-xmark modal-content-header-icon-x" @click="closeSidebarModal"></i>
+                </div>
+        
+                <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                    <div class="modal-content-header-messages-search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" v-model="messageSearchQuery" placeholder="Pesquisar..."
+                            class="modal-content-header-messages-search-input" />
+                    </div>
+                    <div class="splide">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide" v-for="(option, index) in messageOptions" :key="index">
+                                    <div class="modal-content-header-messages-option"
+                                        :class="{ 'active': selectedMessageOption === option.value }"
+                                        @click="selectMessageOption(option.value)">
+                                        [[ option.label ]]
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'accessibility'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'help'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/help.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'notifications'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/notifications.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'messages'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/messages.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'profile'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/profile.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'filter'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/filter.html' %}
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="detail-content">
+
+            <a href="{% url 'painel:dashboard' %}" class="btn btn-outline-secondary mb-4">
+                <i class="fa-solid fa-arrow-left"></i> Voltar para Dashboard
+            </a>
+
+            <div class="enrol-header">
+
+                <div class="course-header">
+                    <span class="enrol-header-tag">Curso FIC</span>
+                    <h1>{{ curso_nome }}</h1>
+                </div>
     
-    <div class="curso-actions">
-        {% if request.user.is_authenticated %}
+                <div class="course-actions">
+                    {% if request.user.is_authenticated %}
+                
+                    {% if is_enrolled %}
+                    <a href="{{ moodle_url }}/course/view.php?id={{ id_curso }}" target="_blank" class="btn btn-primary btn-lg">
+                        <i class="fa-solid fa-laptop-code"></i> Acessar Ambiente Virtual
+                    </a>
+                    {% else %}
+                    <button class="btn btn-primary btn-lg"
+                        @click="enrollFromDetails({{ id_ambiente }}, {{ id_curso }}, '{{ moodle_url }}')">
+                        <i class="fa-solid fa-right-to-bracket"></i> Inscreva-se
+                    </button>
+                    {% endif %}
+                    
+                    {% else %}
+                    
+                    <a href="{% url 'a4:login' %}" class="btn btn-warning btn-lg">
+                        <i class="fa-solid fa-user-lock"></i> Faça login para se inscrever
+                    </a>
+                    {% endif %}
+                </div>
+                
 
-        {% if is_enrolled %}
-        <a href="{{ moodle_url }}/course/view.php?id={{ id_curso }}" target="_blank" class="btn btn-primary btn-lg">
-            <i class="fa-solid fa-laptop-code"></i> Acessar Ambiente Virtual
-        </a>
-        {% else %}
-        <button class="btn btn-success btn-lg" onclick="alert('Chamar endpoint enrol_course do Vue!')">
-            <i class="fa-solid fa-right-to-bracket"></i> Quero me inscrever
-        </button>
-        {% endif %}
+            </div>
+            
+            <div class="course-summary my-4">
+                <h2>Visão Geral</h2>
+                <div>
+                    {{ curso_summary|safe }}
+                </div>
+                <h2>Docentes</h2>
 
-        {% else %}
-
-        <a href="{% url 'a4:login' %}" class="btn btn-warning btn-lg">
-            <i class="fa-solid fa-user-lock"></i> Faça login para se inscrever
-        </a>
-
-        {% endif %}
-    </div>
+            </div>
         
+        </div>
+
+    </div>
 </div>
 {% endblock content %}

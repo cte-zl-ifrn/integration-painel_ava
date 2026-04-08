@@ -536,7 +536,8 @@ const app = Vue.createApp({
                     summary: curso.summary,
                     is_enrolled: curso.is_enrolled,
                     environment: curso.ambiente ? curso.ambiente.titulo : '',
-                    details_url: curso.details_url
+                    ambiente_id: curso.ambiente ? curso.ambiente.id : null,
+                    details_url: curso.details_url,
                 }));
             } else {
                 this.vitrine_autoinscricoes = [];
@@ -753,6 +754,34 @@ const app = Vue.createApp({
                 .catch(error => {
                     console.error("Erro na requisição:", error);
                 });
+        },
+        async enrollFromDetails(idAmbiente, idCurso, moodleUrl) {
+            if (!confirm("Deseja confirmar sua inscrição neste curso?")) return;
+
+            this.loading = true;
+            const url = `/curso/${idAmbiente}/${idCurso}/enrol/`;
+
+            try {
+                const response = await axios.post(url, {}, {
+                    headers: { 'X-CSRFToken': this.getCsrfToken() }
+                });
+
+                console.log('Resposta da inscrição:', response.data);
+
+                if (response.data.status === 'enrolled' || response.data.status === 'reactivated') {
+                    alert("Inscrição realizada com sucesso! Redirecionando...");
+
+                    // Como ele está na página de detalhes, faz sentido mandar direto pro curso
+                    window.location.href = `${moodleUrl}/course/view.php?id=${idCurso}`;
+                } else {
+                    alert("Aviso: " + response.data.message);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert("Não foi possível realizar a inscrição.");
+            } finally {
+                this.loading = false;
+            }
         },
         cycleAccessibility() {
             const currentIndex = this.preferences.zoom_options.indexOf(this.preferences.zoom_level);
