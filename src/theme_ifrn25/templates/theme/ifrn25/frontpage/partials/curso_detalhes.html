@@ -89,10 +89,13 @@
                             <i class="fa-regular fa-comment"></i>
                             <span>Idioma Português</span>
                         </div>
+
+                        {% if carga_horaria %}
                         <div class="topic-item">
                             <i class="fa-regular fa-clock"></i>
-                            <span>Carga Horária: 40h</span>
+                            <span>Carga Horária: {{ carga_horaria }}h</span>
                         </div>
+                        {% endif %}
                         
                         <div class="topic-item">
                             <i class="fa-regular fa-circle-check"></i>
