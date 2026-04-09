@@ -9,6 +9,15 @@
         font: var(--font-heading5);
         margin-left: .5rem;
     }
+
+    &.enrolled {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+    }
+}
+
+.painel-card-details.enrolled {
+    justify-content: end !important;
 }
 
 .painel-card-header {

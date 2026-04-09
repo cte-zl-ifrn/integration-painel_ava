@@ -452,80 +452,81 @@
                                     align-items: center;
                                     justify-content: space-between;
                                     gap: .75rem;
+                                }
 
-                                    .painel-card-details-info-published,
-                                    .painel-card-details-info-unpublished,
-                                    .painel-card-info-icon {
-                                        border-radius: 4px;
-                                        opacity: 1;
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        gap: 4px;
-                                        padding: 4px;
-                                        height: 24px;
-                                        transition: all 0.2s ease-out;
+                                .painel-card-details-info-published,
+                                .painel-card-details-info-unpublished,
+                                .painel-card-info-icon {
+                                    border-radius: 4px;
+                                    opacity: 1;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    gap: 4px;
+                                    padding: 4px;
+                                    height: 24px;
+                                    transition: all 0.2s ease-out;
 
-                                        span {
-                                            font: var(--font-heading6);
-                                        }
-
-                                        i {
-                                            font-size: 12px;
-                                        }
+                                    span {
+                                        font: var(--font-heading6);
                                     }
 
-                                    .painel-card-details-info-published,
-                                    .painel-card-details-info-unpublished {
-                                        cursor: pointer;
-                                    }
-
-                                    .painel-card-info-icon,
-                                    .painel-card-details-info-published {
-                                        background-color: var(--primary-light);
-                                        color: var(--primary-dark);
-                                    }
-
-                                    .painel-card-details-info-published:hover {
-                                        background-color: var(--primary-dark);
-                                        color: var(--primary-light);
-                                    }
-
-                                    .painel-card-details-info-unpublished {
-                                        background: var(--light);
-                                        color: var(--dark);
-
-                                        &:hover {
-                                            background-color: var(--light-dark);
-                                        }
-                                    }
-
-                                    .painel-card-details-info-favourite,
-                                    .painel-card-details-info-unfavourite,
-                                    .painel-card-details-info-chevron {
-                                        width: 24px;
-                                        height: 24px;
-                                        background: var(--primary-light);
-                                        opacity: 1;
-                                        border-radius: 100%;
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        cursor: pointer;
-                                        transition: all 0.2s ease-out;
-                                        color: var(--primary-dark);
-                                        display: flex;
-
-                                        i {
-                                            font-size: 12px;
-                                        }
-
-                                        &:hover {
-                                            color: var(--primary-light);
-                                            background-color: var(--primary-dark);
-                                        }
+                                    i {
+                                        font-size: 12px;
                                     }
                                 }
+
+                                .painel-card-details-info-published,
+                                .painel-card-details-info-unpublished {
+                                    cursor: pointer;
+                                }
+
+                                .painel-card-info-icon,
+                                .painel-card-details-info-published {
+                                    background-color: var(--primary-light);
+                                    color: var(--primary-dark);
+                                }
+
+                                .painel-card-details-info-published:hover {
+                                    background-color: var(--primary-dark);
+                                    color: var(--primary-light);
+                                }
+
+                                .painel-card-details-info-unpublished {
+                                    background: var(--light);
+                                    color: var(--dark);
+
+                                    &:hover {
+                                        background-color: var(--light-dark);
+                                    }
+                                }
+
+                                .painel-card-details-info-favourite,
+                                .painel-card-details-info-unfavourite,
+                                .painel-card-details-info-chevron {
+                                    width: 24px;
+                                    height: 24px;
+                                    background: var(--primary-light);
+                                    opacity: 1;
+                                    border-radius: 100%;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    cursor: pointer;
+                                    transition: all 0.2s ease-out;
+                                    color: var(--primary-dark);
+                                    display: flex;
+
+                                    i {
+                                        font-size: 12px;
+                                    }
+
+                                    &:hover {
+                                        color: var(--primary-light);
+                                        background-color: var(--primary-dark);
+                                    }
+                                }
+
                             }
                         }
                     }

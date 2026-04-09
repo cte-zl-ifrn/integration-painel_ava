@@ -28,16 +28,16 @@
             <h2 class="painel-card-title">[[ item.fullname ]]</h2>
             <span class="painel-card-header-shortname">[[ item.shortname ]]</span>
         </a>
-        <div class="painel-card-details">
-            <div v-if="item.is_enrolled" class="card-info-enroll">
-                <i class="fa-regular fa-circle-check"></i>
-                <span class="painel-card-header-env">Inscrito</span>
-            </div>
-            <a v-else class="card-info-enroll" :href="item.details_url">
+        <div class="painel-card-details" :class="{ 'enrolled': item.is_enrolled }">
+            <a v-if="!item.is_enrolled" class="card-info-enroll" :href="item.details_url">
                 <i class="fa-solid fa-right-to-bracket"></i>
                 <span class="painel-card-header-env">Inscreva-se</span>
             </a>
             <div class="painel-card-details-info">
+                <div v-if="item.is_enrolled" class="painel-card-info-icon">
+                    <i class="fa-regular fa-circle-check"></i>
+                    <span class="painel-card-header-env">Inscrito</span>
+                </div>
                 <div class="painel-card-info-icon">
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span class="painel-card-header-env">[[ item.environment ]]</span>
