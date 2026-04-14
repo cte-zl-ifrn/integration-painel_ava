@@ -756,7 +756,6 @@ const app = Vue.createApp({
                 });
         },
         async enrollFromDetails(idAmbiente, idCurso, moodleUrl) {
-            if (!confirm("Deseja confirmar sua inscrição neste curso?")) return;
 
             this.loading = true;
             const url = `/curso/${idAmbiente}/${idCurso}/enrol/`;
@@ -769,16 +768,13 @@ const app = Vue.createApp({
                 console.log('Resposta da inscrição:', response.data);
 
                 if (response.data.status === 'enrolled' || response.data.status === 'reactivated') {
-                    alert("Inscrição realizada com sucesso! Redirecionando...");
-
-                    // Como ele está na página de detalhes, faz sentido mandar direto pro curso
+                    // Após inscrição, redireciona para o curso no Moodle
                     window.location.href = `${moodleUrl}/course/view.php?id=${idCurso}`;
                 } else {
-                    alert("Aviso: " + response.data.message);
+                    console.error('Erro na inscrição:', response.data);
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                alert("Não foi possível realizar a inscrição.");
             } finally {
                 this.loading = false;
             }
