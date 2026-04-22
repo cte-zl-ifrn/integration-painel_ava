@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.core.cache import cache
 from a4.models import logged_user, Usuario
 from painel.models import Ambiente, Situacao, Theme
 from painel.services import get_json_api
@@ -148,4 +149,8 @@ def enrol_course(request, id_ambiente, id_curso):
     if not response:
         return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
         
+    keys = cache.get("keys") or []
+    for v in keys:
+        cache.delete(v)
+    
     return JsonResponse(response)

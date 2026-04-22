@@ -180,12 +180,20 @@ def get_diarios(
 
             result = get_json_api(ambiente, "get_diarios", **querystrings) or {}
 
+            enrolled_autoinscricoes = [
+                curso for curso in result.get("autoinscricoes", [])
+                if curso.get("is_enrolled") == True
+            ]
+
+            if "diarios" in result:
+                result["diarios"].extend(enrolled_autoinscricoes)
+
             for k, v in params["results"].items():
                 if k in result:
                     if k in ["diarios", "coordenacoes", "praticas"]:
                         params["results"][k] += [_merge_course(diario, ambientedict) for diario in result[k] or []]
 
-                    elif k == "vitrine_autoinscricoes":
+                    elif k == "autoinscricoes":
                         def _merge_vitrine(curso_vitrine: dict, amb_dict: dict):
                             ambiente_id = amb_dict["ambiente"]["id"]
                             curso_id = curso_vitrine["id"]
@@ -236,7 +244,7 @@ def get_diarios(
         "coordenacoes": [],
         "praticas": [],
         "reutilizaveis": [],
-        "vitrine_autoinscricoes": [],
+        "autoinscricoes": [],
     }
 
     has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()
