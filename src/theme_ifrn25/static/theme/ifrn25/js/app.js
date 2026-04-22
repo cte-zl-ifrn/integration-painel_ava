@@ -30,11 +30,11 @@ const app = Vue.createApp({
             modalTitle: '',
             activeTab: 0,
             tabs: [
-                { desktop: 'Meus Diários', mobile: 'Diários' },
-                { desktop: 'Salas de Coordenação', mobile: 'Coordenações' },
-                { desktop: 'Práticas', mobile: 'Práticas' },
-                { desktop: 'Reutilizar', mobile: 'Reutilizar' },
-                { desktop: 'Cursos com Autoinscrição', mobile: 'Autoinscrições' },
+                { originalIndex: 0, key: 'diarios', desktop: 'Meus Diários', mobile: 'Diários' },
+                { originalIndex: 1, key: 'coordenacoes', desktop: 'Salas de Coordenação', mobile: 'Coordenações' },
+                { originalIndex: 2, key: 'praticas', desktop: 'Práticas', mobile: 'Práticas' },
+                { originalIndex: 3, key: 'reutilizaveis', desktop: 'Reutilizar', mobile: 'Reutilizar' },
+                { originalIndex: 4, key: 'autoinscricoes', desktop: 'Cursos com Autoinscrição', mobile: 'Autoinscrições' },
             ],
             filters: {
                 situacao: 'inprogress',
@@ -105,7 +105,7 @@ const app = Vue.createApp({
             diarios: [],
             coordenacoes: [],
             reutilizaveis: [],
-            vitrine_autoinscricoes: [],
+            autoinscricoes: [],
             praticas: [],
             loading: false,
         };
@@ -152,8 +152,8 @@ const app = Vue.createApp({
                     if (tabItem.originalIndex === 3 && this.reutilizaveis.length > 0) {
                         return true;
                     }
-                    // Aba 4 (cursos com autoinscrições) só é visível se vitrine_autoinscricoes.length > 0
-                    if (tabItem.originalIndex === 4 && this.vitrine_autoinscricoes.length > 0) {
+                    // Aba 4 (cursos com autoinscrições) só é visível se autoinscricoes.length > 0
+                    if (tabItem.originalIndex === 4 && this.autoinscricoes.length > 0) {
                         return true;
                     }
 
@@ -449,6 +449,14 @@ const app = Vue.createApp({
         setActiveTab(index) {
             this.activeTab = index;
         },
+        getNumberCourses(categoryKey) {
+            const category = this.$data[categoryKey];
+
+            if (category && Array.isArray(category)) {
+                return category.length;
+            }
+            return 0;
+        },
         async filterCards() {
             // Modal fecha ao fazer busca no mobile
             if (this.isMobile()) {
@@ -528,8 +536,8 @@ const app = Vue.createApp({
                 this.reutilizaveis = [];
             }
 
-            if (data.vitrine_autoinscricoes && Array.isArray(data.vitrine_autoinscricoes)) {
-                this.vitrine_autoinscricoes = data.vitrine_autoinscricoes.map(curso => ({
+            if (data.autoinscricoes && Array.isArray(data.autoinscricoes)) {
+                this.autoinscricoes = data.autoinscricoes.map(curso => ({
                     id: curso.id,
                     fullname: curso.fullname,
                     shortname: curso.shortname,
@@ -540,7 +548,7 @@ const app = Vue.createApp({
                     details_url: curso.details_url,
                 }));
             } else {
-                this.vitrine_autoinscricoes = [];
+                this.autoinscricoes = [];
             }
 
             // if (data.modulos && Array.isArray(data.modulos)) {
@@ -1071,12 +1079,5 @@ const app = Vue.createApp({
     }
 });
 
-// Iniciar o app Vue após o carregamento do DOM
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        app.mount('#app');
-        console.log('Aplicação Vue montada com sucesso');
-    } catch (e) {
-        console.error('Erro ao montar a aplicação Vue:', e);
-    }
-});
+
+app.mount('#app');

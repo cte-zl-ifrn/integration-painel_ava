@@ -9,23 +9,10 @@
                     <span class="isMobile">[[ tabItem.mobile ]]</span>
                 </span>
 
-                <span class="badge">
-                    <div v-if="tabItem.originalIndex === 0 && diarios.length > 0">
-                        [[ diarios.length ]]
-                    </div>
-                    <div v-if="tabItem.originalIndex === 1 && coordenacoes.length > 0">
-                        [[ coordenacoes.length ]]
-                    </div>
-                    <div v-if="tabItem.originalIndex === 2 && praticas.length > 0">
-                        [[ praticas.length ]]
-                    </div>
-                    <div v-if="tabItem.originalIndex === 3 && reutilizaveis.length > 0">
-                        [[ reutilizaveis.length ]]
-                    </div>
-                    <div v-if="tabItem.originalIndex === 4 && vitrine_autoinscricoes.length > 0">
-                        [[ vitrine_autoinscricoes.length ]]
-                    </div>
+                <span class="badge" v-if="getNumberCourses(tabItem.key) > 0">
+                    [[ getNumberCourses(tabItem.key) ]]
                 </span>
+
             </li>
         </ul>
     </div>
@@ -143,7 +130,7 @@
             </div>
 
             <div class="tab-pane" :class="{ active: activeTab === 4 }">
-                {% include "theme/ifrn25/frontpage/partials/modals/card-container-autoinscricoes.html" with list_name="vitrine_autoinscricoes" list_gender="o" %}
+                {% include "theme/ifrn25/frontpage/partials/modals/card-container-autoinscricoes.html" with list_name="autoinscricoes" list_gender="o" %}
             </div>
         </div>
         
