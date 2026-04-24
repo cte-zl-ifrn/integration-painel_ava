@@ -2,10 +2,10 @@
 from sc4py.env import env, env_as_bool, env_as_int
 
 if env("GTAG_CODE") is not None:
-    GTAG_CODE=env('GTAG_CODE')
+    GTAG_CODE = env("GTAG_CODE")
 
 if env("CLARITY_CODE") is not None:
-    CLARITY_CODE=env('CLARITY_CODE')
+    CLARITY_CODE = env("CLARITY_CODE")
 
 if env("SENTRY_DNS") is not None:
     import logging
@@ -38,7 +38,7 @@ if env("SENTRY_DNS") is not None:
         environment=env("SENTRY_ENVIRONMENT", "local"),
         max_breadcrumbs=env_as_int("SENTRY_MAX_BREADCRUMBS", 100),
         ignore_errors=[DisallowedHost],
-        release=env('SENTRY_RELEASE', APP_VERSION),
+        release=env("SENTRY_RELEASE", APP_VERSION),
         # attach_stacktrace=env('SENTRY_ATTACH_STACKTRACE', 'off'),
         # server_name=env('SENTRY_SERVER_NAME', 'off'),
         # in_app_include=env_as_list('SENTRY_IN_APP_INCLUDE', []),
@@ -50,7 +50,5 @@ if env("SENTRY_DNS") is not None:
         # transport=,
         # shutdown_timeout=env_as_int('SENTRY_SHUTDOWN_TIMEOUT', 2),
     )
-    print(SENTRY_SETTINGS)
     sentry_sdk.init(**SENTRY_SETTINGS)
-    ignore_logger('gunicorn.error')
-
+    ignore_logger("gunicorn.error")
