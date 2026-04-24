@@ -40,9 +40,14 @@ logging.config.dictConfig(
         "loggers": dict(
             **{"": {"level": "DEBUG", "handlers": ["console"]}},
             **{"requests": {"level": "DEBUG", "handlers": ["console"]}},
+            **{"werkzeug": {"level": "WARNING"}},
+            **{"django.server": {"level": "WARNING"}},
+            **{"django.request": {"level": "WARNING"}},
+            **{"django.security.DisallowedHost": {"level": "ERROR"}},
+            **{"WSGIRequestHandler": {"level": "WARNING"}},
+            **{"staticfiles": {"level": "WARNING"}},
+            **{"urllib3_logger": {"level": "WARNING"}},
             **{app: {"level": "DEBUG"} for app in INSTALLED_APPS},
         ),
     }
 )
-
-
