@@ -1,0 +1,172 @@
+{% extends "theme/ifrn25/frontpage/index.html" %}
+
+{% block content %}
+<div id="content-container" :class="{'expanded': sidebarContracted}">
+
+    <div class="content">
+
+        <div class="sidebar-modal" :class="{'open': modalOpen}">
+            <div class="modal-content" :class="'modal-' + modalType">
+        
+                <div class="modal-content-header">
+                    <div class="modal-content-header-title">
+                        <i :class="'modal-content-header-icon fa-solid ' + modalHeaderIcon"></i>
+                        <span>[[ modalTitle ]]</span>
+                    </div>
+                    <div class="modal-content-header-notifications" v-if="notificationsModalOpen">
+                        <i class="fa-regular fa-circle-check modal-content-header-notifications-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-notifications-icon"></i>
+                    </div>
+                    <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                        <i class="fa-solid fa-user-group modal-content-header-messages-icon"></i>
+                        <i class="fa-solid fa-gear modal-content-header-messages-icon"></i>
+                    </div>
+                    <i class="fa-solid fa-xmark modal-content-header-icon-x" @click="closeSidebarModal"></i>
+                </div>
+        
+                <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                    <div class="modal-content-header-messages-search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" v-model="messageSearchQuery" placeholder="Pesquisar..."
+                            class="modal-content-header-messages-search-input" />
+                    </div>
+                    <div class="splide">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide" v-for="(option, index) in messageOptions" :key="index">
+                                    <div class="modal-content-header-messages-option"
+                                        :class="{ 'active': selectedMessageOption === option.value }"
+                                        @click="selectMessageOption(option.value)">
+                                        [[ option.label ]]
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'accessibility'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'help'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/help.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'notifications'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/notifications.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'messages'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/messages.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'profile'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/profile.html' %}
+                </div>
+        
+                <div class="modal-content-body" v-if="modalType === 'filter'">
+                    {% include 'theme/ifrn25/frontpage/partials/modals/filter.html' %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content">
+            <div class="detail-content">
+
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'painel:dashboard' %}" class="btn btn-outline-secondary mb-4">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar para Dashboard
+                </a>
+                {% endif %}
+
+                <div class="enrol-header">
+
+                    <div class="course-header">
+                        <span class="enrol-header-tag">Curso FIC</span>
+                        <h1>{{ curso_nome }}</h1>
+                        <div class="enrol-header-topics">
+                            <div class="topic-item">
+                                <i class="fa-regular fa-comment"></i>
+                                <span>Idioma Português</span>
+                            </div>
+
+                            {% if carga_horaria %}
+                            <div class="topic-item">
+                                <i class="fa-regular fa-clock"></i>
+                                <span>Carga Horária: {{ carga_horaria }}h</span>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="topic-item">
+                                <i class="fa-regular fa-circle-check"></i>
+                                <span>Emite Certificado</span>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="course-actions">
+                        {% if request.user.is_authenticated %}
+                    
+                        {% if is_enrolled %}
+                        <a href="{{ moodle_url }}/course/view.php?id={{ id_curso }}" class="btn btn-primary btn-lg text-nowrap">
+                            <i class="fa-solid fa-laptop-code"></i> Acessar Curso
+                        </a>
+                        {% else %}
+                        <button class="btn btn-primary btn-lg text-nowrap"
+                            @click="enrollFromDetails({{ id_ambiente }}, {{ id_curso }}, '{{ moodle_url }}')">
+                            <i class="fa-solid fa-right-to-bracket"></i> Inscreva-se
+                        </button>
+                        {% endif %}
+                        
+                        {% else %}
+                        
+                        <a href="{% url 'a4:login' %}" class="btn btn-primary btn-lg text-nowrap">
+                            <i class="fa-solid fa-user-lock"></i> Faça login para se inscrever
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+
+                </div>
+                
+                {% if curso_summary and curso_summary|striptags %}
+                <div class="course-summary my-4">
+                    <h2>Visão Geral</h2>
+                    <div class="course-summary-content">
+                        {{ curso_summary|safe }}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if docentes %}
+                <div class="course-summary course-instructors my-4">
+                    <h2>Docentes</h2>
+                    <div class="instructors-list course-summary-content">
+                        {% for docente in docentes %}
+                        <div class="instructor-item">
+                            <img src="{{ docente.picture }}" alt="Foto de {{ docente.fullname }}" class="instructor-picture">
+                            <div class="instructor-info">
+                                <span class="instructor-name">{{ docente.fullname }}</span>  
+                                {% if docente.description %}
+                                <div class="teacher-bio text-muted mt-2" style="font-size: 0.95rem; line-height: 1.5;">
+                                    {{ docente.description|safe|truncatewords_html:70 }}
+                                </div>
+                                {% else %}
+                                <p class="text-muted small italic">Sem descrição de perfil disponível.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+{% endblock content %}

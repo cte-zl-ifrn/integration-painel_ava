@@ -1,0 +1,125 @@
+.card-info-enroll {
+    background-color: var(--secondary-light);
+    color: var(--secondary-dark);
+    border-radius: 4px;
+    padding: 4px 8px;
+    text-decoration: none;
+
+    span {
+        font: var(--font-heading5);
+        margin-left: .5rem;
+    }
+
+    &.enrolled {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+    }
+}
+
+.painel-card-details.enrolled {
+    justify-content: end !important;
+}
+
+.painel-card-header {
+    margin-bottom: .5rem;
+}
+
+.detail-content {
+    max-width: 894px;
+    width: 100%;
+    margin: 1rem auto;
+    padding-inline: .5rem;
+    /* overflow: auto; */
+}
+
+.enrol-header {
+    padding-block: 2rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    align-items: flex-end;
+
+    /* .btn-primary {
+        background-color: var(--secondary-light);
+        color: var(--secondary-dark);
+    } */
+}
+
+.course-header h1 {
+    font: var(--font-heading1);
+}
+
+.enrol-header-tag {
+    display: inline-block;
+    font: var(--font-heading5);
+    padding: .25rem .4rem;
+    border-radius: 32px;
+    background-color: var(--success-light);
+    margin-bottom: .5rem;
+}
+
+.enrol-header-topics {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+
+    .topic-item i {
+        color: var(--secondary);
+        margin-right: .5rem;
+    }
+}
+
+.course-summary {
+    max-width: 894px;
+
+    .course-summary-content {
+        border-top: 1px solid var(--light-dark);
+        padding-top: 1rem;
+        font: var(--font-paragraph1);
+    }
+}
+
+.course-summary h2 {
+    font: var(--font-heading2);
+    margin-bottom: .5rem;
+}
+
+.instructors-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .instructor-item {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        background-color: var(--light-lighter);
+    }
+
+    .instructor-picture {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .instructor-name {
+        font: var(--font-heading3);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .enrol-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .instructor-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}

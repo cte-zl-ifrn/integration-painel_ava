@@ -87,7 +87,7 @@ class Ambiente(ActiveMixin, Model):
 
     @property
     def moodle_base_api_url(self):
-        return f"{self.moodle_base_url}/local/suap/api"
+        return f"{self.moodle_base_url}/admin/tool/painelava/api"
 
     @staticmethod
     def as_dict():

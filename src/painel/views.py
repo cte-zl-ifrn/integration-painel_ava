@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.core.cache import cache
 from a4.models import logged_user, Usuario
 from painel.models import Ambiente, Situacao, Theme
 from painel.services import get_json_api
@@ -24,7 +25,9 @@ def __get_theme_prefix(request: HttpRequest) -> str:
 
 @login_required
 def dashboard(request: HttpRequest) -> HttpResponse:
-    return render(request, __get_theme_prefix(request) + "/frontpage/index.html")
+    return render(request, __get_theme_prefix(request) + "/frontpage/index.html", {
+        "enable_filters": True,
+    })
 
 
 @login_required
@@ -105,3 +108,49 @@ def get_tour_status(request: HttpRequest) -> HttpResponse:
         completed = False  
     
     return JsonResponse({"completed_tour": completed})
+
+
+def curso_detalhes(request, id_ambiente, id_curso):
+    ambiente = get_object_or_404(Ambiente, id=id_ambiente)
+
+    username = request.user.username if request.user.is_authenticated else ""
+
+    curso_data = get_json_api(ambiente, "get_course_info", courseid=id_curso, username=username) or {}
+
+    curso_nome = curso_data.get("fullname", "Detalhes do Curso")
+    curso_summary = curso_data.get("summary", "Nenhuma descrição disponível para este curso.")
+    curso_is_enrolled = curso_data.get("is_enrolled", False)
+    curso_docentes = curso_data.get("docentes", [])
+    curso_carga_horaria = curso_data.get("carga_horaria", "")
+
+    context = {
+        "id_ambiente": id_ambiente,
+        "id_curso": id_curso,
+        "ambiente_nome": ambiente.nome,
+        "moodle_url": ambiente.moodle_base_url,
+        "enable_filters": False,
+        "curso_nome": curso_nome,
+        "curso_summary": curso_summary,
+        "is_enrolled": curso_is_enrolled,
+        "docentes": curso_docentes,
+        "carga_horaria": curso_carga_horaria,
+    }
+    return render(request, "theme/ifrn25/frontpage/partials/curso_detalhes.html", context)
+
+
+@login_required
+@require_POST
+def enrol_course(request, id_ambiente, id_curso):
+    ambiente = get_object_or_404(Ambiente, id=id_ambiente)
+    username = request.user.username
+    
+    response = get_json_api(ambiente, "enrol_course", courseid=id_curso, username=username)
+    
+    if not response:
+        return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
+        
+    keys = cache.get("keys") or []
+    for v in keys:
+        cache.delete(v)
+    
+    return JsonResponse(response)

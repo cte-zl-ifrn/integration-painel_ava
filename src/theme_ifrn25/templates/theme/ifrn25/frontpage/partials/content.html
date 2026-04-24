@@ -9,23 +9,14 @@
                     <span class="isMobile">[[ tabItem.mobile ]]</span>
                 </span>
 
-                <span class="badge">
-                    <div v-if="tabItem.originalIndex === 0 && diarios.length > 0">
-                        [[ diarios.length ]]
-                    </div>
-                    <div v-if="tabItem.originalIndex === 1 && coordenacoes.length > 0">
-                        [[ coordenacoes.length ]]
-                    </div>
-                    <div v-if="tabItem.originalIndex === 2 && praticas.length > 0">
-                        [[ praticas.length ]]
-                    </div>
-                    <div v-if="tabItem.originalIndex === 3 && reutilizaveis.length > 0">
-                        [[ reutilizaveis.length ]]
-                    </div>
+                <span class="badge" v-if="getNumberCourses(tabItem.key) > 0">
+                    [[ getNumberCourses(tabItem.key) ]]
                 </span>
+
             </li>
         </ul>
     </div>
+
     <div class="content">
         <div class="sidebar-modal" :class="{'open': modalOpen}">
             <div class="modal-content" :class="'modal-' + modalType">
@@ -137,6 +128,11 @@
                     <p>Nenhum dado encontrado.</p>
                 </div>
             </div>
+
+            <div class="tab-pane" :class="{ active: activeTab === 4 }">
+                {% include "theme/ifrn25/frontpage/partials/modals/card-container-autoinscricoes.html" with list_name="autoinscricoes" list_gender="o" %}
+            </div>
         </div>
+        
     </div>
 </div>

@@ -34,15 +34,18 @@
                 &.active {
                     color: white;
                     background-color: var(--primary);
+
                     &:hover {
                         color: white;
                         background-color: var(--primary-dark);
                     }
                 }
+
                 &:hover {
                     color: var(--primary-dark);
                 }
-                .badge{
+
+                .badge {
                     background-color: var(--secondary-light);
                     border-radius: 50%;
                     font: var(--font-heading5);
@@ -57,11 +60,11 @@
             flex: 1;
             min-height: 0;
             display: flex;
-            overflow: hidden;
+            overflow: auto;
             background-color: var(--general-white);
             gap: 1rem;
 
-            .sidebar-modal.open ~ .tab-content {
+            .sidebar-modal.open~.tab-content {
                 padding-left: 0;
             }
 
@@ -76,7 +79,7 @@
                 border-radius: 0px 16px 16px 0px;
                 opacity: 1;
                 display: flex;
-                
+
                 &.open {
                     width: 294px;
                 }
@@ -98,7 +101,7 @@
                             flex-wrap: nowrap;
                             gap: .5rem;
                             align-items: center;
-                              
+
                             span {
                                 font: var(--font-heading2);
                                 white-space: nowrap;
@@ -131,13 +134,15 @@
                             cursor: pointer;
                         }
 
-                        .modal-content-header-notifications, .modal-content-header-messages {
+                        .modal-content-header-notifications,
+                        .modal-content-header-messages {
                             display: flex;
                             justify-content: center;
                             align-items: center;
                             margin-left: 1rem;
 
-                            .modal-content-header-notifications-icon, .modal-content-header-messages-icon {
+                            .modal-content-header-notifications-icon,
+                            .modal-content-header-messages-icon {
                                 color: var(--escuro-primario) 0% 0% no-repeat padding-box;
                                 background: #EBEBEB 0% 0% no-repeat padding-box;
                                 opacity: 1;
@@ -161,13 +166,13 @@
                                 overflow: visible !important;
                                 padding: 8px 0 !important;
                             }
-                    
+
                             &__list {
                                 gap: 8px;
                                 margin: 0 -8px;
                                 align-items: center;
                             }
-                            
+
                             &__slide {
                                 /* Reset de estilos do Splide */
                                 width: auto !important;
@@ -200,7 +205,7 @@
                                 outline: none;
                             }
                         }
-                    
+
                         .modal-content-header-messages-option {
                             background: #CEFDEF;
                             padding: 8px 12px;
@@ -213,7 +218,7 @@
                             font: var(--font-button3);
                             color: var(--verde-tema);
                             letter-spacing: 0px;
-                            
+
                             &.active {
                                 background: var(--verde-tema) !important;
                                 color: white !important;
@@ -247,6 +252,7 @@
                         margin-top: 2rem;
                         margin-inline: auto;
                         max-width: 1360px;
+
                         h3 {
                             font: var(--font-heading2);
                         }
@@ -295,7 +301,7 @@
 
                         .title-skeleton {
                             height: 24px;
-                            width: 60%;   
+                            width: 60%;
                         }
 
                         .subtitle-skeleton {
@@ -325,7 +331,7 @@
 
                         .progress-text-skeleton {
                             height: 14px;
-                            width: 50px; 
+                            width: 50px;
                         }
 
                         .itens-skeleton {
@@ -337,13 +343,13 @@
 
                         .badge-skeleton {
                             height: 24px;
-                            width: 80px;  
+                            width: 80px;
                             border-radius: 14px;
                         }
 
                         .icon-skeleton {
                             height: 24px;
-                            width: 24px;   
+                            width: 24px;
                             border-radius: 50%;
                         }
 
@@ -368,7 +374,7 @@
 
                             &:hover {
                                 transform: translateY(-2px);
-                                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                             }
 
                             .painel-card-header-icon {
@@ -385,21 +391,22 @@
                                     color: #338F74;
                                 }
                             }
-                            
+
                             .painel-card-title {
                                 font: var(--font-heading1);
                                 letter-spacing: 0px;
                                 opacity: 1;
                                 /* cursor: pointer; */
                                 width: fit-content;
-                                margin-bottom: 1rem;
+                                /* margin-bottom: 1rem; */
                             }
+
                             .painel-card-header-env {
                                 font-family: Noto Sans, Arial, sans-serif;
                             }
-                            
+
                             .painel-card-header-shortname {
-                                font:var(--font-button2);
+                                font: var(--font-button2);
                                 color: var(--dark);
                             }
 
@@ -415,7 +422,7 @@
                                     justify-content: start;
                                     align-items: center;
                                     gap: 8px;
-                                    
+
                                     .painel-progress-bar-container {
                                         background: #E3E3E3 0% 0% no-repeat padding-box;
                                         border-radius: 50px;
@@ -424,7 +431,7 @@
                                         max-width: 187px;
                                         width: 20vw;
                                         overflow: hidden;
-                                        
+
                                         .painel-progress-bar {
                                             background: linear-gradient(270deg, #9F6EDE 0%, #633594 100%);
                                             border-radius: 50px;
@@ -432,6 +439,7 @@
                                             height: 100%;
                                         }
                                     }
+
                                     span {
                                         font-family: Noto Sans, Arial, sans-serif;
                                         font-size: 12px;
@@ -444,70 +452,81 @@
                                     align-items: center;
                                     justify-content: space-between;
                                     gap: .75rem;
+                                }
 
-                                    .painel-card-details-info-published, .painel-card-details-info-unpublished, .painel-card-info-icon {
-                                        border-radius: 4px;
-                                        opacity: 1;
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        gap: 4px;
-                                        padding: 4px;
-                                        height: 24px;
-                                        transition: all 0.2s ease-out;
-                                        span {
-                                            font: var(--font-heading6);
-                                        }
-                                        i {
-                                            font-size: 12px;
-                                        }
+                                .painel-card-details-info-published,
+                                .painel-card-details-info-unpublished,
+                                .painel-card-info-icon {
+                                    border-radius: 4px;
+                                    opacity: 1;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    gap: 4px;
+                                    padding: 4px;
+                                    height: 24px;
+                                    transition: all 0.2s ease-out;
+
+                                    span {
+                                        font: var(--font-heading6);
                                     }
 
-                                    .painel-card-details-info-published, .painel-card-details-info-unpublished {
-                                        cursor: pointer;
-                                    }
-
-                                    .painel-card-info-icon, .painel-card-details-info-published {
-                                        background-color: var(--primary-light);
-                                        color: var(--primary-dark);
-                                    }
-
-                                    .painel-card-details-info-published:hover {
-                                        background-color: var(--primary-dark);
-                                        color: var(--primary-light);
-                                    }
-
-                                    .painel-card-details-info-unpublished {
-                                        background: var(--light);
-                                        color: var(--dark);
-                                        &:hover {
-                                            background-color: var(--light-dark);
-                                        }
-                                    }
-
-                                    .painel-card-details-info-favourite, .painel-card-details-info-unfavourite, .painel-card-details-info-chevron {
-                                        width: 24px;
-                                        height: 24px;
-                                        background: var(--primary-light);
-                                        opacity: 1;
-                                        border-radius: 100%;
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        cursor: pointer;
-                                        transition: all 0.2s ease-out;
-                                        color: var(--primary-dark);
-                                        display: flex;
-
-                                        i {
-                                            font-size: 12px;
-                                        }
-                                        &:hover {
-                                            color: var(--primary-light);
-                                            background-color: var(--primary-dark);
-                                        }
+                                    i {
+                                        font-size: 12px;
                                     }
                                 }
+
+                                .painel-card-details-info-published,
+                                .painel-card-details-info-unpublished {
+                                    cursor: pointer;
+                                }
+
+                                .painel-card-info-icon,
+                                .painel-card-details-info-published {
+                                    background-color: var(--primary-light);
+                                    color: var(--primary-dark);
+                                }
+
+                                .painel-card-details-info-published:hover {
+                                    background-color: var(--primary-dark);
+                                    color: var(--primary-light);
+                                }
+
+                                .painel-card-details-info-unpublished {
+                                    background: var(--light);
+                                    color: var(--dark);
+
+                                    &:hover {
+                                        background-color: var(--light-dark);
+                                    }
+                                }
+
+                                .painel-card-details-info-favourite,
+                                .painel-card-details-info-unfavourite,
+                                .painel-card-details-info-chevron {
+                                    width: 24px;
+                                    height: 24px;
+                                    background: var(--primary-light);
+                                    opacity: 1;
+                                    border-radius: 100%;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    cursor: pointer;
+                                    transition: all 0.2s ease-out;
+                                    color: var(--primary-dark);
+                                    display: flex;
+
+                                    i {
+                                        font-size: 12px;
+                                    }
+
+                                    &:hover {
+                                        color: var(--primary-light);
+                                        background-color: var(--primary-dark);
+                                    }
+                                }
+
                             }
                         }
                     }
@@ -531,56 +550,67 @@
                     flex-wrap: nowrap;
                     -webkit-overflow-scrolling: touch !important;
                 }
+
                 .nav-link {
                     font-size: 14px;
                     flex-wrap: nowrap !important;
                     flex-shrink: 0;
                     min-width: fit-content;
                 }
-        
+
                 .nav::-webkit-scrollbar {
-                    display: none; 
+                    display: none;
                 }
             }
 
             .content .tab-content {
                 margin-left: 1rem;
+
                 .tab-pane .card-container .card .painel-card-details {
                     flex-direction: column;
                     align-items: flex-start;
+
                     .painel-card-details-info {
                         gap: .5rem;
                     }
+
                     .painel-card-details-progress {
                         flex-flow: wrap-reverse;
                         width: 100%;
+
                         .painel-progress-bar-container {
                             flex: 1;
                         }
                     }
                 }
-            } 
+            }
 
-            .painel-card-header-icon  {
+            .painel-card-header-icon {
                 font: var(--font-heading6);
                 color: #338F74;
             }
+
             .painel-card-header-shortname {
                 font-size: 12px;
                 min-width: 120px;
                 text-wrap: wrap;
             }
+
             .painel-card-title {
                 font: var(--font-heading2) !important;
             }
 
             .painel-card-details-info-published {
-                i, span {
+
+                i,
+                span {
                     font-size: 10px !important;
                 }
-                
+
             }
-            .painel-card-details-info-favourite,  .painel-card-details-info-chevron {
+
+            .painel-card-details-info-favourite,
+            .painel-card-details-info-chevron {
                 font-size: 10px !important;
             }
         }
