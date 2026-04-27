@@ -154,3 +154,21 @@ def enrol_course(request, id_ambiente, id_curso):
         cache.delete(v)
     
     return JsonResponse(response)
+
+
+@login_required
+@require_POST
+def unenrol_course(request, id_ambiente, id_curso):
+    ambiente = get_object_or_404(Ambiente, id=id_ambiente)
+    username = request.user.username
+    
+    response = get_json_api(ambiente, "suspend_enrol", courseid=id_curso, username=username)
+    
+    if not response:
+        return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA ao tentar suspender a matrícula."}, status=500)
+        
+    keys = cache.get("keys") or []
+    for v in keys:
+        cache.delete(v)
+    
+    return JsonResponse(response)
