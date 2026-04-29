@@ -153,7 +153,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
             logger.debug(f"checking user: {user}")
             if user is None:
                 is_superuser = Usuario.objects.count() == 0
-                logger.debug(f"need to create user: {username}")
+                logger.debug("need to create user")
                 user = Usuario.objects.create(
                     username=username,
                     is_superuser=is_superuser,

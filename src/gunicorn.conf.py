@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import sc4py.envs import env_as_bool
 
 wsgi_app = "wsgi:application"
 bind_port = os.getenv("VIRTUAL_PORT", "8000")
@@ -12,7 +13,8 @@ loglevel = "info"
 timeout = int(os.getenv("WORKER_TIMEOUT", 120))
 error_logfile = "-"
 errorlog = "-"
-accesslog = "-"
+accesslog = env_as_bool("DJANGO_DEBUG", False) and "-" or None
+access_logfile = env_as_bool("DJANGO_DEBUG", False) and "-" or None
 capture_output = False
 syslog = False
 logger_class = "gunicorn.glogging.Logger"

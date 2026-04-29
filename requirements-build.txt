@@ -1,4 +1,0 @@
-# UI
-django-compressor
-django-sass-processor
-libsass

@@ -8,6 +8,7 @@ const app = Vue.createApp({
     data() {
         return {
             enableFilters: window.PAGE_CONFIG?.enableFilters ?? true,
+            enableFilters: window.PAGE_CONFIG?.enableFilters ?? true,
             isBottom: window.INITIAL_SETTINGS.menuPosition === 'bottom',
             sidebarContracted: false,
             modalOpen: false,

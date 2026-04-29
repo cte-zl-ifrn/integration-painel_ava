@@ -41,3 +41,92 @@ minversion = "6.0"
 # addopts="-ra --cov-report term --cov-report html:coverage --cov-report xml:coverage/cobertura-coverage.xml --cov=."
 addopts="-p no:warnings -ra  ."
 filterwarnings="ignore::urllib3.exceptions.InsecureRequestWarning"
+###############################################################
+# Dependências do projeto
+[project]
+name = "painel_ava"
+version = "0.1.0"
+description = "Painel AVA - IFRN"
+requires-python = ">=3.11"
+dependencies = [
+	# Core
+	"Django==5.2.12",
+	"sc4py==0.1.4",
+
+	# Models
+	"django-better-choices==1.18",
+
+	# Rule engine
+	"jsonschema==4.26.0",
+	"rule-engine==4.5.3",
+
+	# REST
+	"httpie==3.2.4",
+	"requests==2.33.1",
+	"django-ninja==1.5.3",
+
+	# Cache and Session
+	"django-valkey==0.4.0",
+	"valkey==6.1.1",
+
+	# Security
+	"cryptography==46.0.7",
+	"pyjwt==2.12.0",
+
+	# Audit
+	"django-simple-history==3.11.0",
+	"django-safedelete==1.4.1",
+
+	# UI
+	"whitenoise==6.11.0",
+	"django-import-export==4.4.0",
+	"django-json-widget==2.1.1",
+	"django-admin-autocomplete-filter==0.7.1",
+	# "django-richtextfield==1.6.2",  # comentado no requirements.txt
+
+	# Database
+	"psycopg[binary,pool]==3.3.3",
+
+	# Production
+	"sentry-sdk[django,rq]==2.58.0,
+	"gunicorn==25.3.0",
+]
+
+[project.optional-dependencies]
+# Dependências de desenvolvimento
+dev = [
+	# "-e ../django-adminlte3",  # comentado
+	"libsass",
+	"types-libsass",
+	"black",
+	"debugpy",
+	"django-debug-toolbar",
+	"django-extensions",
+	"djlint",
+	"flake8",
+	"ipdb",
+	"ipython",
+	"lxml",
+	"mypy",
+	"pdoc3",
+	"pytest",
+	"pytest-cov",
+	"pytest-profiling",
+	"ruff",
+	"types-requests",
+	"Werkzeug",
+	# "-e ../django-adminlte3",  # comentado
+	"black",
+	"djlint",
+	"flake8",
+	"mypy",
+	"ruff",
+]
+
+# Dependências de build
+build = [
+	# UI
+	"django-compressor",
+	"django-sass-processor",
+	"libsass",
+]
