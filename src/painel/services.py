@@ -11,8 +11,10 @@ from django.conf import settings
 from django.core.cache import cache
 import requests
 from http.client import HTTPException
+
 from .models import Ambiente, Curso
 from backup.models import ArquivoBackup
+from a4.models import Usuario
 
 
 logger = logging.getLogger(__name__)
@@ -41,6 +43,99 @@ CODIGO_PRATICA_SUFIXO_INDEX = 4
 CURSOS_CACHE = {}
 
 CHANGE_URL = re.compile("/course/view.php\\?")
+
+
+def _resolve_dot_notation(data: dict, path: str) -> list:
+    """Busca valores dentro de um dicionário usando notação de ponto (dot notation)."""
+    keys = path.split('.')
+    results = [data]
+
+    for key in keys:
+        next_results = []
+        for item in results:
+            if key == '*':
+                if isinstance(item, list):
+                    next_results.extend(item)
+                elif isinstance(item, dict):
+                    next_results.extend(item.values())
+            else:
+                if isinstance(item, dict) and key in item:
+                    next_results.append(item[key])
+        results = next_results
+
+    return results
+
+
+def _avalia_restricao(aluno_data: dict, chave: str, valor_esperado: str) -> bool:
+    """Avalia se o dicionário de dados do aluno atende à restrição."""
+    chave = str(chave)
+    valor_esperado = str(valor_esperado).lower()
+
+    # Tratamento especial legado do SUAP (unificação em 'tipo_usuario')
+    if chave.startswith('eh_') and chave not in aluno_data:
+        tipo_usuario = str(aluno_data.get('tipo_usuario', '')).lower()
+        termo_busca = chave.replace('eh_', '')
+        valor_aluno = "true" if termo_busca in tipo_usuario else "false"
+        return valor_aluno == valor_esperado
+
+    valores_aluno = _resolve_dot_notation(aluno_data, chave)
+    
+    for v in valores_aluno:
+        if isinstance(v, bool):
+            v_str = "true" if v else "false"
+        else:
+            v_str = str(v).lower()
+            
+        if v_str == valor_esperado:
+            return True
+
+    return False
+
+
+def _filtrar_autoinscricoes_vitrine(autoinscricoes: list, username_logado: str) -> list:
+    """
+    Avalia a lista de cursos de autoinscrição vinda do Moodle e filtra
+    baseado no JSON do SUAP do usuário logado no Painel AVA.
+    """
+    if not autoinscricoes:
+        return []
+
+    usuario_db = Usuario.objects.filter(username=username_logado).first()
+    aluno_data = {}
+
+    if usuario_db:
+        if usuario_db.last_json:
+            try:
+                aluno_data = json.loads(usuario_db.last_json)
+            except json.JSONDecodeError:
+                pass
+        
+        # Garante que o tipo_usuario nativo do Django também esteja disponível
+        aluno_data['tipo_usuario'] = str(usuario_db.tipo_usuario or '')
+
+    cursos_vitrine_filtrados = []
+
+    for curso_vitrine in autoinscricoes:
+        restricoes = curso_vitrine.get("restricoes_de_autoinscricao", [])
+
+        if not restricoes:
+            # Sem restrições = Liberado para todos
+            cursos_vitrine_filtrados.append(curso_vitrine)
+            continue
+
+        passou_nos_filtros = False
+        # Avalia se atende a pelo menos uma restrição (Lógica OR)
+        for regra in restricoes:
+            chave = regra.get("chave", "")
+            valor = regra.get("restricao", "")
+            if _avalia_restricao(aluno_data, chave, valor):
+                passou_nos_filtros = True
+                break
+                
+        if passou_nos_filtros:
+            cursos_vitrine_filtrados.append(curso_vitrine)
+
+    return cursos_vitrine_filtrados
 
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
@@ -183,6 +278,13 @@ def get_diarios(
                 querystrings["q"] = urllib.parse.quote(querystrings["q"])
 
             result = get_json_api(ambiente, "get_diarios", **querystrings) or {}
+
+            # Filtragem de autoinscrições baseada no perfil do usuário
+            username_logado = params.get("username", "")
+            result["autoinscricoes"] = _filtrar_autoinscricoes_vitrine(
+                result.get("autoinscricoes", []), 
+                username_logado
+            )
 
             enrolled_autoinscricoes = [
                 curso for curso in result.get("autoinscricoes", [])
