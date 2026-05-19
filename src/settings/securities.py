@@ -47,6 +47,7 @@ OAUTH = {
     "AUTHORIZE_URL": env("OAUTH_AUTHORIZE_URL", f"{oauth_base_url}/o/authorize/"),
     "TOKEN_URL": env("OAUTH_TOKEN_URL", f"{oauth_base_url}/o/token/"),
     "USERINFO_URL": env("OAUTH_USERINFO_URL", f"{oauth_base_url}/api/rh/eu/"),
+    "VINCULOS_URL": env("OAUTH_VINCULOS_URL", f"{oauth_base_url}/api/rh/meus-vinculos/"),
     "CLIENT_ID": env("OAUTH_CLIENT_ID", "#warning: changeme"),
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "#warning: changeme"),
     "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),

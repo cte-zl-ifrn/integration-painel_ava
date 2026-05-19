@@ -129,7 +129,28 @@ def authenticate(request: HttpRequest) -> HttpResponse:
                 )
             return oauth_error(f"{e}. {response_text}")
 
-    def save_user(user_info) -> Usuario or HttpResponse:
+    def get_user_vinculos(access_token) -> tuple:
+        dados_vinculos = None
+        erro_vinculo = None
+        try:
+            headers = {
+                "Authorization": f"Bearer {access_token.get('access_token')}",
+                "x-api-key": OAUTH["CLIENT_SECRET"],
+            }
+            response = _get(OAUTH['VINCULOS_URL'], headers=headers)
+            
+            if response.status_code == 200:
+                dados_vinculos = response.json()
+            else:
+                erro_vinculo = f"Erro API Vínculos (Status {response.status_code}): {response.text}"
+                logger.warning(erro_vinculo)
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            erro_vinculo = f"Exceção ao buscar vínculos: {str(e)}"
+            
+        return dados_vinculos, erro_vinculo
+
+    def save_user(user_info, vinculos_data, erro_vinculo) -> Usuario or HttpResponse:
         try:
             username = user_info.get("identificacao", None)
             defaults = {
@@ -147,6 +168,8 @@ def authenticate(request: HttpRequest) -> HttpResponse:
                 "foto": user_info.get("foto"),
                 "tipo_usuario": user_info.get("tipo_usuario"),
                 "last_json": json.dumps(user_info),
+                "vinculos": vinculos_data, 
+                "observacao_erro_vinculo": erro_vinculo,
             }
 
             user = Usuario.objects.filter(username=username).first()
@@ -184,7 +207,9 @@ def authenticate(request: HttpRequest) -> HttpResponse:
     if isinstance(user_info_data, HttpResponse):
         return user_info_data
 
-    user_model = save_user(user_info_data)
+    vinculos_data, erro_vinculo = get_user_vinculos(access_token_data)
+
+    user_model = save_user(user_info_data, vinculos_data, erro_vinculo)
     if isinstance(user_model, HttpResponse):
         return user_model
 

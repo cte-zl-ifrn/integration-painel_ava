@@ -64,6 +64,8 @@ class Usuario(SafeDeleteModel, AbstractUser):
     first_login = DateTimeField(_("first login"), null=True, blank=True)
     last_json = TextField(_("último JSON"), null=True, blank=True)
     settings = JSONField(_("configurações"), null=True, blank=True)
+    vinculos = JSONField("Vínculos SUAP", null=True, blank=True)
+    observacao_erro_vinculo = TextField("Erro ao buscar vínculos", null=True, blank=True)
 
     history = HistoricalRecords()
 
