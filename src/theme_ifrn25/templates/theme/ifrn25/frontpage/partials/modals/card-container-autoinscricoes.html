@@ -28,19 +28,36 @@
             <h2 class="painel-card-title">[[ item.fullname ]]</h2>
             <span class="painel-card-header-shortname">[[ item.shortname ]]</span>
         </a>
-        <div class="painel-card-details" :class="{ 'enrolled': item.is_enrolled }">
-            <a v-if="!item.is_enrolled" class="card-info-enroll" :href="item.details_url">
-                <i class="fa-solid fa-right-to-bracket"></i>
-                <span class="painel-card-header-env">Inscreva-se</span>
-            </a>
+        <div class="painel-card-details" style="margin-top: 1rem;" :class="{ 'enrolled': item.is_enrolled }">
+
+            <div class="painel-card-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            
+                <button v-if="!item.is_enrolled" class="btn btn-primary" style="margin-bottom: 0px; flex: 1;" @click.prevent="enrollCourse(item)">
+                    <i class="fa-solid fa-right-to-bracket"></i> Inscreva-se
+                </button>
+            
+                <template v-else>
+                    <a class="btn btn-primary"
+                        style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 5px;"
+                        :href="item.url" @click="mostrarGauge">
+                        Acessar curso
+                    </a>
+            
+                    <button class="btn btn-outline-secondary btn-cancel-enroll" title="Cancelar Matrícula" @click.prevent="unenrollCourse(item)">
+                        <i class="fa-solid fa-xmark"></i> Cancelar inscrição
+                    </button>
+                </template>
+            
+            </div>
+
             <div class="painel-card-details-info">
-                <div v-if="item.is_enrolled" class="painel-card-info-icon">
-                    <i class="fa-regular fa-circle-check"></i>
-                    <span class="painel-card-header-env">Inscrito</span>
-                </div>
-                <div class="painel-card-info-icon">
+                <div class="painel-card-info-icon" v-if="item.environment">
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span class="painel-card-header-env">[[ item.environment ]]</span>
+                </div>
+                <div v-if="item.is_enrolled" class="painel-card-info-icon text-success">
+                    <i class="fa-regular fa-circle-check"></i>
+                    <span class="painel-card-header-env">Inscrito</span>
                 </div>
             </div>
 
@@ -52,6 +69,7 @@
     <h3>Nenhum resultado encontrado nesta aba.</h3>
     <p>Ajuste os filtros ou clique em "Limpar filtros" para ver todos os itens.</p>
     <button class="btn btn-primary" @click="resetFilters()">Limpar filtros</button>
+    <p></p>
     <p>É possível que a Secretaria Acadêmica ainda não tenha lhe inserido em diário algum, neste caso, por favor
         aguarde.</p>
 </div>

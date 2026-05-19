@@ -25,7 +25,7 @@
     --primary: #098E95;
     --primary-dark: #0F5A60;
     --primary-light: #CEFDEF;
-    --secondary: #9F6EDE; 
+    --secondary: #9F6EDE;
     --secondary-dark: #633594;
     --secondary-light: #E7DBF9;
     --success: #85C121;
@@ -48,7 +48,7 @@
     --dark-light: #858585;
     --general-white: #FFFFFF;
     --bg-green: #fafefd;
-    --bg-green-gradient: linear-gradient(131.57deg, #F1FDF9 7.49%, #FFFFFF 84.71%);    
+    --bg-green-gradient: linear-gradient(131.57deg, #F1FDF9 7.49%, #FFFFFF 84.71%);
 
     /* SIZES */
     --counter-close: 56px;
@@ -64,23 +64,33 @@
 body {
     /* FONTS */
     --font-family: "Noto Sans", sans-serif;
-    
+
     --font-scale: 1;
 
-    --font-heading1: 700 calc(1.5rem * var(--font-scale))/normal var(--font-family); /*24px*/
-    --font-heading2: 700 calc(1.125rem * var(--font-scale))/normal var(--font-family); /*18px*/
-    --font-heading3: 500 calc(1rem * var(--font-scale))/normal var(--font-family); /*16px*/
-    --font-heading4: 500 calc(0.875rem * var(--font-scale))/normal var(--font-family); /*14px*/
-    --font-heading5: 500 calc(0.75rem * var(--font-scale))/normal var(--font-family); /*12px*/
-    --font-heading6: 500 calc(0.625rem * var(--font-scale))/normal var(--font-family); /*10px*/
-    --font-heading7: 700 calc(2.375rem * var(--font-scale))/normal var(--font-family); /*38px*/
+    --font-heading1: 700 calc(1.5rem * var(--font-scale))/normal var(--font-family);
+    /*24px*/
+    --font-heading2: 700 calc(1.125rem * var(--font-scale))/normal var(--font-family);
+    /*18px*/
+    --font-heading3: 500 calc(1rem * var(--font-scale))/normal var(--font-family);
+    /*16px*/
+    --font-heading4: 500 calc(0.875rem * var(--font-scale))/normal var(--font-family);
+    /*14px*/
+    --font-heading5: 500 calc(0.75rem * var(--font-scale))/normal var(--font-family);
+    /*12px*/
+    --font-heading6: 500 calc(0.625rem * var(--font-scale))/normal var(--font-family);
+    /*10px*/
+    --font-heading7: 700 calc(2.375rem * var(--font-scale))/normal var(--font-family);
+    /*38px*/
 
     --font-button1: 600 calc(1rem * var(--font-scale))/normal var(--font-family);
-    --font-button2: 600 calc(0.875rem * var(--font-scale))/normal var(--font-family); /*14px*/
-    --font-button3: 600 calc(0.75rem * var(--font-scale))/normal var(--font-family); /*12px*/
+    --font-button2: 600 calc(0.875rem * var(--font-scale))/normal var(--font-family);
+    /*14px*/
+    --font-button3: 600 calc(0.75rem * var(--font-scale))/normal var(--font-family);
+    /*12px*/
 
     --font-paragraph1: 400 calc(1rem * var(--font-scale))/1.5 var(--font-family);
-    --font-paragraph2: 400 calc(0.875rem * var(--font-scale))/1.5 var(--font-family); /*14px*/
+    --font-paragraph2: 400 calc(0.875rem * var(--font-scale))/1.5 var(--font-family);
+    /*14px*/
 }
 
 * {
@@ -94,7 +104,8 @@ body {
     transition: all 100ms ease-in; */
 }
 
-html, body {
+html,
+body {
     background: var(--branco-secundario) 0% 0% no-repeat padding-box;
     color: var(--escuro-primario) !important;
     font: var(--font-paragraph1);
@@ -111,8 +122,10 @@ html, body {
 /* Carregamento ao ir para o Moodle */
 .loading-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(255, 255, 255, 0.8);
     display: flex;
     flex-direction: column;
@@ -137,7 +150,9 @@ html, body {
 }
 
 @keyframes spin {
-    100% { transform: rotate(360deg); }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 h1,
@@ -161,6 +176,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--branco-primario);
 }
+
 .h5-noto-sans-medium-—-16pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -170,6 +186,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--branco-primario);
 }
+
 .h4-noto-sans-semibold-—-14pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -179,6 +196,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--branco-primario);
 }
+
 .h3-noto-sans-semibold-—-16pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -188,6 +206,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--branco-primario);
 }
+
 .h2-noto-sans-semibold-—-24pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -197,6 +216,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--branco-primario);
 }
+
 .h1-noto-sans-bold-—-40pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -206,6 +226,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--branco-primario);
 }
+
 .legenda-noto-sans-—-10pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -215,6 +236,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--cinza-secundario);
 }
+
 .h6-noto-sans-regular-—-14pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -224,6 +246,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--cinza-secundario);
 }
+
 .h5-noto-sans-medium-—-16pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -233,6 +256,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--cinza-secundario);
 }
+
 .h4-noto-sans-semibold-—-14pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -242,6 +266,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--cinza-secundario);
 }
+
 .h3-noto-sans-semibold-—-16pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -251,6 +276,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--cinza-secundario);
 }
+
 .h2-noto-sans-semibold-—-24pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -260,6 +286,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--cinza-secundario);
 }
+
 .h1-noto-sans-bold-—-40pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -269,6 +296,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--cinza-secundario);
 }
+
 .h6-noto-sans-regular-—-14pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -278,6 +306,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--unnamed-color-1d2125);
 }
+
 .h5-noto-sans-medium-—-16pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -287,6 +316,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--unnamed-color-1d2125);
 }
+
 .h4-noto-sans-semibold-—-14pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -296,6 +326,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--unnamed-color-1d2125);
 }
+
 .h3-noto-sans-semibold-—-16pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -305,6 +336,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--unnamed-color-1d2125);
 }
+
 .h2-noto-sans-semibold-—-24pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -314,6 +346,7 @@ h6 {
     letter-spacing: var(--unnamed-character-spacing-0);
     color: var(--unnamed-color-1d2125);
 }
+
 .h1-noto-sans-semibold-—-40pt {
     font-family: var(--unnamed-font-family-noto-sans);
     font-style: var(--unnamed-font-style-normal);
@@ -331,7 +364,7 @@ h6 {
     border: none;
     transition: all 0.3s ease-in-out;
     padding: .5rem 1rem;
-    margin-bottom: 1rem;
+
     &:hover {
         background-color: var(--primary-dark);
     }
@@ -339,12 +372,13 @@ h6 {
 
 /* Para esperar carregamento do vue */
 [v-cloak] {
-  display: none !important;
+    display: none !important;
 }
 
 .isDesktop {
     display: inline;
 }
+
 .isMobile {
     display: none;
 }
@@ -354,16 +388,20 @@ h6 {
     0% {
         background-color: #e0e0e0;
     }
+
     50% {
         background-color: #f0f0f0;
     }
+
     100% {
         background-color: #e0e0e0;
     }
 }
 
 @media (max-width: 767.98px) {
-    .mobile-backdrop:not(.contracted), .mobile-backdrop.open {
+
+    .mobile-backdrop:not(.contracted),
+    .mobile-backdrop.open {
         position: fixed;
         z-index: 40;
         height: 100vh;
@@ -374,6 +412,7 @@ h6 {
     .isDesktop {
         display: none;
     }
+
     .isMobile {
         display: inline;
     }

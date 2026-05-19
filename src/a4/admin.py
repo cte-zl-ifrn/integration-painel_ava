@@ -62,8 +62,8 @@ class UsuarioAdmin(BaseModelAdmin):
         (
             _("Audit"),
             {
-                "fields": [("last_json")],
-                "description": _("JSON com os dados do SUAP"),
+                "fields": [("last_json"), ("vinculos"), ("observacao_erro_vinculo")],
+                "description": _("JSONs com os dados do SUAP"),
             },
         ),
         (
@@ -74,7 +74,7 @@ class UsuarioAdmin(BaseModelAdmin):
             },
         ),
     ]
-    readonly_fields: Sequence[str] = ["date_joined", "first_login", "last_login", "last_json"]
+    readonly_fields: Sequence[str] = ["date_joined", "first_login", "last_login", "last_json", "vinculos", "observacao_erro_vinculo"]
     # autocomplete_fields: Sequence[str] = ['groups']
     resource_classes = [UsuarioResource]
 

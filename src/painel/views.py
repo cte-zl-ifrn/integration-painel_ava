@@ -142,12 +142,62 @@ def curso_detalhes(request, id_ambiente, id_curso):
 @require_POST
 def enrol_course(request, id_ambiente, id_curso):
     ambiente = get_object_or_404(Ambiente, id=id_ambiente)
-    username = request.user.username
+    user = request.user
+    username = user.username
     
-    response = get_json_api(ambiente, "enrol_course", courseid=id_curso, username=username)
+    primeiro_nome = user.first_name
+    ultimo_nome = user.last_name
+    
+    if not primeiro_nome:
+        # Fallback seguro: se tudo for nulo, a string "Aluno SUAP" salva o .split() de quebrar
+        nome_completo = user.nome_usual or user.nome_registro or user.nome or "Aluno SUAP"
+        partes_nome = nome_completo.split()
+        primeiro_nome = partes_nome[0]
+        ultimo_nome = " ".join(partes_nome[1:]) if len(partes_nome) > 1 else "SUAP"
+
+    # Garante um e-mail válido
+    email = user.email or f"{username}@sememail.ifrn.edu.br"
+    
+    # Faz a requisição enviando os dados de provisionamento JIT
+    response = get_json_api(
+        ambiente, 
+        "enrol_course", 
+        courseid=id_curso, 
+        username=username,
+        firstname=primeiro_nome,
+        lastname=ultimo_nome,
+        email=email
+    )
     
     if not response:
         return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
+        
+    keys = cache.get("keys") or []
+    for v in keys:
+        cache.delete(v)
+    
+    return JsonResponse(response)
+    
+    if not response:
+        return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
+        
+    keys = cache.get("keys") or []
+    for v in keys:
+        cache.delete(v)
+    
+    return JsonResponse(response)
+
+
+@login_required
+@require_POST
+def unenrol_course(request, id_ambiente, id_curso):
+    ambiente = get_object_or_404(Ambiente, id=id_ambiente)
+    username = request.user.username
+    
+    response = get_json_api(ambiente, "suspend_enrol", courseid=id_curso, username=username)
+    
+    if not response:
+        return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA ao tentar suspender a matrícula."}, status=500)
         
     keys = cache.get("keys") or []
     for v in keys:

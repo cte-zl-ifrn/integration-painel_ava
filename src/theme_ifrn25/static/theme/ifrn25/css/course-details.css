@@ -16,8 +16,11 @@
     }
 }
 
-.painel-card-details.enrolled {
-    justify-content: end !important;
+.btn-cancel-enroll {
+    border-radius: 2rem;
+    padding: .5rem 1rem;
+    font: var(--font-button2);
+    transition: all 0.2s ease-out;
 }
 
 .painel-card-header {

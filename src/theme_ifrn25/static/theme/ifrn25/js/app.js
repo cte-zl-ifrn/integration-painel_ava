@@ -8,6 +8,7 @@ const app = Vue.createApp({
     data() {
         return {
             enableFilters: window.PAGE_CONFIG?.enableFilters ?? true,
+            enableFilters: window.PAGE_CONFIG?.enableFilters ?? true,
             isBottom: window.INITIAL_SETTINGS.menuPosition === 'bottom',
             sidebarContracted: false,
             modalOpen: false,
@@ -457,12 +458,16 @@ const app = Vue.createApp({
             }
             return 0;
         },
-        async filterCards() {
+        async filterCards(exibirLoading = true) {
             // Modal fecha ao fazer busca no mobile
             if (this.isMobile()) {
                 this.closeSidebarModal();
             }
-            this.loading = true;
+
+            if (exibirLoading) {
+                this.loading = true;
+            }
+
             try {
                 const params = new URLSearchParams({
                     q: this.filters.query || "",
@@ -482,7 +487,9 @@ const app = Vue.createApp({
                 console.error("Error fetching data:", error);
                 this.diarios = [];
             } finally {
-                this.loading = false;
+                if (exibirLoading) {
+                    this.loading = false;
+                }
             }
         },
         handleFilterResponse(data) {
@@ -546,6 +553,7 @@ const app = Vue.createApp({
                     environment: curso.ambiente ? curso.ambiente.titulo : '',
                     ambiente_id: curso.ambiente ? curso.ambiente.id : null,
                     details_url: curso.details_url,
+                    url: curso.viewurl
                 }));
             } else {
                 this.autoinscricoes = [];
@@ -763,6 +771,41 @@ const app = Vue.createApp({
                     console.error("Erro na requisição:", error);
                 });
         },
+
+        async enrollCourse(item) {
+            // Previne duplo clique se já estiver carregando
+            if (this.loading) return;
+
+            this.loading = true;
+
+            const idAmbiente = item.ambiente_id;
+            const idCurso = item.id;
+            console.log(item.ambiente_url);
+
+            const url = `/curso/${idAmbiente}/${idCurso}/enrol/`;
+
+            try {
+                const response = await axios.post(url, {}, {
+                    headers: { 'X-CSRFToken': this.getCsrfToken() }
+                });
+
+                if (response.data.status === 'enrolled' || response.data.status === 'reactivated') {
+                    item.is_enrolled = true;
+                    this.filterCards(false);
+
+                    // Opcional: Se quiser forçar o redirecionamento, descomente a linha abaixo
+                    // window.location.href = `/course/view.php?id=${idCurso}`;
+                } else {
+                    console.error('Erro na inscrição:', response.data);
+                    alert("Não foi possível realizar a inscrição. Tente novamente.");
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert("Erro de comunicação com o servidor.");
+            } finally {
+                this.loading = false;
+            }
+        },
         async enrollFromDetails(idAmbiente, idCurso, moodleUrl) {
 
             this.loading = true;
@@ -787,6 +830,43 @@ const app = Vue.createApp({
                 this.loading = false;
             }
         },
+        unenrollCourse(item) {
+            // Chamamos o showConfirmation passando a ação 'cancelar', 
+            // o callback assíncrono e o nome do curso como contexto extra.
+            this.showConfirmation('cancelar', async (confirmed) => {
+                if (!confirmed) return;
+
+                if (this.loading) return;
+                this.loading = true;
+
+                const idAmbiente = item.ambiente_id;
+                const idCurso = item.id;
+
+                const url = `/curso/${idAmbiente}/${idCurso}/unenrol/`;
+
+                try {
+                    const response = await axios.post(url, {}, {
+                        headers: { 'X-CSRFToken': this.getCsrfToken() }
+                    });
+
+                    console.log('Resposta do cancelamento:', response.data);
+
+                    if (response.data.status === 'unenrolled' || response.status === 200) {
+                        item.is_enrolled = false;
+                        this.filterCards(false);
+                    } else {
+                        console.error('Erro no cancelamento:', response.data);
+                        alert("Não foi possível cancelar a inscrição.");
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert("Erro de comunicação com o servidor ao cancelar a matrícula.");
+                } finally {
+                    this.loading = false;
+                }
+            }, item.fullname);
+        },
+
         cycleAccessibility() {
             const currentIndex = this.preferences.zoom_options.indexOf(this.preferences.zoom_level);
             const nextIndex = (currentIndex + 1) % this.preferences.zoom_options.length;
@@ -848,7 +928,7 @@ const app = Vue.createApp({
                 }
             })
         },
-        showConfirmation(action, callback) {
+        showConfirmation(action, callback, itemName = '') {
             const modal = document.getElementById("popup-modal");
             const title = document.getElementById("popup-modal-message-title");
             const message = document.getElementById("popup-modal-message");
@@ -856,15 +936,26 @@ const app = Vue.createApp({
             const cancelBtn = document.getElementById("modal-cancel");
             const modalContent = modal.querySelector(".popup-modal-content");
 
-            title.innerHTML = `Gostaria de <strong>${action}</strong> esse diário?`;
-            confirmBtn.innerText = action;
+            // Tratamento específico para o unenrollCourse
+            if (action === 'cancelar') {
+                title.innerHTML = `Tem certeza que deseja cancelar sua inscrição em:<br><strong>${itemName}</strong>?`;
+                message.innerHTML = `Ao cancelar, você perderá o acesso a este curso.`;
+                confirmBtn.innerText = "Sair do curso";
+                cancelBtn.innerText = "Voltar";
+            } else {
+                // Lógica original para ocultar/publicar diários
+                title.innerHTML = `Gostaria de <strong>${action}</strong> esse diário?`;
+                confirmBtn.innerText = action;
+                cancelBtn.innerText = "Cancelar";
 
-            if (action == 'publicar') {
-                message.innerHTML = `Ao publicar este diário os alunos terão acesso ao conteúdo`;
+                if (action == 'publicar') {
+                    message.innerHTML = `Ao publicar este diário os alunos terão acesso ao conteúdo`;
+                }
+                if (action == 'ocultar') {
+                    message.innerHTML = `Ao ocultar este diário os alunos <strong>não</strong> terão acesso ao conteúdo`;
+                }
             }
-            if (action == 'ocultar') {
-                message.innerHTML = `Ao ocultar este diário os alunos <strong>não</strong> terão acesso ao conteúdo`;
-            }
+
             modal.classList.remove("hidden");
 
             const closeModal = (confirmed) => {

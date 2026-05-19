@@ -11,8 +11,10 @@ from django.conf import settings
 from django.core.cache import cache
 import requests
 from http.client import HTTPException
+
 from .models import Ambiente, Curso
 from backup.models import ArquivoBackup
+from a4.models import Usuario
 
 
 logger = logging.getLogger(__name__)
@@ -41,6 +43,99 @@ CODIGO_PRATICA_SUFIXO_INDEX = 4
 CURSOS_CACHE = {}
 
 CHANGE_URL = re.compile("/course/view.php\\?")
+
+
+def _resolve_dot_notation(data: dict, path: str) -> list:
+    """Busca valores dentro de um dicionário usando notação de ponto (dot notation)."""
+    keys = path.split('.')
+    results = [data]
+
+    for key in keys:
+        next_results = []
+        for item in results:
+            if key == '*':
+                if isinstance(item, list):
+                    next_results.extend(item)
+                elif isinstance(item, dict):
+                    next_results.extend(item.values())
+            else:
+                if isinstance(item, dict) and key in item:
+                    next_results.append(item[key])
+        results = next_results
+
+    return results
+
+
+def _avalia_restricao(aluno_data: dict, chave: str, valor_esperado: str) -> bool:
+    """Avalia se o dicionário de dados do aluno atende à restrição."""
+    chave = str(chave)
+    valor_esperado = str(valor_esperado).lower()
+
+    # Tratamento especial legado do SUAP (unificação em 'tipo_usuario')
+    if chave.startswith('eh_') and chave not in aluno_data:
+        tipo_usuario = str(aluno_data.get('tipo_usuario', '')).lower()
+        termo_busca = chave.replace('eh_', '')
+        valor_aluno = "true" if termo_busca in tipo_usuario else "false"
+        return valor_aluno == valor_esperado
+
+    valores_aluno = _resolve_dot_notation(aluno_data, chave)
+    
+    for v in valores_aluno:
+        if isinstance(v, bool):
+            v_str = "true" if v else "false"
+        else:
+            v_str = str(v).lower()
+            
+        if v_str == valor_esperado:
+            return True
+
+    return False
+
+
+def _filtrar_autoinscricoes_vitrine(autoinscricoes: list, username_logado: str) -> list:
+    """
+    Avalia a lista de cursos de autoinscrição vinda do Moodle e filtra
+    baseado no JSON do SUAP do usuário logado no Painel AVA.
+    """
+    if not autoinscricoes:
+        return []
+
+    usuario_db = Usuario.objects.filter(username=username_logado).first()
+    aluno_data = {}
+
+    if usuario_db:
+        if usuario_db.last_json:
+            try:
+                aluno_data = json.loads(usuario_db.last_json)
+            except json.JSONDecodeError:
+                pass
+        
+        # Garante que o tipo_usuario nativo do Django também esteja disponível
+        aluno_data['tipo_usuario'] = str(usuario_db.tipo_usuario or '')
+
+    cursos_vitrine_filtrados = []
+
+    for curso_vitrine in autoinscricoes:
+        restricoes = curso_vitrine.get("restricoes_de_autoinscricao", [])
+
+        if not restricoes:
+            # Sem restrições = Liberado para todos
+            cursos_vitrine_filtrados.append(curso_vitrine)
+            continue
+
+        passou_nos_filtros = False
+        # Avalia se atende a pelo menos uma restrição (Lógica OR)
+        for regra in restricoes:
+            chave = regra.get("chave", "")
+            valor = regra.get("restricao", "")
+            if _avalia_restricao(aluno_data, chave, valor):
+                passou_nos_filtros = True
+                break
+                
+        if passou_nos_filtros:
+            cursos_vitrine_filtrados.append(curso_vitrine)
+
+    return cursos_vitrine_filtrados
 
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
@@ -89,40 +184,63 @@ def get_diarios(
 ) -> dict:
     def _get_diarios(params: Dict[str, Any]):
         def _merge_course(diario: dict, ambiente: dict):
-            def _merge_curso(diario: dict, diario_re: re.Match):
-                if not diario_re and len(diario_re[0]) not in (
-                    CODIGO_DIARIO_ANTIGO_ELEMENTS_COUNT,
-                    CODIGO_DIARIO_NOVO_ELEMENTS_COUNT,
-                    CODIGO_COORDENACAO_ELEMENTS_COUNT,
-                    CODIGO_PRATICA_ELEMENTS_COUNT,
-                ):
-                    return
+            # ========== 1. DADOS NOVOS (CUSTOM FIELDS) ==========
+            co_curso = diario.get("curso_codigo")
+            turma_nova = diario.get("turma_ano_periodo")
+            componente_novo = diario.get("disciplina_sigla")
+            id_diario_novo = diario.get("diario_id")
 
-                if len(diario_re[0]) == CODIGO_COORDENACAO_ELEMENTS_COUNT:
-                    co_curso = diario_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
-                else:
+            # ========== 2. FALLBACK LEGADO (RegEx) ==========
+            codigo = diario.get("shortname", "")
+            diario_re = CODIGO_DIARIO_REGEX.findall(codigo)
+            coordenacao_re = CODIGO_COORDENACAO_REGEX.findall(codigo)
+            pratica_re = CODIGO_PRATICA_REGEX.findall(codigo)
+
+            # --- CURSO ---
+            if not co_curso:
+                if diario_re and len(diario_re[0]) > CODIGO_DIARIO_CURSO_INDEX:
                     co_curso = diario_re[0][CODIGO_DIARIO_CURSO_INDEX]
-                curso = next(iter(Curso.cached_by_codigos([co_curso])), None)
-                if curso is not None:
-                    diario["curso"] = {"codigo": curso.codigo, "nome": curso.nome}
+                elif pratica_re and len(pratica_re[0]) > CODIGO_DIARIO_CURSO_INDEX:
+                    co_curso = pratica_re[0][CODIGO_DIARIO_CURSO_INDEX]
+                elif coordenacao_re and len(coordenacao_re[0]) > CODIGO_COORDENACAO_CURSO_INDEX:
+                    co_curso = coordenacao_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
+
+            if co_curso:
+                curso_bd = next(iter(Curso.cached_by_codigos([co_curso])), None)
+                if curso_bd is not None:
+                    diario["curso"] = {"codigo": curso_bd.codigo, "nome": curso_bd.nome}
                 else:
-                    diario["curso"] = {"codigo": co_curso, "nome": f"Curso {co_curso}"}
+                    diario["curso"] = {"codigo": co_curso, "nome": diario.get("curso_descricao") or f"Curso {co_curso}"}
+            else:
+                diario["curso"] = {"codigo": "", "nome": diario.get("curso_descricao") or "Curso Desconhecido"}
 
-            def _merge_turma(diario: dict, diario_re: re.Match):
-                if len(diario_re) > 0 and len(diario_re[0]) >= CODIGO_DIARIO_TURMA_INDEX:
-                    diario["turma"] = ".".join(diario_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
+            # --- TURMA ---
+            if turma_nova:
+                diario["turma"] = turma_nova
+            elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
+                diario["turma"] = ".".join(diario_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
+            elif pratica_re and len(pratica_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
+                diario["turma"] = ".".join(pratica_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
 
-            def _merge_componente(diario: dict, diario_re: re.Match):
-                if len(diario_re) > 0 and len(diario_re[0]) >= CODIGO_DIARIO_DISCIPLINA_INDEX:
-                    diario["componente"] = diario_re[0][CODIGO_DIARIO_DISCIPLINA_INDEX]
+            # --- COMPONENTE ---
+            if componente_novo:
+                diario["componente"] = componente_novo
+            elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_DISCIPLINA_INDEX:
+                diario["componente"] = diario_re[0][CODIGO_DIARIO_DISCIPLINA_INDEX]
+            elif pratica_re and len(pratica_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
+                diario["componente"] = pratica_re[0][CODIGO_PRATICA_SUFIXO_INDEX]
 
-            def _merge_id_diario(diario: dict, diario_re: re.Match):
-                if len(diario_re) > 0 and len(diario_re[0]) >= CODIGO_DIARIO_ID_DIARIO_INDEX:
-                    id_diario_hash = diario_re[0][CODIGO_DIARIO_ID_DIARIO_INDEX]
-                    diario["id_diario"] = id_diario_hash
-                    diario["id_diario_clean"] = int(id_diario_hash[1:]) if id_diario_hash else None
+            # --- ID DO DIÁRIO ---
+            if id_diario_novo:
+                diario["id_diario"] = str(id_diario_novo)
+                diario["id_diario_clean"] = int(id_diario_novo) if str(id_diario_novo).isnumeric() else None
+            elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_ID_DIARIO_INDEX:
+                id_diario_hash = diario_re[0][CODIGO_DIARIO_ID_DIARIO_INDEX]
+                diario["id_diario"] = id_diario_hash
+                diario["id_diario_clean"] = int(id_diario_hash[1:]) if id_diario_hash else None
 
-            def _merge_extra_urls(diario: dict, ava: Ambiente):
+            # ========== 3. URLs EXTRAS ==========
+            def _merge_extra_urls(diario: dict, ava: dict):
                 id_diario = diario.get("id_diario_clean", None)
 
                 if diario.get("can_set_visibility") and id_diario:
@@ -130,37 +248,18 @@ def get_diarios(
                     diario["checkgradesurl"] = reverse(
                         "painel:checkgrades", kwargs={"id_ambiente": ava["ambiente"]["id"], "id_diario": id_diario}
                     )
-
-                    diario["mensagemurl"] = f"{settings.OAUTH["BASE_URL"]}/edu/enviar_mensagem/?diario={id_diario}"
+                    diario["mensagemurl"] = f"{settings.OAUTH['BASE_URL']}/edu/enviar_mensagem/?diario={id_diario}"
 
                 if id_diario:
-                    diario["suapsurl"] = f"{settings.OAUTH["BASE_URL"]}/edu/meu_diario/{id_diario}/1/"
+                    diario["suapsurl"] = f"{settings.OAUTH['BASE_URL']}/edu/meu_diario/{id_diario}/1/"
                     if diario.get("can_set_visibility"):
                         diario["gradesurl"] = re.sub("/course/view", "/grade/report/grader/index", diario["viewurl"])
                     else:
                         diario["gradesurl"] = re.sub("/course/view", "/grade/report/overview/index", diario["viewurl"])
 
-            def _merge_aluno(diario: dict, diario_re: re.Match):
-                if diario_re and len(diario_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
-                    diario["componente"] = diario_re[0][CODIGO_PRATICA_SUFIXO_INDEX]
-
-            codigo = diario["shortname"]
-            diario_re = CODIGO_DIARIO_REGEX.findall(codigo)
-            coordenacao_re = CODIGO_COORDENACAO_REGEX.findall(codigo)
-            pratica_re = CODIGO_PRATICA_REGEX.findall(codigo)
-
-            if diario_re:
-                _merge_curso(diario, diario_re)
-                _merge_turma(diario, diario_re)
-                _merge_componente(diario, diario_re)
-                _merge_id_diario(diario, diario_re)
+            if diario.get("id_diario_clean"):
                 _merge_extra_urls(diario, ambiente)
-            elif pratica_re:
-                _merge_curso(diario, pratica_re)
-                _merge_turma(diario, pratica_re)
-                _merge_aluno(diario, pratica_re)
-            elif coordenacao_re:
-                _merge_curso(diario, coordenacao_re)
+
             return {**diario, **ambiente}
 
         try:
@@ -179,6 +278,13 @@ def get_diarios(
                 querystrings["q"] = urllib.parse.quote(querystrings["q"])
 
             result = get_json_api(ambiente, "get_diarios", **querystrings) or {}
+
+            # Filtragem de autoinscrições baseada no perfil do usuário
+            username_logado = params.get("username", "")
+            result["autoinscricoes"] = _filtrar_autoinscricoes_vitrine(
+                result.get("autoinscricoes", []), 
+                username_logado
+            )
 
             enrolled_autoinscricoes = [
                 curso for curso in result.get("autoinscricoes", [])
