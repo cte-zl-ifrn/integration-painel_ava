@@ -260,6 +260,9 @@ def get_diarios(
     page: int = 1,
     page_size: int = 21,
 ) -> dict:
+
+    CHAVES_ESTATICAS = ["semestres", "disciplinas", "cursos", "ambientes", "autoinscricoes", "reutilizaveis"]
+
     def _get_diarios(params: Dict[str, Any]):
         def _merge_course(diario: dict, ambiente: dict):
             # ========== 1. DADOS NOVOS (CUSTOM FIELDS) ==========
@@ -363,27 +366,33 @@ def get_diarios(
                 result.get("autoinscricoes", []), 
                 username_logado
             )
+            
+            for k, v in result.items():
+                # 1. Se a chave for nova (ex: 'projetos'), cria a lista vazia no dicionário global
+                if k not in params["results"]:
+                    params["results"][k] = []
 
-            for k, v in params["results"].items():
-                if k in result:
-                    if k in ["diarios", "coordenacoes", "praticas"]:
-                        params["results"][k] += [_merge_course(diario, ambientedict) for diario in result[k] or []]
+                # 2. Tratamento específico para autoinscrições (vitrine)
+                if k == "autoinscricoes":
+                    def _merge_vitrine(curso_vitrine: dict, amb_dict: dict):
+                        ambiente_id = amb_dict["ambiente"]["id"]
+                        curso_id = curso_vitrine["id"]
+                        
+                        curso_vitrine["details_url"] = reverse(
+                            "painel:curso_detalhes", 
+                            kwargs={"id_ambiente": ambiente_id, "id_curso": curso_id}
+                        )
+                        return {**curso_vitrine, **amb_dict}
 
-                    elif k == "autoinscricoes":
-                        def _merge_vitrine(curso_vitrine: dict, amb_dict: dict):
-                            ambiente_id = amb_dict["ambiente"]["id"]
-                            curso_id = curso_vitrine["id"]
-                            
-                            curso_vitrine["details_url"] = reverse(
-                                "painel:curso_detalhes", 
-                                kwargs={"id_ambiente": ambiente_id, "id_curso": curso_id}
-                            )
-                            return {**curso_vitrine, **amb_dict}
+                    params["results"][k] += [_merge_vitrine(c, ambientedict) for c in v or []]
 
-                        params["results"][k] += [_merge_vitrine(c, ambientedict) for c in result[k] or []]
+                # 3. Tratamento para filtros (não precisam de merge de curso)
+                elif k in CHAVES_ESTATICAS:
+                    params["results"][k] += v or []
 
-                    else:
-                        params["results"][k] += result[k] or []
+                # 4. Tratamento DINÂMICO para todas as salas (diarios, praticas, nova_sala...)
+                else:
+                    params["results"][k] += [_merge_course(diario, ambientedict) for diario in v or []]
 
         except Exception as e:
             logging.error(e)
@@ -474,8 +483,12 @@ def get_diarios(
                 pass
 
     results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
-    results["praticas"] = sorted(results["praticas"], key=lambda e: e["fullname"])
-    results["coordenacoes"] = sorted(results["coordenacoes"], key=lambda e: e["fullname"])
+
+    for k in results.keys():
+        if k not in CHAVES_ESTATICAS and isinstance(results[k], list):
+            if len(results[k]) > 0 and isinstance(results[k][0], dict) and "fullname" in results[k][0]:
+                results[k] = sorted(results[k], key=lambda e: e.get("fullname", ""))
+
     results["reutilizaveis"] = [
         {
             'id': x.id,
