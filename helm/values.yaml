@@ -1,0 +1,70 @@
+replicaCount: 3
+
+image:
+  repository: ctezlifrn/avapainel
+  tag: producao
+  pullPolicy: Always
+
+securityContext:
+  runAsUser: 0
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+vault:
+  enabled: true
+  secretName: "painel-secrets" # Nome unificado para o app usar
+  secretStoreRef: "vault-backend-v2"
+  vaultpaths:
+    - "dbs-ava/painel"
+    - "ava/painel"
+
+env:
+  POSTGRES_PORT: "5432"
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+  hosts:
+    - host: painel.ead.ifrn.edu.br
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: painel-tls
+      hosts:
+        - painel.ead.ifrn.edu.br
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 90
+  targetMemoryUtilizationPercentage: 90 
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "2"
+    memory: "2Gi"
+
+serviceAccount:
+  create: false
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: app-placement
+              operator: NotIn
+              values:
+                - infra-k8s

@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: painel-env-config
+  labels:
+    app: painel-web
+    release: {{ .Release.Name }}
+data:
+  # ======================
+  # Django Core
+  # ======================
+  DJANGO_DEBUG: "False"
+  DJANGO_ALLOWED_HOSTS: "painel.ead.ifrn.edu.br"
+  DJANGO_CSRF_TRUSTED_ORIGINS: "https://painel.ead.ifrn.edu.br"
+  DJANGO_CSRF_COOKIE_DOMAIN: "painel.ead.ifrn.edu.br"
+  DJANGO_CSRF_COOKIE_SECURE: "True"
+  DJANGO_USE_X_FORWARDED_HOST: "True"
+  DJANGO_SECURE_PROXY_SSL_HEADER: "HTTP_X_FORWARDED_PROTO,https"
+
+  DJANGO_LOGIN_URL: "https://painel.ead.ifrn.edu.br/login/"
+  DJANGO_LOGIN_REDIRECT_URL: "https://painel.ead.ifrn.edu.br/"
+  DJANGO_LOGOUT_REDIRECT_URL: "https://suap.ifrn.edu.br/comum/logout/"
+
+  # ======================
+  # Database
+  # ======================
+  POSTGRES_PORT: "5432"
+
+  # ======================
+  # Static & Frontend
+  # ======================
+  DJANGO_STATIC_URL: "https://ava-painel-statics.pages.dev/"
+
+  # ======================
+  # OAuth (SUAP)
+  # ======================
+  OAUTH_BASE_URL: "https://suap.ifrn.edu.br"
+  OAUTH_TOKEN_URL: "https://suap.ifrn.edu.br/o/token/"
+  OAUTH_AUTHORIZE_URL: "https://suap.ifrn.edu.br/o/authorize/"
+  OAUTH_USERINFO_URL: "https://suap.ifrn.edu.br/api/rh/eu/"
+  OAUTH_REDIRECT_URI: "https://painel.ead.ifrn.edu.br/authenticate/"
+  OAUTH_VERIFY_URL: "https://suap.ifrn.edu.br/api/v1/verify/"
+  OAUTH_VERIFY_SSL: "False"
+
+  # ======================
+  # Sentry
+  # ======================
+  SENTRY_ENVIRONMENT: "production"
+  SENTRY_SAMPLE_RATE: "1"
+  SENTRY_TRACES_SAMPLE_RATE: "1"
+
+  # ======================
+  # UI / Acessibilidade
+  # ======================
+  SHOW_USERWAY: "False"
+  USERWAY_ACCOUNT: "wPr7IBWf6k"
+  SHOW_VLIBRAS: "False"
+
+  # ======================
+  # Timezone
+  # ======================
+  TZ: "America/Fortaleza"
+
+  # ======================
+  # Gunicorn
+  # ======================
+  GUNICORN_TIMEOUT: "30"
+  GUNICORN_NUM_WORKERS: "5"
+  GUNICORN_LOG_LEVEL: "debug"
+  HOSTNAME: "web1"
+
+  # ======================
+  # Analytics
+  # ======================
+  GTAG_CODE: "G-DL5BKHKYBY"
+  CLARITY_CODE: "pn9h14ln9l"
+
+  # ======================
+  # Redis / Valkey
+  # ======================
+  DJANGO_SESSION_REDIS_HOST: "valkey.storage.svc.cluster.local"
+  DJANGO_SESSION_REDIS_PORT: "6379"
+  DJANGO_SESSION_REDIS_DB: "1"

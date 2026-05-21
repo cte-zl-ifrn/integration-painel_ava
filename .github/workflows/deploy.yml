@@ -1,31 +1,44 @@
 name: Publish image on DockerHub
 
+env:
+  MAIN_IMAGE: ctezlifrn/avapainel
+
 on:
     push:
         tags:
             - "*"
 
 jobs:
-    build-container:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v3.5.3
+  deploy:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: [self-hosted, runner-dead]
 
-            - name: Login to DockerHub
-              uses: docker/login-action@v2.2.0
-              with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+    environment:
+      name: production
 
-            - name: Extract metadata (tags, labels) for Docker
-              id: meta
-              uses: docker/metadata-action@v4.6.0
-              with:
-                  images: ctezlifrn/avapainel
-            - name: Build and push
-              uses: docker/build-push-action@v4.1.1
-              with:
-                  context: src/python/
-                  push: true
-                  tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.K8S_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Enviar Chart do Helm
+        run: |
+          ssh root@${{ secrets.K8S_HOST }} "rm -rf /tmp/painel-chart"
+
+          scp -r ./helm \
+            root@${{ secrets.K8S_HOST }}:/tmp/painel-chart
+
+      - name: Executar Upgrade no Helm
+        run: |
+          DEPLOY_TAG="${{ github.ref_type == 'tag' && github.ref_name || github.sha }}"
+
+          ssh root@${{ secrets.K8S_HOST }} "
+            helm upgrade --install painel /tmp/painel-chart \
+              --namespace ava \
+              --set image.tag=$DEPLOY_TAG \
+              --set image.repository=${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }}
+          "
