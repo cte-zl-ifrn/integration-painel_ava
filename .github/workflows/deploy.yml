@@ -4,9 +4,9 @@ env:
   MAIN_IMAGE: ctezlifrn/avapainel
 
 on:
-    push:
-        tags:
-            - "*"
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
