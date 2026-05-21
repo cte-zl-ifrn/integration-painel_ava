@@ -1,6 +1,7 @@
 import logging
 import concurrent
 import re
+import ast
 import json
 import urllib.parse
 import sentry_sdk
@@ -45,90 +46,167 @@ CURSOS_CACHE = {}
 CHANGE_URL = re.compile("/course/view.php\\?")
 
 
-def _resolve_dot_notation(data: dict, path: str) -> list:
-    """Busca valores dentro de um dicionário usando notação de ponto (dot notation)."""
-    keys = path.split('.')
-    results = [data]
-
-    for key in keys:
-        next_results = []
-        for item in results:
-            if key == '*':
-                if isinstance(item, list):
-                    next_results.extend(item)
-                elif isinstance(item, dict):
-                    next_results.extend(item.values())
-            else:
-                if isinstance(item, dict) and key in item:
-                    next_results.append(item[key])
-        results = next_results
-
-    return results
-
-
-def _avalia_restricao(aluno_data: dict, chave: str, valor_esperado: str) -> bool:
-    """Avalia se o dicionário de dados do aluno atende à restrição."""
-    chave = str(chave)
-    valor_esperado = str(valor_esperado).lower()
-
-    # Tratamento especial legado do SUAP (unificação em 'tipo_usuario')
-    if chave.startswith('eh_') and chave not in aluno_data:
-        tipo_usuario = str(aluno_data.get('tipo_usuario', '')).lower()
-        termo_busca = chave.replace('eh_', '')
-        valor_aluno = "true" if termo_busca in tipo_usuario else "false"
-        return valor_aluno == valor_esperado
-
-    valores_aluno = _resolve_dot_notation(aluno_data, chave)
-    
-    for v in valores_aluno:
-        if isinstance(v, bool):
-            v_str = "true" if v else "false"
-        else:
-            v_str = str(v).lower()
+def _build_user_contexts(usuario_db) -> list:
+    """
+    Lê o 'last_json' e a lista de 'vinculos' para montar uma lista de contextos.
+    """
+    last_json = {}
+    if usuario_db and usuario_db.last_json:
+        try: last_json = json.loads(usuario_db.last_json)
+        except Exception: pass
             
-        if v_str == valor_esperado:
-            return True
+    vinculos_data = []
+    if usuario_db and hasattr(usuario_db, 'vinculos') and usuario_db.vinculos:
+        v_raw = usuario_db.vinculos
+        if isinstance(v_raw, str):
+            try: v_raw = json.loads(v_raw)
+            except Exception: pass
+        if isinstance(v_raw, dict): vinculos_data = v_raw.get('results', [])
+        elif isinstance(v_raw, list): vinculos_data = v_raw
 
-    return False
+    tipo_usuario_principal = str(last_json.get('tipo_usuario') or '').lower()
+    campus_principal = str(last_json.get('campus') or '').lower()
+    situacao_principal = str(last_json.get('situacao') or '').lower()
+    
+    contexts = []
+    if not vinculos_data: vinculos_data = [{}] 
+        
+    for v in vinculos_data:
+        situacao_vinculo = str(v.get('situacao') or '').lower()
+        if situacao_vinculo and situacao_vinculo not in ['ativo', 'matriculado']:
+            continue
+            
+        detalhamento = v.get('detalhamento') or {}
+        
+        context = {
+            'tipo_usuario': {tipo_usuario_principal, str(v.get('tipo') or '').lower()},
+            'tipo': {str(v.get('tipo') or '').lower()},
+            'campus': {campus_principal, str(v.get('campus') or '').lower()},
+            'estrangeiro': {'true' if v.get('estrangeiro') else 'false'},
+            'situacao': {situacao_principal, situacao_vinculo},
+            'detalhamento.modalidade': {str(detalhamento.get('modalidade') or '').lower()},
+            'detalhamento.nivel_ensino': {str(detalhamento.get('nivel_ensino') or '').lower()},
+            'detalhamento.curso': {str(detalhamento.get('curso') or '').lower()},
+        }
+        
+        for key in context:
+            context[key] = {val for val in context[key] if val}
+        contexts.append(context)
+        
+    if not contexts:
+        contexts.append({
+            'tipo_usuario': {tipo_usuario_principal},
+            'campus': {campus_principal},
+            'situacao': {situacao_principal}
+        })
+        
+    return contexts
+
+
+def _parse_moodle_value(val_str: str) -> list:
+    """Converte listas strings do Moodle (ex: "['A', 'B']") em listas Python em minúsculo."""
+    val_str = val_str.strip()
+    val_str_py = re.sub(r'\bfalse\b', 'False', val_str)
+    val_str_py = re.sub(r'\btrue\b', 'True', val_str_py)
+    
+    try:
+        parsed = ast.literal_eval(val_str_py)
+        if isinstance(parsed, list):
+            return [str(i).lower() for i in parsed]
+        return [str(parsed).lower()]
+    except (ValueError, SyntaxError):
+        return [v.strip().strip("'").strip('"').lower() for v in val_str.strip('[]').split(',') if v.strip()]
+
+
+def _evaluate_simple_condition(context: dict, expr: str) -> bool:
+    """Avalia uma condição unitária (ex: "m.campus in ['CNAT', 'ZL']") contra um vínculo único."""
+    match = re.match(r"([\w\.]+)\s+(==|in)\s+(.*)", expr.strip())
+    if not match: return False
+        
+    field, op, val_str = match.groups()
+    if field.startswith('m.'): field = field[2:]
+        
+    expected_values = set(_parse_moodle_value(val_str))
+    user_values = context.get(field, set())
+    
+    return bool(user_values.intersection(expected_values))
+
+
+def _evaluate_complex_rule(rule_str: str, user_contexts: list) -> bool:
+    """Lê a expressão maior e cruza as lógicas AND e $any() com os contextos do usuário."""
+    any_blocks = re.findall(r"\$any\(\[\s*(.*?)\s+for\s+m\s+in\s+outras_matriculas\s*\]\)", rule_str)
+    
+    rest_str = re.sub(r"\$any\(\[.*?\]\)", "", rule_str)
+    simple_conditions = [c.strip() for c in rest_str.split(' and ') if c.strip()]
+    
+    # Devem passar em *pelo menos um* dos vínculos do usuário
+    for cond in simple_conditions:
+        passou_global = False
+        for context in user_contexts:
+            if _evaluate_simple_condition(context, cond):
+                passou_global = True
+                break
+        if not passou_global: return False
+            
+    # Todo bloco interno verdadeiro para o *MESMO* vínculo
+    for inner_rule in any_blocks:
+        inner_conds = [c.strip() for c in inner_rule.split(' and ')]
+        
+        passou_neste_any = False
+        for context in user_contexts:
+            passou_todas_internas = True
+            for ic in inner_conds:
+                if not _evaluate_simple_condition(context, ic):
+                    passou_todas_internas = False
+                    break
+
+            if passou_todas_internas:
+                passou_neste_any = True
+                break
+
+        if not passou_neste_any:
+            return False
+
+    return True
 
 
 def _filtrar_autoinscricoes_vitrine(autoinscricoes: list, username_logado: str) -> list:
-    """
-    Avalia a lista de cursos de autoinscrição vinda do Moodle e filtra
-    baseado no JSON do SUAP do usuário logado no Painel AVA.
-    """
-    if not autoinscricoes:
-        return []
+    if not autoinscricoes: return []
 
     usuario_db = Usuario.objects.filter(username=username_logado).first()
-    aluno_data = {}
-
-    if usuario_db:
-        if usuario_db.last_json:
-            try:
-                aluno_data = json.loads(usuario_db.last_json)
-            except json.JSONDecodeError:
-                pass
-        
-        # Garante que o tipo_usuario nativo do Django também esteja disponível
-        aluno_data['tipo_usuario'] = str(usuario_db.tipo_usuario or '')
+    user_contexts = _build_user_contexts(usuario_db)
 
     cursos_vitrine_filtrados = []
 
     for curso_vitrine in autoinscricoes:
-        restricoes = curso_vitrine.get("restricoes_de_autoinscricao", [])
+        restricoes_raw = curso_vitrine.get("restricoes_de_autoinscricao", "")
+        
+        regras = []
+        if isinstance(restricoes_raw, str) and restricoes_raw.strip():
+            if restricoes_raw.startswith('[') or restricoes_raw.startswith('{'):
+                try:
+                    parsed = json.loads(restricoes_raw)
+                    if isinstance(parsed, list):
+                        regras.extend([r["chave"] for r in parsed if isinstance(r, dict) and "chave" in r])
+                    elif isinstance(parsed, dict) and "chave" in parsed:
+                        regras.append(parsed["chave"])
+                except json.JSONDecodeError:
+                    logger.error(f"Erro ao ler JSON de restrições: {restricoes_raw}")
+                    continue
+            else:
+                regras.append(restricoes_raw.strip())
+        elif isinstance(restricoes_raw, list):
+            for item in restricoes_raw:
+                if isinstance(item, dict) and "chave" in item: regras.append(item["chave"])
+                elif isinstance(item, str): regras.append(item)
 
-        if not restricoes:
-            # Sem restrições = Liberado para todos
-            cursos_vitrine_filtrados.append(curso_vitrine)
+        if not regras:
             continue
 
         passou_nos_filtros = False
-        # Avalia se atende a pelo menos uma restrição (Lógica OR)
-        for regra in restricoes:
-            chave = regra.get("chave", "")
-            valor = regra.get("restricao", "")
-            if _avalia_restricao(aluno_data, chave, valor):
+        
+        for regra_str in regras:
+            if _evaluate_complex_rule(regra_str, user_contexts):
                 passou_nos_filtros = True
                 break
                 
@@ -285,14 +363,6 @@ def get_diarios(
                 result.get("autoinscricoes", []), 
                 username_logado
             )
-
-            enrolled_autoinscricoes = [
-                curso for curso in result.get("autoinscricoes", [])
-                if curso.get("is_enrolled") == True
-            ]
-
-            if "diarios" in result:
-                result["diarios"].extend(enrolled_autoinscricoes)
 
             for k, v in params["results"].items():
                 if k in result:
