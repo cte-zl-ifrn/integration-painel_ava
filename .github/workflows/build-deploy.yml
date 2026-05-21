@@ -11,32 +11,20 @@ on:
 permissions: {}
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Log in to Docker Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ vars.DOCKERHUB_HOST }}
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and Push Docker Image (Native Engine)
+      - uses: actions/checkout@v2
+      - name: Build Dockerfiles
         run: |
-          TAG="${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }}:${{ github.sha }}"
-          
-          echo "Iniciando build clássico..."
-          docker build -t "$TAG" . --file ./Dockerfile
-          
-          echo "Enviando imagem para o registro..."
-          docker push "$TAG"
+          for dockerfile in $(find . -iname "*Dockerfile*" -o -iwholename "./Dockerfile"); do
+            echo "Starting build for the Dockerfile $dockerfile"
+            docker build . --file $dockerfile
+          done
         shell: bash
 
   deploy:
-    needs: build-and-push
+    needs: build 
     runs-on: [self-hosted, runner-dead]
     environment:
       name: production
@@ -57,11 +45,8 @@ jobs:
 
       - name: Executar Upgrade no Helm
         run: |
-          DEPLOY_TAG="${{ github.ref_type == 'tag' && github.ref_name || github.sha }}"
-
           ssh root@${{ secrets.K8S_HOST }} "
             helm upgrade --install painel /tmp/painel-chart \
               --namespace ava \
-              --set image.tag=$DEPLOY_TAG \
               --set image.repository=${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }}
           "
