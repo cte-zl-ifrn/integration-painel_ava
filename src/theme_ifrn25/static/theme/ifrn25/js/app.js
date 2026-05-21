@@ -89,6 +89,7 @@ const app = Vue.createApp({
                 // { id: 6, title: 'Notificação 6', date: '2025-03-21 12:00', link: '#' },
                 // { id: 7, title: 'Notificação 9', date: '2025-03-25 12:00', link: '#' },
             ],
+
             periodos: [],
             modulos: [],
             semestres: [],
@@ -102,12 +103,8 @@ const app = Vue.createApp({
             disciplinas: [],
             cursos: [],
             ambientes: [],
-            salas: [],
-            diarios: [],
-            coordenacoes: [],
-            reutilizaveis: [],
-            autoinscricoes: [],
-            praticas: [],
+            salasPorCategoria: {}, // Vai guardar { 'diarios': [...], 'praticas': [...] }
+            activeTabKey: 'diarios',
             loading: false,
         };
     },
@@ -135,31 +132,42 @@ const app = Vue.createApp({
     },
     computed: {
         visibleTabs() {
-            return this.tabs
-                .map((tab, index) => ({
-                    ...tab,
-                    originalIndex: index
-                }))
-                .filter(tabItem => {
-                    // Abas 0 (Meus Diários) e 1 (Salas de Coordenação) são sempre visíveis
-                    if (tabItem.originalIndex === 0 || tabItem.originalIndex === 1) {
-                        return true;
-                    }
-                    // Aba 2 (Práticas) só é visível se praticas.length > 0
-                    if (tabItem.originalIndex === 2 && this.praticas.length > 0) {
-                        return true;
-                    }
-                    // Aba 3 (Reutilizar) só é visível se reutilizaveis.length > 0
-                    if (tabItem.originalIndex === 3 && this.reutilizaveis.length > 0) {
-                        return true;
-                    }
-                    // Aba 4 (cursos com autoinscrições) só é visível se autoinscricoes.length > 0
-                    if (tabItem.originalIndex === 4 && this.autoinscricoes.length > 0) {
-                        return true;
-                    }
+            // Definições padrão e lógicas de visibilidade caso não venha do Django Admin
+            const configPadrao = {
+                diarios: { desktop: 'Meus Diários', mobile: 'Diários', order: 1, sempreVisivel: true },
+                coordenacoes: { desktop: 'Salas de Coordenação', mobile: 'Coordenações', order: 2, sempreVisivel: true },
+                praticas: { desktop: 'Práticas', mobile: 'Práticas', order: 3 },
+                reutilizaveis: { desktop: 'Reutilizar', mobile: 'Reutilizar', order: 4 },
+                autoinscricoes: { desktop: 'Cursos com Autoinscrição', mobile: 'Autoinscrições', order: 5 }
+            };
 
-                    return false;
-                });
+            const nomesAdmin = window.PAGE_CONFIG?.nomesAbas || {};
+            
+            let tabs = [];
+
+            Object.keys(this.salasPorCategoria).forEach(key => {
+                const itens = this.salasPorCategoria[key] || [];
+                
+                // Mescla as configurações (Admin -> Padrão -> Fallback dinâmico)
+                const config = nomesAdmin[key] || configPadrao[key] || {
+                    desktop: key.charAt(0).toUpperCase() + key.slice(1),
+                    mobile: key.charAt(0).toUpperCase() + key.slice(1),
+                    order: 99,
+                    sempreVisivel: false
+                };
+
+                // Mostra se tiver item OU se for configurada para sempre aparecer (como Diários)
+                if (itens.length > 0 || config.sempreVisivel) {
+                    tabs.push({
+                        key: key,
+                        desktop: config.desktop,
+                        mobile: config.mobile,
+                        order: config.order
+                    });
+                }
+            });
+
+            return tabs.sort((a, b) => a.order - b.order);
         },
 
         filteredMessages() {
@@ -447,12 +455,11 @@ const app = Vue.createApp({
             this.closeSidebar();
             this.closeSidebarModal();
         },
-        setActiveTab(index) {
-            this.activeTab = index;
+        setActiveTab(key) {
+            this.activeTabKey = key;
         },
         getNumberCourses(categoryKey) {
-            const category = this.$data[categoryKey];
-
+            const category = this.salasPorCategoria[categoryKey];
             if (category && Array.isArray(category)) {
                 return category.length;
             }
@@ -492,129 +499,54 @@ const app = Vue.createApp({
                 }
             }
         },
+
+        mapCardData(curso) {
+            return {
+                id: curso.id,
+                fullname: curso.fullname,
+                shortname: curso.shortname ? this.changeShortnameStyle(curso.shortname) : '',
+                isfavourite: curso.isfavourite || false,
+                environment: curso.ambiente ? curso.ambiente.titulo : '',
+                ambiente_id: curso.ambiente ? curso.ambiente.id : null,
+                progress: curso.progress || 0,
+                visible: curso.visible == 1 || curso.visible === true,
+                can_set_visibility: curso.can_set_visibility || 0,
+                url: curso.viewurl || curso.url || '',
+                // Específicos de autoinscrição (não quebram se não existirem nos outros)
+                summary: curso.summary || '',
+                is_enrolled: curso.is_enrolled || false,
+                details_url: curso.details_url || ''
+            };
+        },
+
         handleFilterResponse(data) {
-            if (data.diarios && Array.isArray(data.diarios)) {
-                this.diarios = data.diarios.map(diario => ({
-                    id: diario.id,
-                    fullname: diario.fullname,
-                    shortname: this.changeShortnameStyle(diario.shortname),
-                    isfavourite: diario.isfavourite,
-                    environment: diario.ambiente.titulo,
-                    progress: diario.progress,
-                    visible: diario.visible == 1,
-                    can_set_visibility: diario.can_set_visibility,
-                    url: diario.viewurl
-                }));
-            } else {
-                this.diarios = [];
-            }
-            if (data.coordenacoes && Array.isArray(data.coordenacoes)) {
-                this.coordenacoes = data.coordenacoes.map(coordenacao => ({
-                    id: coordenacao.id,
-                    fullname: coordenacao.fullname,
-                    shortname: coordenacao.shortname,
-                    isfavourite: coordenacao.isfavourite,
-                    environment: coordenacao.ambiente.titulo,
-                    progress: coordenacao.progress,
-                    visible: coordenacao.visible == 1,
-                    can_set_visibility: coordenacao.can_set_visibility,
-                    url: coordenacao.viewurl
-                }));
-            } else {
-                this.coordenacoes = [];
-            }
-            if (data.praticas && Array.isArray(data.praticas)) {
-                this.praticas = data.praticas.map(sala => ({
-                    id: sala.id,
-                    fullname: sala.fullname,
-                    shortname: sala.shortname,
-                    isfavourite: sala.isfavourite,
-                    environment: sala.ambiente.titulo,
-                    progress: sala.progress,
-                    visible: sala.visible,
-                    url: sala.viewurl
-                }));
-            } else {
-                this.praticas = [];
-            }
-            if (data.reutilizaveis && Array.isArray(data.reutilizaveis)) {
-                this.reutilizaveis = data.reutilizaveis;
-            } else {
-                this.reutilizaveis = [];
-            }
+            const chavesDeFiltro = ['periodos', 'semestres', 'disciplinas', 'cursos', 'ambientes', 'modulos'];
 
-            if (data.autoinscricoes && Array.isArray(data.autoinscricoes)) {
-                this.autoinscricoes = data.autoinscricoes.map(curso => ({
-                    id: curso.id,
-                    fullname: curso.fullname,
-                    shortname: curso.shortname,
-                    summary: curso.summary,
-                    is_enrolled: curso.is_enrolled,
-                    environment: curso.ambiente ? curso.ambiente.titulo : '',
-                    ambiente_id: curso.ambiente ? curso.ambiente.id : null,
-                    details_url: curso.details_url,
-                    url: curso.viewurl
-                }));
-            } else {
-                this.autoinscricoes = [];
-            }
+            this.salasPorCategoria = {};
 
-            // if (data.modulos && Array.isArray(data.modulos)) {
-            //     this.modulos = data.modulos.map(modulo => ({
-            //         id: modulo.id,
-            //         label: modulo.label
-            //     }));
-            // } else {
-            //     this.modulos = [];
-            // }
+            Object.keys(data).forEach(key => {
+                if (chavesDeFiltro.includes(key)) {
+                    // Preenche os selects de filtro ignorando o primeiro item vazio se houver
+                    if (Array.isArray(data[key])) {
+                        this[key] = (data[key][0]?.id === "") ? data[key].slice(1) : data[key];
+                    }
+                } else {
+                    // Se não é filtro, assumimos que é uma lista de cursos/salas
+                    if (Array.isArray(data[key])) {
+                        this.salasPorCategoria[key] = data[key].map(curso => this.mapCardData(curso));
+                    }
+                }
+            });
 
-            if (data.periodos && Array.isArray(data.periodos)) {
-                this.periodos = data.periodos.slice(1).map(periodo => ({
-                    id: periodo.id,
-                    label: periodo.label
-                }));
-            }
-            else {
-                this.periodos = [];
-            }
-            if (data.semestres && Array.isArray(data.semestres)) {
-                this.semestres = data.semestres.slice(1).map(semestre => ({
-                    id: semestre.id,
-                    label: semestre.label
-                }));
-            }
-            else {
-                this.semestres = [];
-            }
-            if (data.disciplinas && Array.isArray(data.disciplinas)) {
-                this.disciplinas = data.disciplinas.slice(1).map(disciplina => ({
-                    id: disciplina.id,
-                    label: disciplina.label
-                }));
-            }
-            else {
-                this.disciplinas = [];
-            }
-            if (data.cursos && Array.isArray(data.cursos)) {
-                this.cursos = data.cursos.slice(1).map(curso => ({
-                    id: curso.id,
-                    label: curso.label
-                }));
-            }
-            else {
-                this.cursos = [];
-            }
-            if (data.ambientes && Array.isArray(data.ambientes)) {
-                this.ambientes = data.ambientes.slice(1).map(ambiente => ({
-                    id: ambiente.id,
-                    label: ambiente.label
-                }));
-            }
-            else {
-                this.ambientes = [];
-            }
+            // Garante que a aba ativa ainda exista na lista visível, se não, pula para primeira
+            this.$nextTick(() => {
+                const temAbaAtiva = this.visibleTabs.find(t => t.key === this.activeTabKey);
+                if (!temAbaAtiva && this.visibleTabs.length > 0) {
+                    this.activeTabKey = this.visibleTabs[0].key;
+                }
+            });
+
             this.userTour01();
-
         },
         removeFilter(filterType) {
             if (filterType === 'situacao') return; // Impede remoção do filtro padrão

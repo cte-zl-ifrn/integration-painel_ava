@@ -1,7 +1,7 @@
 from django.utils.translation import gettext as _
 from django.contrib.admin import register, TabularInline, StackedInline
 from base.admin import BaseModelAdmin
-from painel.models import Ambiente, Curso, Popup, Theme
+from painel.models import Ambiente, Curso, Popup, Theme, ConfiguracaoAba
 
 
 ####
@@ -37,3 +37,10 @@ class ThemeAdmin(BaseModelAdmin):
     list_display = ["nome", "active"]
     search_fields = ["nome"]
     list_filter = ["active"] + BaseModelAdmin.list_filter
+
+@register(ConfiguracaoAba)
+class ConfiguracaoAbaAdmin(BaseModelAdmin):
+    list_display = ["chave", "nome_desktop", "nome_mobile", "ordem", "sempre_visivel"]
+    list_editable = ["nome_desktop", "nome_mobile", "ordem", "sempre_visivel"]
+    search_fields = ["chave", "nome_desktop", "nome_mobile"]
+    list_filter = ["sempre_visivel"] + BaseModelAdmin.list_filter

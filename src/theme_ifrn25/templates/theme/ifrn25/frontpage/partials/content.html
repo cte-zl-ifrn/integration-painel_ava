@@ -1,8 +1,9 @@
 <div id="content-container" :class="{'expanded': sidebarContracted}">
     <div class="topbar" v-cloak>
         <ul class="nav">
-            <li class="nav-link" v-for="tabItem in visibleTabs" :key="tabItem.originalIndex"
-                :class="{ active: activeTab === tabItem.originalIndex }" @click="setActiveTab(tabItem.originalIndex)">
+            <!-- 1. TOPBAR DINÂMICA: Usa a key em vez do index numérico -->
+            <li class="nav-link" v-for="tabItem in visibleTabs" :key="tabItem.key"
+                :class="{ active: activeTabKey === tabItem.key }" @click="setActiveTab(tabItem.key)">
 
                 <span class="aba-seletora">
                     <span class="isDesktop">[[ tabItem.desktop ]]</span>
@@ -18,6 +19,7 @@
     </div>
 
     <div class="content">
+        <!-- MODAIS CONTINUAM EXATAMENTE IGUAIS -->
         <div class="sidebar-modal" :class="{'open': modalOpen}">
             <div class="modal-content" :class="'modal-' + modalType">
 
@@ -38,18 +40,16 @@
                 </div>
 
                 <div class="modal-content-header-messages" v-if="messagesModalOpen">
+                    <!-- Conteúdo do modal de mensagens mantido... -->
                     <div class="modal-content-header-messages-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" v-model="messageSearchQuery" placeholder="Pesquisar..."
-                            class="modal-content-header-messages-search-input" />
+                        <input type="text" v-model="messageSearchQuery" placeholder="Pesquisar..." class="modal-content-header-messages-search-input" />
                     </div>
                     <div class="splide">
                         <div class="splide__track">
                             <ul class="splide__list">
                                 <li class="splide__slide" v-for="(option, index) in messageOptions" :key="index">
-                                    <div class="modal-content-header-messages-option"
-                                        :class="{ 'active': selectedMessageOption === option.value }"
-                                        @click="selectMessageOption(option.value)">
+                                    <div class="modal-content-header-messages-option" :class="{ 'active': selectedMessageOption === option.value }" @click="selectMessageOption(option.value)">
                                         [[ option.label ]]
                                     </div>
                                 </li>
@@ -58,79 +58,55 @@
                     </div>
                 </div>
 
-                <div class="modal-content-body" v-if="modalType === 'accessibility'">
-                    {% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}
-                </div>
-
-                <div class="modal-content-body" v-if="modalType === 'help'">
-                    {% include 'theme/ifrn25/frontpage/partials/modals/help.html' %}
-                </div>
-
-                <div class="modal-content-body" v-if="modalType === 'notifications'">
-                    {% include 'theme/ifrn25/frontpage/partials/modals/notifications.html' %}
-                </div>
-
-                <div class="modal-content-body" v-if="modalType === 'messages'">
-                    {% include 'theme/ifrn25/frontpage/partials/modals/messages.html' %}
-                </div>
-
-                <div class="modal-content-body" v-if="modalType === 'profile'">
-                    {% include 'theme/ifrn25/frontpage/partials/modals/profile.html' %}
-                </div>
-
-                <div class="modal-content-body" v-if="modalType === 'filter'">
-                    {% include 'theme/ifrn25/frontpage/partials/modals/filter.html' %}
-                </div>
+                <div class="modal-content-body" v-if="modalType === 'accessibility'">{% include 'theme/ifrn25/frontpage/partials/modals/accessibility.html' %}</div>
+                <div class="modal-content-body" v-if="modalType === 'help'">{% include 'theme/ifrn25/frontpage/partials/modals/help.html' %}</div>
+                <div class="modal-content-body" v-if="modalType === 'notifications'">{% include 'theme/ifrn25/frontpage/partials/modals/notifications.html' %}</div>
+                <div class="modal-content-body" v-if="modalType === 'messages'">{% include 'theme/ifrn25/frontpage/partials/modals/messages.html' %}</div>
+                <div class="modal-content-body" v-if="modalType === 'profile'">{% include 'theme/ifrn25/frontpage/partials/modals/profile.html' %}</div>
+                <div class="modal-content-body" v-if="modalType === 'filter'">{% include 'theme/ifrn25/frontpage/partials/modals/filter.html' %}</div>
             </div>
         </div>
 
+        <!-- 2. CONTEÚDO DAS ABAS (Onde a mágica acontece) -->
         <div class="tab-content">
-            <div class="tab-pane" :class="{ active: activeTab === 0 }">
-                {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="diarios" list_gender="o" %}
-            </div>
-
-            <div class="tab-pane" :class="{ active: activeTab === 1 }">
-                {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="coordenacoes" list_gender="a" %}
-            </div>
-
-            <div class="tab-pane" :class="{ active: activeTab === 2 }">
-                <div class="card-container" v-if="praticas.length > 0">
-                    <div class="card" v-for="(item, index) in praticas" :key="index">
-                        <div class="card-body">
-                            <h5 class="card-title">[[index]] - [[ item.name ]]</h5>
-                            <div class="card-details">
-                                <p><strong>ID:</strong>[[ item.id ]]</p>
-                                <p><strong>Descrição:</strong> [[ item.description ]]</p>
+            
+            <!-- Cria um painel dinâmico para CADA aba visível -->
+            <div class="tab-pane" v-for="tabItem in visibleTabs" :key="tabItem.key" 
+                 :class="{ active: activeTabKey === tabItem.key }" 
+                 v-show="activeTabKey === tabItem.key">
+                 
+                <!-- EXCEÇÃO A: Backup/Reutilizáveis têm um layout muito específico -->
+                <div v-if="tabItem.key === 'reutilizaveis'">
+                    <div class="card-container" v-if="salasPorCategoria['reutilizaveis']?.length > 0">
+                        <div class="card" v-for="item in salasPorCategoria['reutilizaveis']" :key="item.id">
+                            <div class="card-body">
+                                <a :href="`/api/v1/backup/baixar/${item.id}/`" class="text-decoration-none" target="_blank">
+                                    <h5 class="card-title"><strong>[[ item.fullname ]]</strong></h5>
+                                </a>
+                                <div class="card-details">
+                                    <p>[[ item.shortname ]]</p>
+                                    <ul style="list-style-type:none;"><strong>Podem baixar:</strong><li v-for="dono in item.donos" :key="dono.username">[[ dono.fullname ]]</li></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="no-data" v-else>
-                    <p>Nenhum dado encontrado.</p>
-                </div>
-            </div>
-
-            <div class="tab-pane" :class="{ active: activeTab === 3 }">
-                <div class="card-container" v-if="reutilizaveis.length > 0">
-                    <div class="card" v-for="item in reutilizaveis">
-                        <div class="card-body">
-                            <a :href="`/api/v1/backup/baixar/${item.id}/`" class="text-decoration-none" target="_blank">
-                                <h5 class="card-title"><strong>[[ item.fullname ]]</strong></h5>
-                            </a>
-                            <div class="card-details">
-                                <p>[[ item.shortname ]]</p>
-                                <ul style="list-style-type:none;"><strong>Podem baixar:</strong><li v-for="dono in item.donos">[[ dono.fullname ]]</li></ul>
-                            </div>
-                        </div>
+                    <div class="no-data" v-else>
+                        <p>Nenhum dado encontrado.</p>
                     </div>
                 </div>
-                <div class="no-data" v-else>
-                    <p>Nenhum dado encontrado.</p>
-                </div>
-            </div>
 
-            <div class="tab-pane" :class="{ active: activeTab === 4 }">
-                {% include "theme/ifrn25/frontpage/partials/modals/card-container-autoinscricoes.html" with list_name="autoinscricoes" list_gender="o" %}
+                <!-- EXCEÇÃO B: Autoinscrições usam um container próprio -->
+                <div v-else-if="tabItem.key === 'autoinscricoes'">
+                    {% include "theme/ifrn25/frontpage/partials/modals/card-container-autoinscricoes.html" with list_name="salasPorCategoria['autoinscricoes']" list_gender="o" %}
+                </div>
+
+                <!-- PADRÃO: Diários, Coordenações, Práticas, Projetos... -->
+                <div v-else>
+                    <!-- Truque genial: Passamos "salasPorCategoria[tabItem.key]" para o Django. 
+                         Quando o Django compilar a página, o Vue.js vai ler a string resultante e montar a aba correta! -->
+                    {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="salasPorCategoria[tabItem.key]" list_gender="o" %}
+                </div>
+
             </div>
         </div>
         
