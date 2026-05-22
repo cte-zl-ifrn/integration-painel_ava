@@ -12,7 +12,6 @@ from django.db.models import (
     URLField,
 )
 from django.forms import ValidationError
-from django.utils.html import format_html
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from django_better_choices import Choices
@@ -57,9 +56,6 @@ class Theme(ActiveMixin, Model):
 
 
 class Ambiente(ActiveMixin, Model):
-    def _c(color: str):
-        return f"""<span style='background: {color}; color: #fff; padding: 1px 5px;
-                                font-size: 95%; border-radius: 4px;'>{color}</span>"""
 
     nome = CharField(_("nome do ambiente"), max_length=255)
     url = CharField(_("URL"), max_length=255)
@@ -67,9 +63,7 @@ class Ambiente(ActiveMixin, Model):
     cor_mestra = CharField(
         _("cor mestra"),
         max_length=255,
-        help_text=format_html(f"""Escolha uma cor em RGB.
-                Ex.: {_c('#a04ed0')} {_c('#396ba7')} {_c('#559c1a')}
-                {_c('#fabd57')} {_c('#fd7941')} {_c('#f54f3b')} {_c('#2dcfe0')}"""),
+        help_text="""Escolha uma cor em RGB. Ex.: #a04ed0 #396ba7 #559c1a #fabd57 #fd7941 #f54f3b #2dcfe0""",
     )
     active = BooleanField(_("ativo?"), default=True)
 
