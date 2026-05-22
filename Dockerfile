@@ -1,4 +1,4 @@
-ARG BASEIMAGE=6.0.5.29
+ARG BASEIMAGE=6.0.5.32
 
 
 #########################
@@ -8,7 +8,7 @@ FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS development
 
 RUN uv pip uninstall --system dsgovbr
 RUN uv pip install --system \
-                    django-safedelete django-sass-processor libsass django-compressor django-ninja PyJWT \
+                    django-safedelete libsass django-compressor django-ninja PyJWT \
                     black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
                     django-sass-processor Werkzeug django-debug-toolbar
 
