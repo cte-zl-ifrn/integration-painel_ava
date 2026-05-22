@@ -1,3 +1,14 @@
+name: QA
+
+on:
+  workflow_dispatch: # Permite disparo manual se um dia você quiser descomentar
+
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "QA desativado temporariamente."
+
 # name: QA
 
 # on:
