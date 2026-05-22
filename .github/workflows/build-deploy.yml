@@ -1,6 +1,9 @@
 name: Pipeline - Painel AVA
 
 on:
+  push:
+    branches:
+      - main  # <-- Adicione isso para rodar automaticamente a cada push na main
   release:
     types: [published]
   workflow_dispatch:
