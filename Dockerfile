@@ -1,40 +1,41 @@
-ARG PYTHON_VERSION=3.14.2-slim-trixie
-
-FROM python:$PYTHON_VERSION AS production
-
-ENV PYTHONUNBUFFERED=1
-
-COPY . /app
-WORKDIR /app/src
-RUN    useradd -ms /usr/sbin/nologin app \
-    && pip install -r /app/requirements.txt  -r /app/requirements-build.txt \
-    && mkdir -p /app/static \
-    && python manage.py compilescss \
-    && python manage.py collectstatic --noinput \
-    && ls -l /app/static \
-    && pip uninstall -y  -r /app/requirements-build.txt \
-    && find /app -type d -name "__pycache__" -exec rm -rf {} + \
-    && find /usr/local/lib/python3.14/site-packages/ -type d -name "__pycache__" -exec rm -rf {} +
-
-USER app
-EXPOSE 8000
-ENTRYPOINT [ "/app/src/django-entrypoint.sh" ]
-WORKDIR /app/src
-CMD  ["gunicorn" ]
+ARG BASEIMAGE=6.0.5.29
 
 
 #########################
-# Development build stage
+# Development stage
 ########################################################################
-FROM production AS development
+FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS development
 
-RUN pip install -r /app/requirements-dev.txt -r /app/requirements-lint.txt -r /app/requirements-build.txt \
-    && python manage.py show_urls \
+RUN uv pip uninstall --system dsgovbr
+RUN uv pip install --system \
+                    django-safedelete django-sass-processor libsass django-compressor django-ninja PyJWT \
+                    black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
+                    django-sass-processor Werkzeug django-debug-toolbar
+
+COPY src /app/src
+WORKDIR /app/src
+RUN mkdir -p /app/static \
+    && python manage.py compilescss \
+    && python manage.py collectstatic --noinput \
+    && ls -l /app/static \
     && find /app -type d -name "__pycache__" -exec rm -rf {} + \
     && find /usr/local/lib/python3.14/site-packages/ -type d -name "__pycache__" -exec rm -rf {} +
 
 USER app
 EXPOSE 8000
-ENTRYPOINT [ "/app/src/django-entrypoint.sh" ]
+WORKDIR /app/src
+CMD  ["python", "manage.py", "runserver_plus", "0.0.0.0:8000"]
+
+
+
+#########################
+# Production stage
+########################################################################
+FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS production
+
+COPY --chown=root:app --from=development /app /app
+
+USER app
+EXPOSE 8000
 WORKDIR /app/src
 CMD  ["gunicorn" ]

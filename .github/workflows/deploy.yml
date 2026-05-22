@@ -4,9 +4,11 @@ env:
   MAIN_IMAGE: ctezlifrn/avapainel
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
+  workflow_run:
+    workflows: ["Publish"]
+    types: [completed]
 
 jobs:
   deploy:
