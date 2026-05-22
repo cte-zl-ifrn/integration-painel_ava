@@ -4,7 +4,7 @@ import logging
 from django.utils.timezone import now
 from django.utils.safestring import mark_safe
 from django.forms import ValidationError
-from django.db.models import BooleanField, URLField, CharField, DateTimeField, Model, TextField, ForeignKey, EmailField, PROTECT
+from django.db.models import BooleanField, URLField, CharField, DateTimeField, Model, TextField, ForeignKey, EmailField, PROTECT, IntegerField
 from django.core.cache import cache
 from django_better_choices import Choices
 from simple_history.models import HistoricalRecords
@@ -196,3 +196,42 @@ class Popup(ActiveMixin, Model):
     @staticmethod
     def activePopup():
         return next(iter(Popup.cached()), None)
+
+
+class ConfiguracaoAba(Model):
+    chave = CharField(
+        _("chave (Moodle)"),
+        max_length=50,
+        unique=True,
+        help_text=_("O nome exato do sala_tipo enviado pelo Moodle (ex: diarios, praticas, autoinscricoes, tcc)")
+    )
+    nome_desktop = CharField(
+        _("nome no desktop"),
+        max_length=100,
+        help_text=_("Ex: Meus Diários, Salas de Coordenação")
+    )
+    nome_mobile = CharField(
+        _("nome no mobile"),
+        max_length=50,
+        help_text=_("Nome curto para telas menores. Ex: Diários, Coordenações")
+    )
+    ordem = IntegerField(
+        _("ordem"),
+        default=99,
+        help_text=_("Números menores aparecem primeiro (ex: 1 para Diários, 2 para Coordenações).")
+    )
+    sempre_visivel = BooleanField(
+        _("sempre visível?"),
+        default=False,
+        help_text=_("Se marcado, a aba aparece mesmo que o usuário tenha 0 cursos nela.")
+    )
+
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = _("configuração de aba")
+        verbose_name_plural = _("configurações de abas")
+        ordering = ["ordem", "chave"]
+
+    def __str__(self):
+        return f"{self.nome_desktop} ({self.chave})"

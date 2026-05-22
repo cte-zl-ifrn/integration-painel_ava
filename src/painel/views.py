@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
 from a4.models import logged_user, Usuario
-from painel.models import Ambiente, Situacao, Theme
+from painel.models import Ambiente, Situacao, Theme, ConfiguracaoAba
 from painel.services import get_json_api
 import json
 
@@ -25,10 +25,22 @@ def __get_theme_prefix(request: HttpRequest) -> str:
 
 @login_required
 def dashboard(request: HttpRequest) -> HttpResponse:
+    abas_db = ConfiguracaoAba.objects.all()
+    
+    config_abas = {}
+    for aba in abas_db:
+        config_abas[aba.chave] = {
+            "desktop": aba.nome_desktop,
+            "mobile": aba.nome_mobile,
+            "order": aba.ordem,
+            "sempreVisivel": aba.sempre_visivel
+        }
+
+    # 3. Entrega a página com o JSON injetado
     return render(request, __get_theme_prefix(request) + "/frontpage/index.html", {
         "enable_filters": True,
+        "config_abas_json": json.dumps(config_abas),
     })
-
 
 @login_required
 def change_theme(request: HttpRequest, theme: str) -> HttpResponse:

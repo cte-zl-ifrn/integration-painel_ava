@@ -1,4 +1,4 @@
-name: Publish image on DockerHub
+name: Build and Deploy Painel
 
 env:
   MAIN_IMAGE: ctezlifrn/avapainel
@@ -10,11 +10,24 @@ on:
     workflows: ["Publish"]
     types: [completed]
 
-jobs:
-  deploy:
-    #if: startsWith(github.ref, 'refs/tags/')
-    runs-on: [self-hosted, runner-dead]
+permissions: {}
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Dockerfiles
+        run: |
+          for dockerfile in $(find . -iname "*Dockerfile*" -o -iwholename "./Dockerfile"); do
+            echo "Starting build for the Dockerfile $dockerfile"
+            docker build . --file $dockerfile
+          done
+        shell: bash
+
+  deploy:
+    needs: build 
+    runs-on: [self-hosted, runner-dead]
     environment:
       name: production
 
@@ -30,17 +43,12 @@ jobs:
       - name: Enviar Chart do Helm
         run: |
           ssh root@${{ secrets.K8S_HOST }} "rm -rf /tmp/painel-chart"
-
-          scp -r ./helm \
-            root@${{ secrets.K8S_HOST }}:/tmp/painel-chart
+          scp -r ./helm root@${{ secrets.K8S_HOST }}:/tmp/painel-chart
 
       - name: Executar Upgrade no Helm
         run: |
-          DEPLOY_TAG="${{ github.ref_type == 'tag' && github.ref_name || github.sha }}"
-
           ssh root@${{ secrets.K8S_HOST }} "
             helm upgrade --install painel /tmp/painel-chart \
               --namespace ava \
-              --set image.tag=$DEPLOY_TAG \
               --set image.repository=${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }}
           "

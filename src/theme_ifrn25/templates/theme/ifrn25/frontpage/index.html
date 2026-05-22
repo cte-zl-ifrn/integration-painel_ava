@@ -20,7 +20,8 @@
         };
 
         window.PAGE_CONFIG = {
-            enableFilters: {% if enable_filters %} true {% else %} false {% endif %}
+            enableFilters: {% if enable_filters %} true {% else %} false {% endif %},
+            nomesAbas: {{ config_abas_json|default:"{}"|safe }}
         };
     </script>
     <div id="app" class="{% if request.user.menu_position == 'bottom' %}menu-bottom{% endif %}">
