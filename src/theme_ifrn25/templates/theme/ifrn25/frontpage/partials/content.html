@@ -69,12 +69,12 @@
 
         <!-- 2. CONTEÚDO DAS ABAS (Onde a mágica acontece) -->
         <div class="tab-content">
-            
+
             <!-- Cria um painel dinâmico para CADA aba visível -->
-            <div class="tab-pane" v-for="tabItem in visibleTabs" :key="tabItem.key" 
-                 :class="{ active: activeTabKey === tabItem.key }" 
+            <div class="tab-pane" v-for="tabItem in visibleTabs" :key="tabItem.key"
+                 :class="{ active: activeTabKey === tabItem.key }"
                  v-show="activeTabKey === tabItem.key">
-                 
+
                 <!-- EXCEÇÃO A: Backup/Reutilizáveis têm um layout muito específico -->
                 <div v-if="tabItem.key === 'reutilizaveis'">
                     <div class="card-container" v-if="salasPorCategoria['reutilizaveis']?.length > 0">
@@ -102,13 +102,13 @@
 
                 <!-- PADRÃO: Diários, Coordenações, Práticas, Projetos... -->
                 <div v-else>
-                    <!-- Truque genial: Passamos "salasPorCategoria[tabItem.key]" para o Django. 
+                    <!-- Truque genial: Passamos "salasPorCategoria[tabItem.key]" para o Django.
                          Quando o Django compilar a página, o Vue.js vai ler a string resultante e montar a aba correta! -->
                     {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="salasPorCategoria[tabItem.key]" list_gender="o" %}
                 </div>
 
             </div>
         </div>
-        
+
     </div>
 </div>

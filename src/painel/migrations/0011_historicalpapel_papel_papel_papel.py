@@ -12,17 +12,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="historicalpapel",
             name="papel",
-            field=models.CharField(
-                db_index=True, default="teacher", max_length=10, verbose_name="papel"
-            ),
+            field=models.CharField(db_index=True, default="teacher", max_length=10, verbose_name="papel"),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name="papel",
             name="papel",
-            field=models.CharField(
-                default="teacher", max_length=10, unique=True, verbose_name="papel"
-            ),
+            field=models.CharField(default="teacher", max_length=10, unique=True, verbose_name="papel"),
             preserve_default=False,
         ),
     ]

@@ -8,16 +8,17 @@ def request2dict(request: HttpRequest):
 def get_installed_themes() -> list[str]:
     from django.apps import apps
 
-    # Percorrer a lista de applications do django e retornar o name de todas que tenham a propriedade is_painel_theme e ela seja igual a True
+    # Percorrer a lista de applications do django e retornar o name de todas que tenham a propriedade `is_painel_theme`
+    # e ela seja igual a True
     themes: list[str] = []
     for app_config in apps.get_app_configs():
         # Checa se o app tem o atributo 'is_painel_theme' e se está habilitado
-        if getattr(app_config, 'is_painel_theme', False):
-            themes.append((app_config.name.split('_')[1], app_config.verbose_name))
+        if getattr(app_config, "is_painel_theme", False):
+            themes.append((app_config.name.split("_")[1], app_config.verbose_name))
     return themes
 
 
 def get_active_themes() -> list[str]:
     from painel.models import Theme
-    
+
     return Theme.objects.filter(active=True)

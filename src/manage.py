@@ -1,16 +1,17 @@
 #!/usr/bin/env python
+import logging
 import os
 import sys
-from sc4py.env import env
-import psycopg
 import time
-import logging
-from settings.indebug import DEBUG, TESTING_MODE  # noqa: F401
+
+import psycopg
+
 from settings.databases import DATABASES  # noqa: F401
+from settings.indebug import DEBUG, TESTING_MODE  # noqa: F401
 
 
 def _wait_db():
-    db = DATABASES['default']
+    db = DATABASES["default"]
     host = db["HOST"]
     port = db["PORT"]
     dbname = db["NAME"]
@@ -40,10 +41,9 @@ if __name__ == "__main__":
             try:
                 import debugpy
 
-                debugpy.listen(("0.0.0.0", 5678))
+                debugpy.listen(("0.0.0.0", 5678))  # noqa S104
                 # debugpy.wait_for_client()
-            except Exception:
-                pass
-            # debugpy.breakpoint()
+            except Exception as e:
+                logging.error(e)
 
     execute_from_command_line(sys.argv)

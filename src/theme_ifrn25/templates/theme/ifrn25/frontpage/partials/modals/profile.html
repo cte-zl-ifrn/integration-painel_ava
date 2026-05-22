@@ -19,31 +19,31 @@
         {% endfor %}
     </div>
     {% if personificando %}
-    <div class="admin-button-options">
-        <div class="modal-button-option">
-            <a class="dropdown-item" href="{% url 'a4:despersonificar' %}">Voltar a ser {{ user.show_name }}</a>
-        </div>
-    </div>
-    {% else %}
-    {% if user.is_superuser %}
-    <div class="admin-button-options">
-        <span class="modal-content-body-title">Admins</span>
-        {% if admins %}
-            {% for ava in admins %}
+        <div class="admin-button-options">
             <div class="modal-button-option">
-                <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
+                <a class="dropdown-item" href="{% url 'a4:despersonificar' %}">Voltar a ser {{ user.show_name }}</a>
             </div>
-            {% endfor %}
-        {% else %}
-            <div class="modal-button-option">
-                <a class="dropdown-item" href="{% url 'admin:painel_contrante_changelist' %}">Cadastrar ambiente</a>
+        </div>
+    {% else %}
+        {% if user.is_superuser %}
+            <div class="admin-button-options">
+                <span class="modal-content-body-title">Admins</span>
+                {% if admins %}
+                    {% for ava in admins %}
+                        <div class="modal-button-option">
+                            <a class="dropdown-item" href="{{ ava.url }}">{{ ava.nome }}</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="modal-button-option">
+                        <a class="dropdown-item" href="{% url 'admin:painel_contrante_changelist' %}">Cadastrar ambiente</a>
+                    </div>
+                {% endif %}
+                <div class="modal-button-option">
+                    <a class="dropdown-item" href="{% url 'admin:index' %}">Painel AVA</a>
+                </div>
             </div>
         {% endif %}
-        <div class="modal-button-option">
-            <a class="dropdown-item" href="{% url 'admin:index' %}">Painel AVA</a>
-        </div>
-    </div>
-    {% endif %}
     {% endif %}
     <div class="modal-button-option">
         <span class="modal-content-body-title">Versão {{ app_version }}</span>
@@ -53,7 +53,7 @@
         <span class="modal-switch-title">Menu na parte inferior</span>
         <div class="modal-switch-option custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" id="menuPositionCheckbox" v-model="isBottom"
-                @change="savePosition" />
+                   @change="savePosition" />
             <span class="slider"></span>
             <label class="custom-control-label" for="menuPositionCheckbox">
                 [[ isBottom ? 'Ativado' : 'Desativado' ]]

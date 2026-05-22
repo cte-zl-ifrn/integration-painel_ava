@@ -1,8 +1,7 @@
 from django.urls import path
-from .apps import A4Config
-from .views import login, authenticate, logout
-from .views import personificar, despersonificar
 
+from .apps import A4Config
+from .views import authenticate, despersonificar, login, logout, personificar
 
 app_name = A4Config.name
 

@@ -2,75 +2,75 @@
 
 
 <div id="grid-filter-wrapper">
-   
+
     <div id="grid-filter">
-            <div class="grid-item item-1 position-relative content-center hide-close">
-                <b id="filters-title">Filtrar por </b>
-            </div>
-            <hr class="hr-personal hide-mobile" />
-            <div class="grid-item item-2 position-relative filfixedter-field" id="input-filter">
-                <input
-                    placeholder="Busque #id, código ou nome"
-                    name="q"
-                    id="q"
-                    v-model="q"
-                    @keydown.enter="filterCards($event)"
-                />
-            </div>
-            <div class="grid-item position-relative filter-field display-content">
-                <select
-                    name="situacao"
-                    id="situacao"
-                    placeholder="teste"
-                    v-model="situacao"
-                    style="width: 100%; margin-left: 0px"
-                >
-                    <option v-for="row in situacoes" v-bind:value="row.id">[[ row.label ]]</option>
-                </select>
-            </div>
-            <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
-                <select name="semestre" id="semestre" v-model="semestre" required :disabled="shouldDisableSelects">
-                    <option v-for="row in semestres" v-bind:value="row.id">[[ row.label ]]</option>
-                </select>
-            </div>
-            <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
-                <select name="disciplina" id="disciplina" v-model="disciplina" required >
-                    <option v-for="row in disciplinas" v-bind:value="row.id">[[ row.label ]]</option>
-                </select>
-            </div>
-            <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
-                <select name="curso" id="curso" v-model="curso" required >
-                    <option v-for="row in cursos" v-bind:value="row.id">[[ row.label ]]</option>
-                </select>
-            </div>
-            <div class="grid-item position-relative filter-field">
-                <select name="ambiente" id="ambiente" v-model="ambiente" required>
-                    <option v-for="row in ambientes"  v-bind:value="row.id" v-bind:data-icon="getIcon(row.label)"> 
-                        <span class="cor-ambiente">[[ getIcon(row.label) ]]</span> [[ row.label ]]
-                    </option>
-                </select>
-            </div>
+        <div class="grid-item item-1 position-relative content-center hide-close">
+            <b id="filters-title">Filtrar por </b>
+        </div>
+        <hr class="hr-personal hide-mobile" />
+        <div class="grid-item item-2 position-relative filfixedter-field" id="input-filter">
+            <input
+                placeholder="Busque #id, código ou nome"
+                name="q"
+                id="q"
+                v-model="q"
+                @keydown.enter="filterCards($event)"
+            />
+        </div>
+        <div class="grid-item position-relative filter-field display-content">
+            <select
+                name="situacao"
+                id="situacao"
+                placeholder="teste"
+                v-model="situacao"
+                style="width: 100%; margin-left: 0px"
+            >
+                <option v-for="row in situacoes" v-bind:value="row.id">[[ row.label ]]</option>
+            </select>
+        </div>
+        <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
+            <select name="semestre" id="semestre" v-model="semestre" required :disabled="shouldDisableSelects">
+                <option v-for="row in semestres" v-bind:value="row.id">[[ row.label ]]</option>
+            </select>
+        </div>
+        <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
+            <select name="disciplina" id="disciplina" v-model="disciplina" required >
+                <option v-for="row in disciplinas" v-bind:value="row.id">[[ row.label ]]</option>
+            </select>
+        </div>
+        <div class="grid-item position-relative filter-field" v-show="selectedBar == 'diarios' || selectedBar == null">
+            <select name="curso" id="curso" v-model="curso" required >
+                <option v-for="row in cursos" v-bind:value="row.id">[[ row.label ]]</option>
+            </select>
+        </div>
+        <div class="grid-item position-relative filter-field">
+            <select name="ambiente" id="ambiente" v-model="ambiente" required>
+                <option v-for="row in ambientes"  v-bind:value="row.id" v-bind:data-icon="getIcon(row.label)">
+                    <span class="cor-ambiente">[[ getIcon(row.label) ]]</span> [[ row.label ]]
+                </option>
+            </select>
+        </div>
 
-            <div id="buttonsFilters">
-                <button type="button" id="btnClearFilter" class="btn btn-outline-success" v-on:click="clearFilter()" >
-                    <i v-if="screenWidth > 335"class="fa fa-trash" aria-hidden="true"></i> Limpar filtros
-                </button>
-                <button type="button" class="btn btn-success" v-on:click="filterCards($event)" @click="closePopup">Filtrar</button>
-            </div>
+        <div id="buttonsFilters">
+            <button type="button" id="btnClearFilter" class="btn btn-outline-success" v-on:click="clearFilter()" >
+                <i v-if="screenWidth > 335"class="fa fa-trash" aria-hidden="true"></i> Limpar filtros
+            </button>
+            <button type="button" class="btn btn-success" v-on:click="filterCards($event)" @click="closePopup">Filtrar</button>
+        </div>
 
-            <div class="selectedFilters">
-                <div v-if="getSemestreName(semestre)" id="semestreValue" v-on:click="clearOneValue('semestre')">
-                    <div> Semestre: [[getSemestreName(semestre)]] </div><span>✕</span>
-                </div>
-                <div v-if="getDisciplinaName(disciplina)" id="disciplinaValue" v-on:click="clearOneValue('disciplina')">
-                    <div>Disciplina: [[getDisciplinaName(disciplina)]] </div><span>✕</span>
-                </div>
-                <div v-if="getCursoName(curso)" id="cursoValue" v-on:click="clearOneValue('curso')">
-                    <div>Curso: [[getCursoName(curso)]] </div><span>✕</span>
-                </div>
-                <div v-if="getAmbienteName(ambiente)" id="ambienteValue" v-on:click="clearOneValue('ambiente')" >
-                    <div>Ambiente: [[getAmbienteName(ambiente)]]</div><span>✕</span>
-                </div>  
+        <div class="selectedFilters">
+            <div v-if="getSemestreName(semestre)" id="semestreValue" v-on:click="clearOneValue('semestre')">
+                <div> Semestre: [[getSemestreName(semestre)]] </div><span>✕</span>
             </div>
+            <div v-if="getDisciplinaName(disciplina)" id="disciplinaValue" v-on:click="clearOneValue('disciplina')">
+                <div>Disciplina: [[getDisciplinaName(disciplina)]] </div><span>✕</span>
+            </div>
+            <div v-if="getCursoName(curso)" id="cursoValue" v-on:click="clearOneValue('curso')">
+                <div>Curso: [[getCursoName(curso)]] </div><span>✕</span>
+            </div>
+            <div v-if="getAmbienteName(ambiente)" id="ambienteValue" v-on:click="clearOneValue('ambiente')" >
+                <div>Ambiente: [[getAmbienteName(ambiente)]]</div><span>✕</span>
+            </div>
+        </div>
     </div>
-</div> 
+</div>

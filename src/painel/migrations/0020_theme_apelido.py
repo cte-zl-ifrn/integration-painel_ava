@@ -13,9 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="theme",
             name="apelido",
-            field=models.CharField(
-                default="tema", max_length=255, verbose_name="apelido"
-            ),
+            field=models.CharField(default="tema", max_length=255, verbose_name="apelido"),
             preserve_default=False,
         ),
     ]

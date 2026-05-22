@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sc4py.env import env, env_as_bool, env_as_list, env_as_int
+from sc4py.env import env, env_as_bool, env_as_int, env_as_list
 
 # def cors_allow_mysites(sender, request, **kwargs):
 #     return False

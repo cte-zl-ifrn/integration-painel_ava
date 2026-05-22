@@ -1,9 +1,7 @@
-import django.db.models.deletion
-import painel.models
-from django.db import migrations, models
-from painel import get_installed_themes
-from painel.migrations import create_localhost_themes, create_localhost_ambiente
-    
+from django.db import migrations
+
+from painel.migrations import create_localhost_ambiente, create_localhost_themes
+
 
 class Migration(migrations.Migration):
 

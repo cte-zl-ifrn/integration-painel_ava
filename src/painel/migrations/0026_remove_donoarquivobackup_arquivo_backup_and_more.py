@@ -6,25 +6,25 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('painel', '0025_remove_contrante_default_theme_and_more'),
+        ("painel", "0025_remove_contrante_default_theme_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='donoarquivobackup',
-            name='arquivo_backup',
+            model_name="donoarquivobackup",
+            name="arquivo_backup",
         ),
         migrations.RemoveField(
-            model_name='donoarquivobackup',
-            name='dono_backup',
+            model_name="donoarquivobackup",
+            name="dono_backup",
         ),
         migrations.DeleteModel(
-            name='ArquivoBackup',
+            name="ArquivoBackup",
         ),
         migrations.DeleteModel(
-            name='DonoArquivoBackup',
+            name="DonoArquivoBackup",
         ),
         migrations.DeleteModel(
-            name='DonoBackup',
+            name="DonoBackup",
         ),
     ]

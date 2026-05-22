@@ -1,5 +1,6 @@
-from sc4py.env import env, env_as_list, env_as_bool
 import datetime
+
+from sc4py.env import env, env_as_bool, env_as_list
 
 APP_VERSION = "1.2.2"
 
@@ -33,22 +34,21 @@ THIRD_APPS = env_as_list(
         "simple_history",
         "safedelete",
         "admin_auto_filters",
-        
         "django_extensions",
         "sass_processor",
     ],
 )
 
 try:
-    import django_extensions
+    import django_extensions  # noqa F401
 except ImportError:
     print("django_extensions not installed, removing from INSTALLED_APPS")
     THIRD_APPS.remove("django_extensions")
 
 try:
-    import sass_processor
+    import sass_processor  # noqa F401
 except ImportError:
-    print("sass_processor not installed, removing from INSTALLED_APPS")
+    print("sass_processor NOT INSTALLED, removing from INSTALLED_APPS")
     THIRD_APPS.remove("sass_processor")
 
 DJANGO_APPS = env_as_list(

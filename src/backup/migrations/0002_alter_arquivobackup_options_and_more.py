@@ -6,16 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backup', '0001_initial'),
+        ("backup", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='arquivobackup',
-            options={'verbose_name': 'arquivo', 'verbose_name_plural': 'arquivos'},
+            name="arquivobackup",
+            options={"verbose_name": "arquivo", "verbose_name_plural": "arquivos"},
         ),
         migrations.AlterModelOptions(
-            name='donoarquivobackup',
-            options={'verbose_name': 'permissão', 'verbose_name_plural': 'permissões'},
+            name="donoarquivobackup",
+            options={"verbose_name": "permissão", "verbose_name_plural": "permissões"},
         ),
     ]

@@ -1,5 +1,5 @@
 #content-container .content .sidebar-modal .modal-content .modal-content-body #modal-content-body-accessibility {
-    
+
 }
 
 input[type="radio"]:checked + .radio-label {
@@ -26,7 +26,7 @@ input[type="radio"]:checked + .radio-label {
     src: url('https://ava-painel-statics.pages.dev/vendors/OpenDyslexic/OpenDyslexic-Bold.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
-} 
+}
 
 @font-face {
     font-family: 'opendyslexic';
@@ -191,7 +191,7 @@ body.stop_animations *::after {
   }
 }
 
-body.hidden_illustrative_image img:not([alt]), 
+body.hidden_illustrative_image img:not([alt]),
 body.hidden_illustrative_image img[alt=""] {
   visibility: hidden !important;
 }
@@ -338,7 +338,7 @@ body.color_mode_high_contrast {
     .painel-card-details-progress span {
       color: white !important;
     }
-  } 
+  }
 
   .sidebar-modal.open {
     border: 1px solid var(--dark-light);

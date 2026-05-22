@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('a4', '0009_alter_historicalusuario_email_and_more'),
+        ("a4", "0009_alter_historicalusuario_email_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='historicalusuario',
-            name='settings',
-            field=models.JSONField(blank=True, null=True, verbose_name='configurações'),
+            model_name="historicalusuario",
+            name="settings",
+            field=models.JSONField(blank=True, null=True, verbose_name="configurações"),
         ),
         migrations.AddField(
-            model_name='usuario',
-            name='settings',
-            field=models.JSONField(blank=True, null=True, verbose_name='configurações'),
+            model_name="usuario",
+            name="settings",
+            field=models.JSONField(blank=True, null=True, verbose_name="configurações"),
         ),
     ]

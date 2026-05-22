@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('a4', '0010_historicalusuario_settings_usuario_settings'),
+        ("a4", "0010_historicalusuario_settings_usuario_settings"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='historicalusuario',
-            name='observacao_erro_vinculo',
-            field=models.TextField(blank=True, null=True, verbose_name='Erro ao buscar vínculos'),
+            model_name="historicalusuario",
+            name="observacao_erro_vinculo",
+            field=models.TextField(blank=True, null=True, verbose_name="Erro ao buscar vínculos"),
         ),
         migrations.AddField(
-            model_name='historicalusuario',
-            name='vinculos',
-            field=models.JSONField(blank=True, null=True, verbose_name='Vínculos SUAP'),
+            model_name="historicalusuario",
+            name="vinculos",
+            field=models.JSONField(blank=True, null=True, verbose_name="Vínculos SUAP"),
         ),
         migrations.AddField(
-            model_name='usuario',
-            name='observacao_erro_vinculo',
-            field=models.TextField(blank=True, null=True, verbose_name='Erro ao buscar vínculos'),
+            model_name="usuario",
+            name="observacao_erro_vinculo",
+            field=models.TextField(blank=True, null=True, verbose_name="Erro ao buscar vínculos"),
         ),
         migrations.AddField(
-            model_name='usuario',
-            name='vinculos',
-            field=models.JSONField(blank=True, null=True, verbose_name='Vínculos SUAP'),
+            model_name="usuario",
+            name="vinculos",
+            field=models.JSONField(blank=True, null=True, verbose_name="Vínculos SUAP"),
         ),
     ]

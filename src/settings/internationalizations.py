@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
 from sc4py.env import env, env_as_bool
 
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

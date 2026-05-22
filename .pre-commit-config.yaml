@@ -1,72 +1,84 @@
+default_stages: [pre-commit]
+exclude: ^src/htmlcov/
+
 repos:
-    - repo: https://github.com/psf/black
-      rev: 23.3.0
-      hooks:
-          - id: black
-            language: python
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: check-ast
+  - id: check-builtin-literals
+  - id: check-case-conflict
+  - id: check-docstring-first
+  - id: check-executables-have-shebangs
+  - id: check-merge-conflict
+  - id: check-shebang-scripts-are-executable
+  - id: check-symlinks
+  - id: check-toml
+  - id: check-vcs-permalinks
+  - id: check-xml
+  - id: check-yaml
+    args: [--allow-multiple-documents]
+    exclude: ^helm/templates/
+  - id: debug-statements
+  - id: destroyed-symlinks
+  - id: fix-byte-order-marker
+  - id: mixed-line-ending
+  - id: name-tests-test
+    args: [--pytest-test-first]
+  - id: requirements-txt-fixer
+  - id: end-of-file-fixer
+    exclude: ^tests_integration/fixtures/060\.moodle\.sql$
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
+    exclude: ^tests_integration/fixtures/060\.moodle\.sql$
+  - id: detect-private-key
+    exclude: ^tests_integration/fixtures/060\.moodle\.sql$
 
-    - repo: https://github.com/charliermarsh/ruff-pre-commit
-      # Ruff version.
-      rev: "v0.0.263"
-      hooks:
-          - id: ruff
 
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.4.0
-      hooks:
-          - id: check-added-large-files # Prevent giant files from being committed.
-          - id: check-ast # Simply check whether files parse as valid python
-          - id: check-builtin-literals # Require literal syntax when initializing empty or zero Python builtin types.
-          - id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT
-          - id: check-docstring-first # Checks for a common error of placing code before the docstring.
-          - id: check-executables-have-shebangs # Checks that non-binary executables have a proper shebang.
-          - id: check-merge-conflict # Check for files that contain merge conflict strings.
-          - id: check-shebang-scripts-are-executable # Checks that scripts with shebangs are executable.
-          - id: check-symlinks # Checks for symlinks which do not point to anything.
-          - id: check-toml # Attempts to load all TOML files to verify syntax.
-          - id: check-vcs-permalinks # Ensures that links to vcs websites are permalinks.
-          - id: check-xml # Attempts to load all xml files to verify syntax.
-          - id: check-yaml # Attempts to load all yaml files to verify syntax.
-          - id: debug-statements # Check for debugger imports and py37+ breakpoint() calls in python source.
-          - id: destroyed-symlinks # Detects symlinks which are changed to regular files with a content of a path which that symlink was pointing to.
-          - id: detect-private-key # Checks for the existence of private keys.
-          - id: end-of-file-fixer # Makes sure files end in a newline and only a newline.
-          - id: fix-byte-order-marker # Removes UTF-8 byte order marker
-          - id: fix-encoding-pragma # Add # -*- coding: utf-8 -*- to the top of python files.
-          - id: mixed-line-ending # Replaces or checks mixed line ending.
-          - id: name-tests-test # verifies that test files are named correctly.
-            args: [--pytest-test-first]
-          # - id: no-commit-to-branch # Protect specific branches from direct checkins.
-          #   args: [--branch, main]
-          - id: requirements-txt-fixer # Sorts entries in requirements.txt and constraints.txt and removes incorrect entry for pkg-resources==0.0.0
-          - id: trailing-whitespace # Trims trailing whitespace.
-            args: [--markdown-linebreak-ext=md]
+- repo: https://github.com/psf/black
+  rev: 26.3.1
+  hooks:
+  - id: black
 
-    # - repo: local
-    #   hooks:
-    #       - id: mypy
-    #         name: mypy
-    #         entry: bash -c 'mypy --warn-unused-configs --python-version 3.9 --show-error-context --show-column-numbers --show-error-end --show-error-codes --pretty .'
-    #         language: system
-    #         types: ["python"]
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.15.11
+  hooks:
+  - id: ruff
+    args: [--fix]
 
-    - repo: local
-      hooks:
-          - id: pytest
-            name: pytest
-            entry: bash -c 'pwd && python -m pytest'
-            language: system
-            types: ["python"]
-            exclude: ^venv/ ^.git/ ^.vscode/ ^.DS_Store
+- repo: https://github.com/PyCQA/doc8
+  rev: v2.0.0
+  hooks:
+  - id: doc8
+    args: ["--max-line-length=120"]
 
-    # - repo: local
-    #   hooks:
-    #       - id: stubgen
-    #         name: stubgen
-    #         entry: bash -c 'stubgen -o . rds.datasus.service'
-    #         language: system
-    #         types: ["python"]
-    #         exclude: ^venv/ ^.git/ ^.vscode/ ^.DS_Store
+- repo: https://github.com/igorshubovych/markdownlint-cli
+  rev: v0.48.0
+  hooks:
+  - id: markdownlint
+    args: ["--fix"]
 
-default_language_version:
-    python: python3.9
+- repo: https://github.com/rtts/djhtml
+  rev: 3.0.11
+  hooks:
+  - id: djhtml
+    files: \.html$
+    exclude: ^(migrations|static|media)/
+
+- repo: local
+  hooks:
+    - id: pytest-coverage-gate
+      name: pytest-coverage-gate
+      stages: [pre-push]
+      entry: ava test integrador pytest --cov=. --cov-report=xml:coverage.xml --cov-report=term-missing
+      language: system
+      pass_filenames: false
+      always_run: true
+
+    - id: integration-test
+      name: integration-test
+      stages: [pre-push]
+      entry: docker compose -f tests_integration/docker-compose.integration.yml up --build test-integration --exit-code-from test-integration
+      language: system
+      pass_filenames: false
+      always_run: true

@@ -1,22 +1,23 @@
-import logging
-import concurrent
-import re
 import ast
+import concurrent
 import json
+import logging
+import re
 import urllib.parse
+from http.client import HTTPException
+from typing import Any, Dict, List, Union
+
+import requests
 import sentry_sdk
-from typing import Dict, List, Union, Any
-from django.shortcuts import get_object_or_404
-from django.urls import reverse
 from django.conf import settings
 from django.core.cache import cache
-import requests
-from http.client import HTTPException
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+
+from a4.models import Usuario
+from backup.models import ArquivoBackup
 
 from .models import Ambiente, Curso
-from backup.models import ArquivoBackup
-from a4.models import Usuario
-
 
 logger = logging.getLogger(__name__)
 
@@ -52,93 +53,100 @@ def _build_user_contexts(usuario_db) -> list:
     """
     last_json = {}
     if usuario_db and usuario_db.last_json:
-        try: last_json = json.loads(usuario_db.last_json)
-        except Exception: pass
-            
+        try:
+            last_json = json.loads(usuario_db.last_json)
+        except Exception as e:
+            logger.error(f"Erro {e}")
+
     vinculos_data = []
-    if usuario_db and hasattr(usuario_db, 'vinculos') and usuario_db.vinculos:
+    if usuario_db and hasattr(usuario_db, "vinculos") and usuario_db.vinculos:
         v_raw = usuario_db.vinculos
         if isinstance(v_raw, str):
-            try: v_raw = json.loads(v_raw)
-            except Exception: pass
-        if isinstance(v_raw, dict): vinculos_data = v_raw.get('results', [])
-        elif isinstance(v_raw, list): vinculos_data = v_raw
+            try:
+                v_raw = json.loads(v_raw)
+            except Exception as e:
+                logger.error(f"Erro {e}")
+        if isinstance(v_raw, dict):
+            vinculos_data = v_raw.get("results", [])
+        elif isinstance(v_raw, list):
+            vinculos_data = v_raw
 
-    tipo_usuario_principal = str(last_json.get('tipo_usuario') or '').lower()
-    campus_principal = str(last_json.get('campus') or '').lower()
-    situacao_principal = str(last_json.get('situacao') or '').lower()
-    
+    tipo_usuario_principal = str(last_json.get("tipo_usuario") or "").lower()
+    campus_principal = str(last_json.get("campus") or "").lower()
+    situacao_principal = str(last_json.get("situacao") or "").lower()
+
     contexts = []
-    if not vinculos_data: vinculos_data = [{}] 
-        
+    if not vinculos_data:
+        vinculos_data = [{}]
+
     for v in vinculos_data:
-        situacao_vinculo = str(v.get('situacao') or '').lower()
-        if situacao_vinculo and situacao_vinculo not in ['ativo', 'matriculado']:
+        situacao_vinculo = str(v.get("situacao") or "").lower()
+        if situacao_vinculo and situacao_vinculo not in ["ativo", "matriculado"]:
             continue
-            
-        detalhamento = v.get('detalhamento') or {}
-        
+
+        detalhamento = v.get("detalhamento") or {}
+
         context = {
-            'tipo_usuario': {tipo_usuario_principal, str(v.get('tipo') or '').lower()},
-            'tipo': {str(v.get('tipo') or '').lower()},
-            'campus': {campus_principal, str(v.get('campus') or '').lower()},
-            'estrangeiro': {'true' if v.get('estrangeiro') else 'false'},
-            'situacao': {situacao_principal, situacao_vinculo},
-            'detalhamento.modalidade': {str(detalhamento.get('modalidade') or '').lower()},
-            'detalhamento.nivel_ensino': {str(detalhamento.get('nivel_ensino') or '').lower()},
-            'detalhamento.curso': {str(detalhamento.get('curso') or '').lower()},
+            "tipo_usuario": {tipo_usuario_principal, str(v.get("tipo") or "").lower()},
+            "tipo": {str(v.get("tipo") or "").lower()},
+            "campus": {campus_principal, str(v.get("campus") or "").lower()},
+            "estrangeiro": {"true" if v.get("estrangeiro") else "false"},
+            "situacao": {situacao_principal, situacao_vinculo},
+            "detalhamento.modalidade": {str(detalhamento.get("modalidade") or "").lower()},
+            "detalhamento.nivel_ensino": {str(detalhamento.get("nivel_ensino") or "").lower()},
+            "detalhamento.curso": {str(detalhamento.get("curso") or "").lower()},
         }
-        
+
         for key in context:
             context[key] = {val for val in context[key] if val}
         contexts.append(context)
-        
+
     if not contexts:
-        contexts.append({
-            'tipo_usuario': {tipo_usuario_principal},
-            'campus': {campus_principal},
-            'situacao': {situacao_principal}
-        })
-        
+        contexts.append(
+            {"tipo_usuario": {tipo_usuario_principal}, "campus": {campus_principal}, "situacao": {situacao_principal}}
+        )
+
     return contexts
 
 
 def _parse_moodle_value(val_str: str) -> list:
     """Converte listas strings do Moodle (ex: "['A', 'B']") em listas Python em minúsculo."""
     val_str = val_str.strip()
-    val_str_py = re.sub(r'\bfalse\b', 'False', val_str)
-    val_str_py = re.sub(r'\btrue\b', 'True', val_str_py)
-    
+    val_str_py = re.sub(r"\bfalse\b", "False", val_str)
+    val_str_py = re.sub(r"\btrue\b", "True", val_str_py)
+
     try:
         parsed = ast.literal_eval(val_str_py)
         if isinstance(parsed, list):
             return [str(i).lower() for i in parsed]
         return [str(parsed).lower()]
-    except (ValueError, SyntaxError):
-        return [v.strip().strip("'").strip('"').lower() for v in val_str.strip('[]').split(',') if v.strip()]
+    except ValueError, SyntaxError:
+        return [v.strip().strip("'").strip('"').lower() for v in val_str.strip("[]").split(",") if v.strip()]
 
 
 def _evaluate_simple_condition(context: dict, expr: str) -> bool:
     """Avalia uma condição unitária (ex: "m.campus in ['CNAT', 'ZL']") contra um vínculo único."""
     match = re.match(r"([\w\.]+)\s+(==|in)\s+(.*)", expr.strip())
-    if not match: return False
-        
+    if not match:
+        return False
+
     field, op, val_str = match.groups()
-    if field.startswith('m.'): field = field[2:]
-        
+    if field.startswith("m."):
+        field = field[2:]
+
     expected_values = set(_parse_moodle_value(val_str))
     user_values = context.get(field, set())
-    
+
     return bool(user_values.intersection(expected_values))
 
 
 def _evaluate_complex_rule(rule_str: str, user_contexts: list) -> bool:
     """Lê a expressão maior e cruza as lógicas AND e $any() com os contextos do usuário."""
     any_blocks = re.findall(r"\$any\(\[\s*(.*?)\s+for\s+m\s+in\s+outras_matriculas\s*\]\)", rule_str)
-    
+
     rest_str = re.sub(r"\$any\(\[.*?\]\)", "", rule_str)
-    simple_conditions = [c.strip() for c in rest_str.split(' and ') if c.strip()]
-    
+    simple_conditions = [c.strip() for c in rest_str.split(" and ") if c.strip()]
+
     # Devem passar em *pelo menos um* dos vínculos do usuário
     for cond in simple_conditions:
         passou_global = False
@@ -146,12 +154,13 @@ def _evaluate_complex_rule(rule_str: str, user_contexts: list) -> bool:
             if _evaluate_simple_condition(context, cond):
                 passou_global = True
                 break
-        if not passou_global: return False
-            
+        if not passou_global:
+            return False
+
     # Todo bloco interno verdadeiro para o *MESMO* vínculo
     for inner_rule in any_blocks:
-        inner_conds = [c.strip() for c in inner_rule.split(' and ')]
-        
+        inner_conds = [c.strip() for c in inner_rule.split(" and ")]
+
         passou_neste_any = False
         for context in user_contexts:
             passou_todas_internas = True
@@ -171,7 +180,8 @@ def _evaluate_complex_rule(rule_str: str, user_contexts: list) -> bool:
 
 
 def _filtrar_autoinscricoes_vitrine(autoinscricoes: list, username_logado: str) -> list:
-    if not autoinscricoes: return []
+    if not autoinscricoes:
+        return []
 
     usuario_db = Usuario.objects.filter(username=username_logado).first()
     user_contexts = _build_user_contexts(usuario_db)
@@ -180,10 +190,10 @@ def _filtrar_autoinscricoes_vitrine(autoinscricoes: list, username_logado: str) 
 
     for curso_vitrine in autoinscricoes:
         restricoes_raw = curso_vitrine.get("restricoes_de_autoinscricao", "")
-        
+
         regras = []
         if isinstance(restricoes_raw, str) and restricoes_raw.strip():
-            if restricoes_raw.startswith('[') or restricoes_raw.startswith('{'):
+            if restricoes_raw.startswith("[") or restricoes_raw.startswith("{"):
                 try:
                     parsed = json.loads(restricoes_raw)
                     if isinstance(parsed, list):
@@ -197,19 +207,21 @@ def _filtrar_autoinscricoes_vitrine(autoinscricoes: list, username_logado: str) 
                 regras.append(restricoes_raw.strip())
         elif isinstance(restricoes_raw, list):
             for item in restricoes_raw:
-                if isinstance(item, dict) and "chave" in item: regras.append(item["chave"])
-                elif isinstance(item, str): regras.append(item)
+                if isinstance(item, dict) and "chave" in item:
+                    regras.append(item["chave"])
+                elif isinstance(item, str):
+                    regras.append(item)
 
         if not regras:
             continue
 
         passou_nos_filtros = False
-        
+
         for regra_str in regras:
             if _evaluate_complex_rule(regra_str, user_contexts):
                 passou_nos_filtros = True
                 break
-                
+
         if passou_nos_filtros:
             cursos_vitrine_filtrados.append(curso_vitrine)
 
@@ -217,7 +229,7 @@ def _filtrar_autoinscricoes_vitrine(autoinscricoes: list, username_logado: str) 
 
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
-    response = requests.get(url, headers=headers, **kwargs)
+    response = requests.get(url, headers=headers, timeout=2, **kwargs)
     byte_array_content = response.content
     content = byte_array_content.decode(encoding) if decode and encoding is not None else byte_array_content
     if response.ok:
@@ -245,7 +257,7 @@ def get_json_api(ava: Ambiente, service: str, **params: dict):
     url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
     try:
         return get_json(url, headers={"Authentication": f"Token {ava.token}"})
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException:
         return None
 
 
@@ -363,10 +375,9 @@ def get_diarios(
             # Filtragem de autoinscrições baseada no perfil do usuário
             username_logado = params.get("username", "")
             result["autoinscricoes"] = _filtrar_autoinscricoes_vitrine(
-                result.get("autoinscricoes", []), 
-                username_logado
+                result.get("autoinscricoes", []), username_logado
             )
-            
+
             for k, v in result.items():
                 # 1. Se a chave for nova (ex: 'projetos'), cria a lista vazia no dicionário global
                 if k not in params["results"]:
@@ -374,13 +385,13 @@ def get_diarios(
 
                 # 2. Tratamento específico para autoinscrições (vitrine)
                 if k == "autoinscricoes":
+
                     def _merge_vitrine(curso_vitrine: dict, amb_dict: dict):
                         ambiente_id = amb_dict["ambiente"]["id"]
                         curso_id = curso_vitrine["id"]
-                        
+
                         curso_vitrine["details_url"] = reverse(
-                            "painel:curso_detalhes", 
-                            kwargs={"id_ambiente": ambiente_id, "id_curso": curso_id}
+                            "painel:curso_detalhes", kwargs={"id_ambiente": ambiente_id, "id_curso": curso_id}
                         )
                         return {**curso_vitrine, **amb_dict}
 
@@ -479,8 +490,8 @@ def get_diarios(
                 curso.codigo = c["id"]
                 curso.nome = f"Curso [{c['id']}], favor solicitar o cadastro"
                 curso.save()
-            except:
-                pass
+            except Exception as e:
+                logger.error(f"Erro ({e}) ao tentar cadastrar o curso {c}")
 
     results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
 
@@ -491,15 +502,15 @@ def get_diarios(
 
     results["reutilizaveis"] = [
         {
-            'id': x.id,
-            'shortname': x.nome_arquivo,
-            'fullname': x.curso_nome,
-            'url': x.url_sem_dados,
-            'donos': [
+            "id": x.id,
+            "shortname": x.nome_arquivo,
+            "fullname": x.curso_nome,
+            "url": x.url_sem_dados,
+            "donos": [
                 {
-                    'username': d.dono_backup.username,
-                    'fullname': d.dono_backup.nome,
-                } 
+                    "username": d.dono_backup.username,
+                    "fullname": d.dono_backup.nome,
+                }
                 for d in x.donoarquivobackup_set.all()
             ],
         }
@@ -531,7 +542,7 @@ def set_visible_course(username: str, ava: str, courseid: int, visible: int) -> 
 
     for v in keys:
         cache.delete(v)
-        
+
     return get_json_api(ava, "set_visible_course", username=username.lower(), courseid=courseid, visible=visible) or {}
 
 
@@ -542,5 +553,5 @@ def set_user_preference(username: str, ava: str, name: str, value: str) -> dict:
 
     for v in keys:
         cache.delete(v)
-        
+
     return get_json_api(ava, "set_user_preference", username=username.lower(), name=name, value=value) or {}

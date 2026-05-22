@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from sc4py.env import env, env_as_bool, env_as_int
 
-
 SESSION_KEY = env("DJANGO_SESSION_KEY", "painelava")
 SESSION_COOKIE_NAME = env("DJANGO_SESSION_COOKIE_NAME", "%s_sessionid" % SESSION_KEY)
 SESSION_COOKIE_AGE = env_as_int("DJANGO_SESSION_COOKIE_AGE", 1209600)

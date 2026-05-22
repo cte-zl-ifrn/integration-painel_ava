@@ -1,18 +1,19 @@
 import logging
-from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.utils.deprecation import MiddlewareMixin
-from django.contrib import auth
+
 import psycopg
 import psycopg_pool
+from django.conf import settings
+from django.contrib import auth
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
+
 from painel.brokers import TokenBroker
 from painel.models import Ambiente
-
 
 logger = logging.getLogger(__name__)
 
 token_broker = TokenBroker()
+
 
 class GoToHTTPSMiddleware(MiddlewareMixin):
     """
@@ -45,10 +46,10 @@ class AuthMobileUserMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        path = getattr(request, 'path', '')
-        method = getattr(request, 'method', '')
-        headers = getattr(request, 'headers', {}) or {}
-        session_key = getattr(getattr(request, 'session', None), 'session_key', None)
+        path = getattr(request, "path", "")
+        method = getattr(request, "method", "")
+        headers = getattr(request, "headers", {}) or {}
+        session_key = getattr(getattr(request, "session", None), "session_key", None)
 
         dont_have_session = session_key is None
         is_to_api = "/api/v1/" in path
@@ -60,8 +61,7 @@ class AuthMobileUserMiddleware:
             auth_header = headers.get("Authorization", "").split(" ")
             if len(auth_header) != 2 or not auth_header[1]:
                 return JsonResponse(
-                    {"error": {"message": "Invalid or not present authentication token", "code": 428}},
-                    status=428
+                    {"error": {"message": "Invalid or not present authentication token", "code": 428}}, status=428
                 )
 
             token = auth_header[1]
@@ -76,24 +76,16 @@ class AuthMobileUserMiddleware:
             try:
                 username = token_broker.verify(token=token)
             except Exception:
-                return JsonResponse(
-                    {"error": {"message": "Invalid authentication token", "code": 403}},
-                    status=403
-                )
+                return JsonResponse({"error": {"message": "Invalid authentication token", "code": 403}}, status=403)
 
             if not username:
-                return JsonResponse(
-                    {"error": {"message": "Invalid authentication token", "code": 403}},
-                    status=403
-                )
+                return JsonResponse({"error": {"message": "Invalid authentication token", "code": 403}}, status=403)
 
             from a4.models import Usuario
+
             user = Usuario.cached(username)
             if not user:
-                return JsonResponse(
-                    {"error": {"message": "Usuário não encontrado", "code": 404}},
-                    status=404
-                )
+                return JsonResponse({"error": {"message": "Usuário não encontrado", "code": 404}}, status=404)
 
             auth.login(request, user)
             response = self.get_response(request)
@@ -112,7 +104,7 @@ class ExceptionMiddleware:
         try:
             return self.get_response(request)
         except Exception as e:
-            print(f"ExceptionMiddleware.__call__")
+            print("ExceptionMiddleware.__call__")
             if isinstance(e, psycopg_pool.PoolTimeout):
                 return HttpResponse("Erro de conexão com o banco!")
             if isinstance(e, psycopg.errors.Error):
@@ -122,11 +114,13 @@ class ExceptionMiddleware:
             print("ExceptionMiddleware@ttt", ttt)
             print("ExceptionMiddleware@e", e)
             logger.info(f"{ttt}-{e}")
-            return HttpResponse(f"{ttt}-{e}, {isinstance(e, psycopg_pool.PoolTimeout)}, {isinstance(e, psycopg.errors.Error)}")
+            return HttpResponse(
+                f"{ttt}-{e}, {isinstance(e, psycopg_pool.PoolTimeout)}, {isinstance(e, psycopg.errors.Error)}"
+            )
 
 
 class XForwardedForMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        if 'HTTP_X_FORWARDED_FOR' in request.META:
-            request.META['REMOTE_ADDR'] = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0].strip()
+        if "HTTP_X_FORWARDED_FOR" in request.META:
+            request.META["REMOTE_ADDR"] = request.META["HTTP_X_FORWARDED_FOR"].split(",")[0].strip()
         return None

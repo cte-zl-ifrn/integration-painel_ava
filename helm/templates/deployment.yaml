@@ -44,7 +44,7 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
-          
+
           # =========================================================
           # Injeta ConfigMap e Segredos do Vault automaticamente
           # =========================================================
@@ -80,7 +80,7 @@ spec:
                   key: db_password
             - name: POSTGRES_PORT
               value: {{ .Values.env.POSTGRES_PORT | default "5432" | quote }}
-          
+
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

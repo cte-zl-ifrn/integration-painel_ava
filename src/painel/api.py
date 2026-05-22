@@ -1,13 +1,16 @@
 import json
-from ninja import NinjaAPI
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.core.exceptions import ValidationError
-from a4.models import logged_user, Usuario
-from .services import get_diarios, set_favourite_course, set_visible_course, set_user_preference
-from .brokers import SuapBroker, TokenBroker
 
+from django.core.exceptions import ValidationError
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from ninja import NinjaAPI
+
+from a4.models import Usuario, logged_user
+
+from .brokers import SuapBroker, TokenBroker
+from .services import get_diarios, set_favourite_course, set_user_preference, set_visible_course
 
 api = NinjaAPI()
+
 
 @api.api_operation(["GET", "OPTIONS"], "/diarios/")
 def diarios(
@@ -72,12 +75,7 @@ def set_visible(request: HttpRequest, ava: str, courseid: int, visible: int):
 
 @api.api_operation(["GET", "OPTIONS"], "/set_user_preference/")
 def set_user_preference_endpoint(
-    request: HttpRequest, 
-    response: HttpResponse, 
-    category: str, 
-    key: str, 
-    value: str,
-    username: str = None
+    request: HttpRequest, response: HttpResponse, category: str, key: str, value: str, username: str = None
 ):
     if request.method == "OPTIONS":
         response["Access-Control-Allow-Origin"] = "*"
@@ -105,11 +103,7 @@ def set_user_preference_endpoint(
             if category not in user.settings:
                 user.settings[category] = {}
 
-            parsed_value = (
-                True if str(value).lower() == "true"
-                else False if str(value).lower() == "false"
-                else value
-            )
+            parsed_value = True if str(value).lower() == "true" else False if str(value).lower() == "false" else value
 
             user.settings[category][key] = parsed_value
             user.save(update_fields=["settings"])
@@ -135,11 +129,13 @@ def set_user_preference_endpoint(
                 erros.append(amb.nome)
 
         if erros:
-            return JsonResponse({
-                "status": "partial",
-                "message": f"Preferência salva localmente, mas falhou em {len(erros)} ambientes.",
-                "failed": erros
-            })
+            return JsonResponse(
+                {
+                    "status": "partial",
+                    "message": f"Preferência salva localmente, mas falhou em {len(erros)} ambientes.",
+                    "failed": erros,
+                }
+            )
 
         return JsonResponse({"status": "ok"})
 

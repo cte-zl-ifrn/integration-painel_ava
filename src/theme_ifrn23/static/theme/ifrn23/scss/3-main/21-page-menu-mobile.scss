@@ -2,7 +2,7 @@
     #page-menu {
         margin: 15px;
         border-bottom: none;
-       
+
         select{
             background-color:#fff;
             border-radius: 5px;
@@ -11,12 +11,12 @@
             padding: 5px;
             font: size 12px;
             border:1px solid #338f73;
-            
+
         }
-        
+
     }
     #search-mobile{
-        margin-top: 10px;      
+        margin-top: 10px;
         display: grid;
         grid-template-columns: 1fr 80px;
         gap: 8px;
@@ -24,14 +24,14 @@
         form{
             position: relative;
         }
-        input{          
+        input{
             width: 100%;
             border:1px solid #338f73;
             line-height: 30px;
             border-radius: 5px;
             margin-right: 10px;
             padding-left: 10px;
-            outline: none;        
+            outline: none;
         }
         button{
             border:1px solid #338f73;
@@ -49,15 +49,15 @@
         #btnClearFilter:hover{
             background-color: #fff !important;
         }
- 
+
         #btn-search {
             position: absolute;
             color: #777;
             top: 0px;
-            right: 0px;         
-            background-color: #DFF4EE;      
+            right: 0px;
+            background-color: #DFF4EE;
         }
-    
+
         #btn-filter{
             color: #fff;
             background-color: var(--verde-botao);

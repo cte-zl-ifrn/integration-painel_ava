@@ -11,14 +11,14 @@
         </thead>
         <tbody>
             {% for solitacao in solicitacoes %}
-            <tr>
-                <td>{{ solitacao.timestamp }}</td>
-                <td>{{ solitacao.status_merged }}</td>
-            </tr>
+                <tr>
+                    <td>{{ solitacao.timestamp }}</td>
+                    <td>{{ solitacao.status_merged }}</td>
+                </tr>
             {% empty %}
-            <tr>
-                <td colspan="3">Não houveram sincronizações</td>
-            </tr>
+                <tr>
+                    <td colspan="3">Não houveram sincronizações</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

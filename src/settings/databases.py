@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sc4py.env import env, env_as_int, env_as_bool
+from sc4py.env import env, env_as_bool, env_as_int
 
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 DATABASES = {

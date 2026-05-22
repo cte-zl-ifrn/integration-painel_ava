@@ -1,16 +1,15 @@
-import logging
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-from django.core.cache import cache
-from a4.models import logged_user, Usuario
-from painel.models import Ambiente, Situacao, Theme, ConfiguracaoAba
-from painel.services import get_json_api
 import json
+import logging
 
+from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+
+from a4.models import Usuario, logged_user
+from painel.models import Ambiente, ConfiguracaoAba, Situacao, Theme
+from painel.services import get_json_api
 
 logger = logging.getLogger(__name__)
 
@@ -26,21 +25,26 @@ def __get_theme_prefix(request: HttpRequest) -> str:
 @login_required
 def dashboard(request: HttpRequest) -> HttpResponse:
     abas_db = ConfiguracaoAba.objects.all()
-    
+
     config_abas = {}
     for aba in abas_db:
         config_abas[aba.chave] = {
             "desktop": aba.nome_desktop,
             "mobile": aba.nome_mobile,
             "order": aba.ordem,
-            "sempreVisivel": aba.sempre_visivel
+            "sempreVisivel": aba.sempre_visivel,
         }
 
     # 3. Entrega a página com o JSON injetado
-    return render(request, __get_theme_prefix(request) + "/frontpage/index.html", {
-        "enable_filters": True,
-        "config_abas_json": json.dumps(config_abas),
-    })
+    return render(
+        request,
+        __get_theme_prefix(request) + "/frontpage/index.html",
+        {
+            "enable_filters": True,
+            "config_abas_json": json.dumps(config_abas),
+        },
+    )
+
 
 @login_required
 def change_theme(request: HttpRequest, theme: str) -> HttpResponse:
@@ -98,6 +102,7 @@ def checkgrades(request: HttpRequest, id_ambiente: int, id_diario: int) -> HttpR
     context = {"diario": diario, "alunos": alunos, "etapas": etapas.keys()}
     return render(request, __get_theme_prefix(request) + "/diario/checkgrades.html", context=context)
 
+
 @login_required
 def completed_tour(request: HttpRequest) -> HttpResponse:
     user: Usuario = request.user
@@ -112,13 +117,13 @@ def completed_tour(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def get_tour_status(request: HttpRequest) -> HttpResponse:
-    user: Usuario = request.user 
-    
+    user: Usuario = request.user
+
     if user.settings and "tour" in user.settings and "completed" in user.settings["tour"]:
         completed = user.settings["tour"]["completed"]
     else:
-        completed = False  
-    
+        completed = False
+
     return JsonResponse({"completed_tour": completed})
 
 
@@ -156,10 +161,10 @@ def enrol_course(request, id_ambiente, id_curso):
     ambiente = get_object_or_404(Ambiente, id=id_ambiente)
     user = request.user
     username = user.username
-    
+
     primeiro_nome = user.first_name
     ultimo_nome = user.last_name
-    
+
     if not primeiro_nome:
         # Fallback seguro: se tudo for nulo, a string "Aluno SUAP" salva o .split() de quebrar
         nome_completo = user.nome_usual or user.nome_registro or user.nome or "Aluno SUAP"
@@ -169,34 +174,34 @@ def enrol_course(request, id_ambiente, id_curso):
 
     # Garante um e-mail válido
     email = user.email or f"{username}@sememail.ifrn.edu.br"
-    
+
     # Faz a requisição enviando os dados de provisionamento JIT
     response = get_json_api(
-        ambiente, 
-        "enrol_course", 
-        courseid=id_curso, 
+        ambiente,
+        "enrol_course",
+        courseid=id_curso,
         username=username,
         firstname=primeiro_nome,
         lastname=ultimo_nome,
-        email=email
+        email=email,
     )
-    
+
     if not response:
         return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
-        
+
     keys = cache.get("keys") or []
     for v in keys:
         cache.delete(v)
-    
+
     return JsonResponse(response)
-    
+
     if not response:
         return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
-        
+
     keys = cache.get("keys") or []
     for v in keys:
         cache.delete(v)
-    
+
     return JsonResponse(response)
 
 
@@ -205,14 +210,17 @@ def enrol_course(request, id_ambiente, id_curso):
 def unenrol_course(request, id_ambiente, id_curso):
     ambiente = get_object_or_404(Ambiente, id=id_ambiente)
     username = request.user.username
-    
+
     response = get_json_api(ambiente, "suspend_enrol", courseid=id_curso, username=username)
-    
+
     if not response:
-        return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA ao tentar suspender a matrícula."}, status=500)
-        
+        return JsonResponse(
+            {"status": "error", "message": "Falha de comunicação com o AVA ao tentar suspender a matrícula."},
+            status=500,
+        )
+
     keys = cache.get("keys") or []
     for v in keys:
         cache.delete(v)
-    
+
     return JsonResponse(response)

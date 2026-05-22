@@ -1,14 +1,15 @@
-from django.utils.translation import gettext as _
 import logging
-from django.conf import settings
-from django.db.models import ForeignKey, PROTECT, CharField, DateTimeField, EmailField, TextField, JSONField
-from django.http import HttpRequest
-from django.core.cache import cache
-from django.contrib.auth.models import AbstractUser, Group as OrignalGroup, UserManager
-from django_better_choices import Choices
-from simple_history.models import HistoricalRecords
-from safedelete.models import SafeDeleteModel, SafeDeleteManager
 
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import Group as OrignalGroup
+from django.core.cache import cache
+from django.db.models import CharField, DateTimeField, EmailField, JSONField, TextField
+from django.http import HttpRequest
+from django.utils.translation import gettext as _
+from django_better_choices import Choices
+from safedelete.models import SafeDeleteManager, SafeDeleteModel
+from simple_history.models import HistoricalRecords
 
 logger = logging.getLogger(__name__)
 
@@ -92,9 +93,9 @@ class Usuario(SafeDeleteModel, AbstractUser):
     @property
     def theme_selected(self) -> str:
         if self.settings is not None and "theme" in self.settings and "selected" in self.settings["theme"]:
-            return self.settings["theme"]["selected"]        
+            return self.settings["theme"]["selected"]
         return "ifrn25"
-    
+
     @property
     def dyslexia_friendly(self) -> bool:
         try:
@@ -155,7 +156,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     def zoom_level(self) -> int:
         try:
             return int(self.settings.get("accessibility", {}).get("zoom_level", 100))
-        except (AttributeError, ValueError, TypeError):
+        except AttributeError, ValueError, TypeError:
             return 100
 
     @property
@@ -164,7 +165,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
             return self.settings.get("accessibility", {}).get("color_mode", "default")
         except AttributeError:
             return "default"
-    
+
     @property
     def menu_position(self) -> str:
         if self.settings and "menu_position" in self.settings:

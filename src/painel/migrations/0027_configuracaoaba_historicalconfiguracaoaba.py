@@ -9,47 +9,130 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('painel', '0026_remove_donoarquivobackup_arquivo_backup_and_more'),
+        ("painel", "0026_remove_donoarquivobackup_arquivo_backup_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ConfiguracaoAba',
+            name="ConfiguracaoAba",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('chave', models.CharField(help_text='O nome exato do sala_tipo enviado pelo Moodle (ex: diarios, praticas, autoinscricoes, tcc)', max_length=50, unique=True, verbose_name='chave (Moodle)')),
-                ('nome_desktop', models.CharField(help_text='Ex: Meus Diários, Salas de Coordenação', max_length=100, verbose_name='nome no desktop')),
-                ('nome_mobile', models.CharField(help_text='Nome curto para telas menores. Ex: Diários, Coordenações', max_length=50, verbose_name='nome no mobile')),
-                ('ordem', models.IntegerField(default=99, help_text='Números menores aparecem primeiro (ex: 1 para Diários, 2 para Coordenações).', verbose_name='ordem')),
-                ('sempre_visivel', models.BooleanField(default=False, help_text='Se marcado, a aba aparece mesmo que o usuário tenha 0 cursos nela.', verbose_name='sempre visível?')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "chave",
+                    models.CharField(
+                        help_text="O nome exato do sala_tipo enviado pelo Moodle (ex: diarios, praticas, autoinscricoes, tcc)",
+                        max_length=50,
+                        unique=True,
+                        verbose_name="chave (Moodle)",
+                    ),
+                ),
+                (
+                    "nome_desktop",
+                    models.CharField(
+                        help_text="Ex: Meus Diários, Salas de Coordenação",
+                        max_length=100,
+                        verbose_name="nome no desktop",
+                    ),
+                ),
+                (
+                    "nome_mobile",
+                    models.CharField(
+                        help_text="Nome curto para telas menores. Ex: Diários, Coordenações",
+                        max_length=50,
+                        verbose_name="nome no mobile",
+                    ),
+                ),
+                (
+                    "ordem",
+                    models.IntegerField(
+                        default=99,
+                        help_text="Números menores aparecem primeiro (ex: 1 para Diários, 2 para Coordenações).",
+                        verbose_name="ordem",
+                    ),
+                ),
+                (
+                    "sempre_visivel",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Se marcado, a aba aparece mesmo que o usuário tenha 0 cursos nela.",
+                        verbose_name="sempre visível?",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'configuração de aba',
-                'verbose_name_plural': 'configurações de abas',
-                'ordering': ['ordem', 'chave'],
+                "verbose_name": "configuração de aba",
+                "verbose_name_plural": "configurações de abas",
+                "ordering": ["ordem", "chave"],
             },
         ),
         migrations.CreateModel(
-            name='HistoricalConfiguracaoAba',
+            name="HistoricalConfiguracaoAba",
             fields=[
-                ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
-                ('chave', models.CharField(db_index=True, help_text='O nome exato do sala_tipo enviado pelo Moodle (ex: diarios, praticas, autoinscricoes, tcc)', max_length=50, verbose_name='chave (Moodle)')),
-                ('nome_desktop', models.CharField(help_text='Ex: Meus Diários, Salas de Coordenação', max_length=100, verbose_name='nome no desktop')),
-                ('nome_mobile', models.CharField(help_text='Nome curto para telas menores. Ex: Diários, Coordenações', max_length=50, verbose_name='nome no mobile')),
-                ('ordem', models.IntegerField(default=99, help_text='Números menores aparecem primeiro (ex: 1 para Diários, 2 para Coordenações).', verbose_name='ordem')),
-                ('sempre_visivel', models.BooleanField(default=False, help_text='Se marcado, a aba aparece mesmo que o usuário tenha 0 cursos nela.', verbose_name='sempre visível?')),
-                ('history_id', models.AutoField(primary_key=True, serialize=False)),
-                ('history_date', models.DateTimeField(db_index=True)),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ("id", models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name="ID")),
+                (
+                    "chave",
+                    models.CharField(
+                        db_index=True,
+                        help_text="O nome exato do sala_tipo enviado pelo Moodle (ex: diarios, praticas, autoinscricoes, tcc)",
+                        max_length=50,
+                        verbose_name="chave (Moodle)",
+                    ),
+                ),
+                (
+                    "nome_desktop",
+                    models.CharField(
+                        help_text="Ex: Meus Diários, Salas de Coordenação",
+                        max_length=100,
+                        verbose_name="nome no desktop",
+                    ),
+                ),
+                (
+                    "nome_mobile",
+                    models.CharField(
+                        help_text="Nome curto para telas menores. Ex: Diários, Coordenações",
+                        max_length=50,
+                        verbose_name="nome no mobile",
+                    ),
+                ),
+                (
+                    "ordem",
+                    models.IntegerField(
+                        default=99,
+                        help_text="Números menores aparecem primeiro (ex: 1 para Diários, 2 para Coordenações).",
+                        verbose_name="ordem",
+                    ),
+                ),
+                (
+                    "sempre_visivel",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Se marcado, a aba aparece mesmo que o usuário tenha 0 cursos nela.",
+                        verbose_name="sempre visível?",
+                    ),
+                ),
+                ("history_id", models.AutoField(primary_key=True, serialize=False)),
+                ("history_date", models.DateTimeField(db_index=True)),
+                ("history_change_reason", models.CharField(max_length=100, null=True)),
+                (
+                    "history_type",
+                    models.CharField(choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")], max_length=1),
+                ),
+                (
+                    "history_user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'historical configuração de aba',
-                'verbose_name_plural': 'historical configurações de abas',
-                'ordering': ('-history_date', '-history_id'),
-                'get_latest_by': ('history_date', 'history_id'),
+                "verbose_name": "historical configuração de aba",
+                "verbose_name_plural": "historical configurações de abas",
+                "ordering": ("-history_date", "-history_id"),
+                "get_latest_by": ("history_date", "history_id"),
             },
             bases=(simple_history.models.HistoricalChanges, models.Model),
         ),

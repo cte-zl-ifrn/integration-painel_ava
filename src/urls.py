@@ -1,10 +1,10 @@
-from django.urls import path, include, re_path
-from django.contrib import admin
-from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-from settings.indebug import DEBUG, TESTING_MODE
+from django.contrib import admin
+from django.urls import include, path
+from django.views.generic import RedirectView
 
+from settings.indebug import DEBUG, TESTING_MODE
 
 admin.site.site_title = "Painel AVA :.: Administração"
 admin.site.site_header = admin.site.site_title

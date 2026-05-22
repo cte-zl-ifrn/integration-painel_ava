@@ -31,23 +31,23 @@
         <div class="painel-card-details" style="margin-top: 1rem;" :class="{ 'enrolled': item.is_enrolled }">
 
             <div class="painel-card-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
-            
+
                 <button v-if="!item.is_enrolled" class="btn btn-primary" style="margin-bottom: 0px; flex: 1;" @click.prevent="enrollCourse(item)">
                     <i class="fa-solid fa-right-to-bracket"></i> Inscreva-se
                 </button>
-            
+
                 <template v-else>
                     <a class="btn btn-primary"
-                        style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 5px;"
-                        :href="item.url" @click="mostrarGauge">
+                       style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 5px;"
+                       :href="item.url" @click="mostrarGauge">
                         Acessar curso
                     </a>
-            
+
                     <button class="btn btn-outline-secondary btn-cancel-enroll" title="Cancelar Matrícula" @click.prevent="unenrollCourse(item)">
                         <i class="fa-solid fa-xmark"></i> Cancelar inscrição
                     </button>
                 </template>
-            
+
             </div>
 
             <div class="painel-card-details-info">

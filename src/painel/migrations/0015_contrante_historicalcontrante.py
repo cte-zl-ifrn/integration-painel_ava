@@ -41,33 +41,23 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "observacoes",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="observações"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="observações"),
                 ),
                 (
                     "rodape",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="rodapé"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="rodapé"),
                 ),
                 (
                     "css_personalizado",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="CSS personalizado"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="CSS personalizado"),
                 ),
                 (
                     "menu_personalizado",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="menu personalizado"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="menu personalizado"),
                 ),
                 (
                     "regex_coordenacao",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="regex coordenação"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="regex coordenação"),
                 ),
                 ("active", models.BooleanField(default=True, verbose_name="ativo?")),
             ],
@@ -82,9 +72,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.IntegerField(
-                        auto_created=True, blank=True, db_index=True, verbose_name="ID"
-                    ),
+                    models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name="ID"),
                 ),
                 ("url", models.URLField(max_length=256, verbose_name="URL")),
                 (
@@ -101,33 +89,23 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "observacoes",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="observações"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="observações"),
                 ),
                 (
                     "rodape",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="rodapé"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="rodapé"),
                 ),
                 (
                     "css_personalizado",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="CSS personalizado"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="CSS personalizado"),
                 ),
                 (
                     "menu_personalizado",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="menu personalizado"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="menu personalizado"),
                 ),
                 (
                     "regex_coordenacao",
-                    models.TextField(
-                        blank=True, null=True, verbose_name="regex coordenação"
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name="regex coordenação"),
                 ),
                 ("active", models.BooleanField(default=True, verbose_name="ativo?")),
                 ("history_id", models.AutoField(primary_key=True, serialize=False)),

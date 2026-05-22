@@ -14,16 +14,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="historicalusuario",
             name="email",
-            field=models.EmailField(
-                max_length=2560, null=True, verbose_name="e-Mail preferêncial"
-            ),
+            field=models.EmailField(max_length=2560, null=True, verbose_name="e-Mail preferêncial"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
             name="email_academico",
-            field=models.EmailField(
-                blank=True, max_length=2560, null=True, verbose_name="e-Mail academico"
-            ),
+            field=models.EmailField(blank=True, max_length=2560, null=True, verbose_name="e-Mail academico"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
@@ -48,51 +44,37 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="historicalusuario",
             name="email_secundario",
-            field=models.EmailField(
-                blank=True, max_length=2560, null=True, verbose_name="e-Mail pessoal"
-            ),
+            field=models.EmailField(blank=True, max_length=2560, null=True, verbose_name="e-Mail pessoal"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
             name="first_name",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="primeiro nome"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="primeiro nome"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
             name="foto",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="URL da foto"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="URL da foto"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
             name="last_name",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="último nome"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="último nome"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
             name="nome",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="nome no SUAP"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="nome no SUAP"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
             name="nome_registro",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="nome civil"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="nome civil"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
             name="nome_social",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="nome social"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="nome social"),
         ),
         migrations.AlterField(
             model_name="historicalusuario",
@@ -138,16 +120,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="usuario",
             name="email",
-            field=models.EmailField(
-                max_length=2560, null=True, verbose_name="e-Mail preferêncial"
-            ),
+            field=models.EmailField(max_length=2560, null=True, verbose_name="e-Mail preferêncial"),
         ),
         migrations.AlterField(
             model_name="usuario",
             name="email_academico",
-            field=models.EmailField(
-                blank=True, max_length=2560, null=True, verbose_name="e-Mail academico"
-            ),
+            field=models.EmailField(blank=True, max_length=2560, null=True, verbose_name="e-Mail academico"),
         ),
         migrations.AlterField(
             model_name="usuario",
@@ -172,51 +150,37 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="usuario",
             name="email_secundario",
-            field=models.EmailField(
-                blank=True, max_length=2560, null=True, verbose_name="e-Mail pessoal"
-            ),
+            field=models.EmailField(blank=True, max_length=2560, null=True, verbose_name="e-Mail pessoal"),
         ),
         migrations.AlterField(
             model_name="usuario",
             name="first_name",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="primeiro nome"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="primeiro nome"),
         ),
         migrations.AlterField(
             model_name="usuario",
             name="foto",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="URL da foto"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="URL da foto"),
         ),
         migrations.AlterField(
             model_name="usuario",
             name="last_name",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="último nome"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="último nome"),
         ),
         migrations.AlterField(
             model_name="usuario",
             name="nome",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="nome no SUAP"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="nome no SUAP"),
         ),
         migrations.AlterField(
             model_name="usuario",
             name="nome_registro",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="nome civil"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="nome civil"),
         ),
         migrations.AlterField(
             model_name="usuario",
             name="nome_social",
-            field=models.CharField(
-                blank=True, max_length=2560, null=True, verbose_name="nome social"
-            ),
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="nome social"),
         ),
         migrations.AlterField(
             model_name="usuario",

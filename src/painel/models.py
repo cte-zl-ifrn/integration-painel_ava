@@ -1,14 +1,22 @@
-from django.utils.translation import gettext as _
-import re
 import logging
-from django.utils.timezone import now
-from django.utils.safestring import mark_safe
-from django.forms import ValidationError
-from django.db.models import BooleanField, URLField, CharField, DateTimeField, Model, TextField, ForeignKey, EmailField, PROTECT, IntegerField
+import re
+
 from django.core.cache import cache
+from django.db.models import (
+    BooleanField,
+    CharField,
+    DateTimeField,
+    IntegerField,
+    Model,
+    TextField,
+    URLField,
+)
+from django.forms import ValidationError
+from django.utils.html import format_html
+from django.utils.timezone import now
+from django.utils.translation import gettext as _
 from django_better_choices import Choices
 from simple_history.models import HistoricalRecords
-
 
 logger = logging.getLogger(__name__)
 
@@ -52,17 +60,16 @@ class Ambiente(ActiveMixin, Model):
     def _c(color: str):
         return f"""<span style='background: {color}; color: #fff; padding: 1px 5px;
                                 font-size: 95%; border-radius: 4px;'>{color}</span>"""
+
     nome = CharField(_("nome do ambiente"), max_length=255)
     url = CharField(_("URL"), max_length=255)
     token = CharField(_("token"), max_length=255)
     cor_mestra = CharField(
         _("cor mestra"),
         max_length=255,
-        help_text=mark_safe(
-            f"""Escolha uma cor em RGB.
+        help_text=format_html(f"""Escolha uma cor em RGB.
                 Ex.: {_c('#a04ed0')} {_c('#396ba7')} {_c('#559c1a')}
-                {_c('#fabd57')} {_c('#fd7941')} {_c('#f54f3b')} {_c('#2dcfe0')}"""
-        ),
+                {_c('#fabd57')} {_c('#fd7941')} {_c('#f54f3b')} {_c('#2dcfe0')}"""),
     )
     active = BooleanField(_("ativo?"), default=True)
 
@@ -78,7 +85,7 @@ class Ambiente(ActiveMixin, Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        logger.debug(f"limpando o cache dos ambientes")
+        logger.debug("limpando o cache dos ambientes")
         cache.delete("ambientes")
 
     @property
@@ -139,7 +146,7 @@ class Curso(Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        logger.debug(f"limpando o cache dos cursos")
+        logger.debug("limpando o cache dos cursos")
         cache.delete("cursos")
 
     @staticmethod
@@ -203,27 +210,23 @@ class ConfiguracaoAba(Model):
         _("chave (Moodle)"),
         max_length=50,
         unique=True,
-        help_text=_("O nome exato do sala_tipo enviado pelo Moodle (ex: diarios, praticas, autoinscricoes, tcc)")
+        help_text=_("O nome exato do sala_tipo enviado pelo Moodle (ex: diarios, praticas, autoinscricoes, tcc)"),
     )
     nome_desktop = CharField(
-        _("nome no desktop"),
-        max_length=100,
-        help_text=_("Ex: Meus Diários, Salas de Coordenação")
+        _("nome no desktop"), max_length=100, help_text=_("Ex: Meus Diários, Salas de Coordenação")
     )
     nome_mobile = CharField(
-        _("nome no mobile"),
-        max_length=50,
-        help_text=_("Nome curto para telas menores. Ex: Diários, Coordenações")
+        _("nome no mobile"), max_length=50, help_text=_("Nome curto para telas menores. Ex: Diários, Coordenações")
     )
     ordem = IntegerField(
         _("ordem"),
         default=99,
-        help_text=_("Números menores aparecem primeiro (ex: 1 para Diários, 2 para Coordenações).")
+        help_text=_("Números menores aparecem primeiro (ex: 1 para Diários, 2 para Coordenações)."),
     )
     sempre_visivel = BooleanField(
         _("sempre visível?"),
         default=False,
-        help_text=_("Se marcado, a aba aparece mesmo que o usuário tenha 0 cursos nela.")
+        help_text=_("Se marcado, a aba aparece mesmo que o usuário tenha 0 cursos nela."),
     )
 
     history = HistoricalRecords()

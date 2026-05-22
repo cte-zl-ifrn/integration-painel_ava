@@ -1,11 +1,11 @@
 <div id="region-messages">
     <div class="dropdown">
         <i id="dropdownConversations"
-            data-bs-toggle="dropdown"
-            class="icon fa fa-comment-o fa-fw "
-            title="messagen drawer"
-            role="img"
-            aria-label="messagen drawer"></i><span v-if="unread_conversations_total > -1" class="icon-count">[[unread_conversations_total]]</span>
+           data-bs-toggle="dropdown"
+           class="icon fa fa-comment-o fa-fw "
+           title="messagen drawer"
+           role="img"
+           aria-label="messagen drawer"></i><span v-if="unread_conversations_total > -1" class="icon-count">[[unread_conversations_total]]</span>
         <ul class="dropdown-menu" id="menu-messages"
             aria-labelledby="dropdownConversations">
             <li>
@@ -13,12 +13,12 @@
             </li>
             <li v-for='atualizacao in atualizacoes'>
                 <a class="dropdown-item ambientes-list"
-                    v-bind:style="{ 'border-left': '8px solid ' + atualizacao.ambiente.cor_mestra }"
-                    v-bind:href="[[atualizacao.ambiente.conversations_url]]">[[atualizacao.ambiente.titulo]] <span>[[atualizacao.unread_conversations_count]]</a>
-            </li>
-            <li>
-                <a class="dropdown-item" id="messages-count">Total de [[unread_conversations_total]] mensagens.</a>
-            </li>
-        </ul>
+                   v-bind:style="{ 'border-left': '8px solid ' + atualizacao.ambiente.cor_mestra }"
+                   v-bind:href="[[atualizacao.ambiente.conversations_url]]">[[atualizacao.ambiente.titulo]] <span>[[atualizacao.unread_conversations_count]]</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" id="messages-count">Total de [[unread_conversations_total]] mensagens.</a>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>

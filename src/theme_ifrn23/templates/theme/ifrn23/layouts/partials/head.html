@@ -23,9 +23,9 @@
 <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="//unpkg.com/webtour@1.1.0/dist/webtour.min.css">
 {% if settings.DEBUG %}
-<link href="{% sass_src 'theme/ifrn23/scss/main.scss' %}?last_startup={{ last_startup }}" rel="stylesheet" type="text/css" />
+    <link href="{% sass_src 'theme/ifrn23/scss/main.scss' %}?last_startup={{ last_startup }}" rel="stylesheet" type="text/css" />
 {% else %}
-<link href="{% static 'theme/ifrn23/css/main.css' %}?last_startup={{ last_startup }}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'theme/ifrn23/css/main.css' %}?last_startup={{ last_startup }}" rel="stylesheet" type="text/css" />
 {% endif %}
 <link rel="stylesheet" href="{% static 'theme/ifrn23/fonts/ifzl-font-icon/styles.css' %}?last_startup={{ last_startup }}" />
 

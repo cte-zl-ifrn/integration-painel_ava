@@ -142,12 +142,12 @@ const app = Vue.createApp({
             };
 
             const nomesAdmin = window.PAGE_CONFIG?.nomesAbas || {};
-            
+
             let tabs = [];
 
             Object.keys(this.salasPorCategoria).forEach(key => {
                 const itens = this.salasPorCategoria[key] || [];
-                
+
                 // Mescla as configurações (Admin -> Padrão -> Fallback dinâmico)
                 const config = nomesAdmin[key] || configPadrao[key] || {
                     desktop: key.charAt(0).toUpperCase() + key.slice(1),
@@ -763,7 +763,7 @@ const app = Vue.createApp({
             }
         },
         unenrollCourse(item) {
-            // Chamamos o showConfirmation passando a ação 'cancelar', 
+            // Chamamos o showConfirmation passando a ação 'cancelar',
             // o callback assíncrono e o nome do curso como contexto extra.
             this.showConfirmation('cancelar', async (confirmed) => {
                 if (!confirmed) return;

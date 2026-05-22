@@ -1,7 +1,7 @@
 from django.urls import path
-from .apps import HealthConfig
-from .views import liveness, readiness, force_fail, force_db_fail
 
+from .apps import HealthConfig
+from .views import force_db_fail, force_fail, liveness, readiness
 
 app_name = HealthConfig.name
 

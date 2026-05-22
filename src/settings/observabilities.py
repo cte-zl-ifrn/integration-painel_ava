@@ -9,13 +9,14 @@ if env("CLARITY_CODE") is not None:
 
 if env("SENTRY_DNS") is not None:
     import logging
+
     import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.redis import RedisIntegration
-    from sentry_sdk.integrations.logging import LoggingIntegration
     from django.core.exceptions import DisallowedHost
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
+    from sentry_sdk.integrations.redis import RedisIntegration
+
     from .apps import APP_VERSION
-    from sentry_sdk.integrations.logging import ignore_logger
 
     SENTRY_SETTINGS = dict(
         dsn=env("SENTRY_DNS"),
@@ -32,7 +33,8 @@ if env("SENTRY_DNS") is not None:
         # Informe em porcentual, ou seja, 50 significa que 100% de erros serão reportados.
         traces_sample_rate=env_as_int("SENTRY_TRACES_SAMPLE_RATE", 100) / 100.0,
         # traces_sampler=
-        # If you wish to associate users to errors (assuming you are using django.contrib.auth) you may enable sending PII data.
+        # If you wish to associate users to errors (assuming you are using django.contrib.auth)
+        # you may enable sending PII data.
         send_default_pii=env_as_bool("SENTRY_SEND_DEFAULT_PII", True),
         debug=env_as_bool("SENTRY_DEBUG", False),
         environment=env("SENTRY_ENVIRONMENT", "local"),

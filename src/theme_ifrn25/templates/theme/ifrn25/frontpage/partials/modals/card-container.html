@@ -21,7 +21,7 @@
     </div>
 </div>
 
-    
+
 <div class="card-container" v-if="!loading && {{ list_name }}.length > 0">
     <div class="card" v-for="(item, index) in {{ list_name }}" :key="index">
         <a class="text-decoration-none" :href="goToCourseUrl(item)" v-on:click="mostrarGauge">
@@ -41,12 +41,12 @@
                     <span class="painel-card-header-env">[[ item.environment ]]</span>
                 </div>
                 <div v-if="item.can_set_visibility" @click="toggleVisible(item)"
-                    :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
+                     :class="`${ item.visible ? 'painel-card-details-info-published' : 'painel-card-details-info-unpublished' }`">
                     <i :class="`${ item.visible ? 'fa-regular fa-circle-check' : 'fa-solid fa-pen-to-square' }`"></i>
                     <span>[[ item.visible ? 'Publicado' : 'Rascunho' ]]</span>
                 </div>
                 <div :class="`${ item.isfavourite ? 'painel-card-details-info-favourite' : 'painel-card-details-info-unfavourite' }`"
-                    @click="toggleFavourite(item)">
+                     @click="toggleFavourite(item)">
                     <i :class="item.isfavourite ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
                 </div>
 

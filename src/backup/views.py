@@ -1,15 +1,13 @@
 import logging
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse, JsonResponse
+
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-from a4.models import logged_user, Usuario
+
+from a4.models import Usuario, logged_user
 from painel.models import Ambiente, Situacao, Theme
 from painel.services import get_json_api
-import json
-
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +81,7 @@ def checkgrades(request: HttpRequest, id_ambiente: int, id_diario: int) -> HttpR
     context = {"diario": diario, "alunos": alunos, "etapas": etapas.keys()}
     return render(request, __get_theme_prefix(request) + "/diario/checkgrades.html", context=context)
 
+
 @login_required
 def completed_tour(request: HttpRequest) -> HttpResponse:
     user: Usuario = request.user
@@ -97,11 +96,11 @@ def completed_tour(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def get_tour_status(request: HttpRequest) -> HttpResponse:
-    user: Usuario = request.user 
-    
+    user: Usuario = request.user
+
     if user.settings and "tour" in user.settings and "completed" in user.settings["tour"]:
         completed = user.settings["tour"]["completed"]
     else:
-        completed = False  
-    
+        completed = False
+
     return JsonResponse({"completed_tour": completed})

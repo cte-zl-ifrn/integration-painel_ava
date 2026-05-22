@@ -1,34 +1,35 @@
-from django.utils.translation import gettext as _
 import json
-import urllib
-import requests
 import logging
-import sentry_sdk
 import re
+import urllib
+
+import requests
+import sentry_sdk
 from django.conf import settings
-from django.shortcuts import redirect, render, get_object_or_404
-from django.utils.timezone import now
+from django.contrib import auth
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
-from django.core.cache import cache
-from django.contrib import auth
+from django.shortcuts import get_object_or_404, redirect, render
 from django.templatetags.static import static
-from a4.models import Usuario
+from django.utils.timezone import now
 
+from a4.models import Usuario
 
 logger = logging.getLogger(__name__)
 
+
 def _post(*args, **kwargs) -> requests.Response:
-    return requests.post(*args, verify=settings.OAUTH["VERIFY_SSL"], **kwargs)
+    return requests.post(*args, verify=settings.OAUTH["VERIFY_SSL"], timeout=2, **kwargs)
+
 
 def _get(*args, **kwargs) -> requests.Response:
-    return requests.get(*args, verify=settings.OAUTH["VERIFY_SSL"], **kwargs)
+    return requests.get(*args, verify=settings.OAUTH["VERIFY_SSL"], timeout=2, **kwargs)
+
 
 def login(request: HttpRequest) -> HttpResponse:
     o = settings.OAUTH
-    suap_url = (
-        f"{o["AUTHORIZE_URL"]}?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
-    )
+    suap_url = f"{o["AUTHORIZE_URL"]}?response_type=code&client_id={o["CLIENT_ID"]}&redirect_uri={o['REDIRECT_URI']}"
     return redirect(suap_url)
 
 
@@ -50,7 +51,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
 
     def validate_request() -> None or HttpResponse:
         if "error" in request.GET:
-            if request.GET['error'] == "access_denied":
+            if request.GET["error"] == "access_denied":
                 return render(request, "a4/not_authorized.html")
             else:
                 return render(request, "a4/not_authorized.html")
@@ -101,7 +102,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
             }
             logger.debug(f"user_info_request_header: {headers}")
 
-            scope = access_token.get('scope', 'identificacao email documentos_pessoais')
+            scope = access_token.get("scope", "identificacao email documentos_pessoais")
             response = _get(f"{OAUTH['USERINFO_URL']}?scope={scope}", headers=headers)
             response_text = response.text
             logger.debug(f"user_info_response_text: {response_text}")
@@ -116,16 +117,18 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         except Exception as e:
             sentry_sdk.capture_exception(e)
             if response_text is not None and "__buscar_menu__" in response_text:
-                vinculo_regex = re.compile('<span title=\\"Vínculo: (\\d*)\\">(\\w* \\w*)</span></a><a href="/comum/minha_conta/"')
+                vinculo_regex = re.compile(
+                    '<span title=\\"Vínculo: (\\d*)\\">(\\w* \\w*)</span></a><a href="/comum/minha_conta/"'
+                )
                 parts = vinculo_regex.findall(response_text)[0]
                 return render(
                     request,
                     "a4/oauth_usuario_sem_vinculo.html",
                     context={
-                        "username": parts[0] if len(parts) > 0  else "[SEU CPF]",
+                        "username": parts[0] if len(parts) > 0 else "[SEU CPF]",
                         "common_name": parts[1] if len(parts) > 0 else "[SEU NOME COMPLETO]",
-                        "tem_foto": static("/comum/img/default.jpg") in response_text
-                    }
+                        "tem_foto": static("/comum/img/default.jpg") in response_text,
+                    },
                 )
             return oauth_error(f"{e}. {response_text}")
 
@@ -137,8 +140,8 @@ def authenticate(request: HttpRequest) -> HttpResponse:
                 "Authorization": f"Bearer {access_token.get('access_token')}",
                 "x-api-key": OAUTH["CLIENT_SECRET"],
             }
-            response = _get(OAUTH['VINCULOS_URL'], headers=headers)
-            
+            response = _get(OAUTH["VINCULOS_URL"], headers=headers)
+
             if response.status_code == 200:
                 dados_vinculos = response.json()
             else:
@@ -147,7 +150,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
         except Exception as e:
             sentry_sdk.capture_exception(e)
             erro_vinculo = f"Exceção ao buscar vínculos: {str(e)}"
-            
+
         return dados_vinculos, erro_vinculo
 
     def save_user(user_info, vinculos_data, erro_vinculo) -> Usuario or HttpResponse:
@@ -168,7 +171,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
                 "foto": user_info.get("foto"),
                 "tipo_usuario": user_info.get("tipo_usuario"),
                 "last_json": json.dumps(user_info),
-                "vinculos": vinculos_data, 
+                "vinculos": vinculos_data,
                 "observacao_erro_vinculo": erro_vinculo,
             }
 

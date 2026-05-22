@@ -1,15 +1,14 @@
-from typing import Sequence, Union, Callable, Any
-from functools import update_wrapper
-from django.utils.translation import gettext as _
-from django.core.exceptions import ValidationError
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
-from django.urls import path, reverse
-from django.templatetags.static import static
-from django.contrib.admin import ModelAdmin, register, site, display
+from typing import Sequence
+
+from django.contrib.admin import display, register, site
 from django.contrib.auth.models import Group
+from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.translation import gettext as _
+
 from base.admin import BaseModelAdmin
-from .models import Usuario, Grupo
+
+from .models import Grupo, Usuario
 from .resources import UsuarioResource
 
 site.unregister(Group)
@@ -69,25 +68,32 @@ class UsuarioAdmin(BaseModelAdmin):
         (
             _("Settings"),
             {
-                "fields": [("settings")],
+                "fields": ["settings"],
                 "description": _("Configurações do usuário"),
             },
         ),
     ]
-    readonly_fields: Sequence[str] = ["date_joined", "first_login", "last_login", "last_json", "vinculos", "observacao_erro_vinculo"]
+    readonly_fields: Sequence[str] = [
+        "date_joined",
+        "first_login",
+        "last_login",
+        "last_json",
+        "vinculos",
+        "observacao_erro_vinculo",
+    ]
     # autocomplete_fields: Sequence[str] = ['groups']
     resource_classes = [UsuarioResource]
 
     @display
     def auth(self, obj):
-        result = '✅ ' if obj.is_active else '❌ '
+        result = "✅ " if obj.is_active else "❌ "
         result += _("Colaborador") if obj.is_staff else _("Usuário")
         result += " " + _("superusuário") if obj.is_staff else ""
-        return mark_safe(result)
+        return format_html(result)
 
     @display
     def photo(self, obj):
-        return mark_safe(f'<img width="56" height="56" src="{obj.foto_url}" />')
+        return format_html(f'<img width="56" height="56" src="{obj.foto_url}" />')
 
     @display(description=_("Ações"))
     def acoes(self, obj):

@@ -1,17 +1,16 @@
-from django.utils.translation import gettext as _
+import datetime
 import http
 import logging
-from django.utils.timezone import now
-from django.http import HttpRequest
-from django.core.exceptions import ValidationError
-from django.contrib.auth.hashers import make_password, check_password
-from django.conf import settings
-from a4.models import Usuario
-from painel.constants import JWT_SECRET
-import jwt
-import datetime
 from datetime import timezone
+
+import jwt
 import requests
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.http import HttpRequest
+from django.utils.translation import gettext as _
+
+from a4.models import Usuario
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,7 @@ class SuapBroker:
 
     def get_user_data(self) -> dict:
         return self.__data
-    
+
     def get_token(self) -> str:
         return self.__access_token
 
@@ -42,7 +41,6 @@ class SuapBroker:
             logger.error(f"Erro ao tentar acessar dados do usuário. {type(e)}:{e}")
         self.__data = result
 
-
     def __suap_user_token(self, username: str, password: str):
         try:
             response = requests.post(
@@ -55,14 +53,12 @@ class SuapBroker:
         except requests.exceptions.HTTPError as e:
             logger.error(f"Erro ao tentar obter token do SUAP. {type(e)}:{e}")
             if e.response is not None and e.response.status_code == 401:
-                raise ValidationError(_("Usuário ou senha inválidos"), code="401") # Corrected line
+                raise ValidationError(_("Usuário ou senha inválidos"), code="401")  # Corrected line
             else:
                 raise Exception(f"Erro ao obter token do SUAP: {e}") from e
         except requests.RequestException as e:
             logger.error(f"Erro ao tentar obter token do SUAP. {type(e)}:{e}")
             raise Exception(f"Erro de requisição ao SUAP: {e}") from e
-        
-
 
     def login(self, request: HttpRequest, username: str, password: str) -> None:
         try:
@@ -93,14 +89,13 @@ class SuapBroker:
             "nome_usual": self.__data.get("nome_usual"),
             "tipo_usuario": self.__data.get("tipo_vinculo"),
         }
-        
+
         try:
             user, created = Usuario.objects.update_or_create(
-                username=user_data_mapping["username"],
-                defaults=user_data_mapping
+                username=user_data_mapping["username"], defaults=user_data_mapping
             )
         except Exception as e:
-            print('e', e)
+            print("e", e)
             return
 
 
@@ -112,19 +107,19 @@ class TokenBroker:
         expiration = datetime.datetime.now(timezone.utc).timestamp() + expiration_days * 24 * 60 * 60
         self.__token_jwt = jwt.encode(
             {"username": username, "exp": expiration},
-            JWT_SECRET,
+            settings.JWT_SECRET,
             algorithm="HS256",
         )
         return self.__token_jwt
 
     def verify(self, token: str) -> str:
         try:
-            return jwt.decode(token, JWT_SECRET, algorithms=["HS256"])["username"]
+            return jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])["username"]
         except jwt.ExpiredSignatureError:
-            return ''
+            return ""
         except jwt.InvalidTokenError:
             logger.error(f"Token inválido: {token}")
-            return ''
+            return ""
         except Exception as e:
             logger.error(f"Erro ao tentar validar token. {type(e)}:{e}")
-            return ''
+            return ""

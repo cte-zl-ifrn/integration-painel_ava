@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from sc4py.env import env
 import logging.config
+
+from sc4py.env import env
+
 from .apps import INSTALLED_APPS
 
 # Get loglevel from env

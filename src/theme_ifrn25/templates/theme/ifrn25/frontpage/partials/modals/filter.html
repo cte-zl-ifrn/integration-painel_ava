@@ -10,7 +10,7 @@
     <div class="filter-select-area">
         <i class="fa-solid fa-book"></i>
         <v-select v-model="filters.situacao" :options="situacoes" :reduce="item => item.id" label="label"
-            placeholder="Situações...">
+                  placeholder="Situações...">
             <template #selected-option="{ label }">
                 <span class="selected-option-text">[[ label ]]</span>
             </template>
@@ -20,7 +20,7 @@
     <div class="filter-select-area">
         <i class="fa-solid fa-calendar-days"></i>
         <v-select v-model="filters.semestre" :options="semestres" :reduce="item => item.id" label="label"
-            placeholder="Semestres...">
+                  placeholder="Semestres...">
             <template #selected-option="{ label }">
                 <span class="selected-option-text">[[ label ]]</span>
             </template>
@@ -30,7 +30,7 @@
     <div class="filter-select-area">
         <i class="fa-solid fa-calendar-week"></i>
         <v-select v-model="filters.periodo" :options="periodos" :reduce="item => item.id" label="label"
-            placeholder="Periodos...">
+                  placeholder="Periodos...">
             <template #selected-option="{ label }">
                 <span class="selected-option-text">[[ label ]]</span>
             </template>
@@ -40,7 +40,7 @@
     <div class="filter-select-area">
         <i class="fa-solid fa-calendar-day"></i>
         <v-select v-model="filters.modulo" :options="modulos" :reduce="item => item.id" label="label"
-            placeholder="Modulos...">
+                  placeholder="Modulos...">
             <template #selected-option="{ label }">
                 <span class="selected-option-text">[[ label ]]</span>
             </template>
@@ -50,7 +50,7 @@
     <div class="filter-select-area">
         <i class="fa-solid fa-newspaper"></i>
         <v-select v-model="filters.disciplina" :options="disciplinas" :reduce="item => item.id" label="label"
-            placeholder="Disciplinas...">
+                  placeholder="Disciplinas...">
             <template #selected-option="{ label }">
                 <span class="selected-option-text">[[ label ]]</span>
             </template>
@@ -60,7 +60,7 @@
     <div class="filter-select-area">
         <img src="{% static 'theme/ifrn25/img/cursos.svg' %}" alt="">
         <v-select v-model="filters.curso" :options="cursos" :reduce="item => item.id" label="label"
-            placeholder="Cursos...">
+                  placeholder="Cursos...">
             <template #selected-option="{ label }">
                 <span class="selected-option-text">[[ label ]]</span>
             </template>
@@ -70,7 +70,7 @@
     <div class="filter-select-area">
         <img src="{% static 'theme/ifrn25/img/ambientes.svg' %}" alt="">
         <v-select v-model="filters.ambiente" :options="ambientes" :reduce="item => item.id" label="label"
-            placeholder="Ambientes...">
+                  placeholder="Ambientes...">
             <template #selected-option="{ label }">
                 <span class="selected-option-text">[[ label ]]</span>
             </template>
@@ -78,7 +78,7 @@
     </div>
 
     <button v-if="loading" disabled="true" class="modal-content-body-filter-button"
-        @click="filterCards()">Carregando</button>
+            @click="filterCards()">Carregando</button>
     <button v-if="!loading" class="modal-content-body-filter-button" @click="filterCards()">Filtrar</button>
     <button class="modal-content-body-filter-clear" @click="resetFilters()">
         <i class="fa-solid fa-trash-can"></i>

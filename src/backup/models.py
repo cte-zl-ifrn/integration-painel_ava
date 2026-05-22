@@ -1,7 +1,7 @@
-from django.utils.translation import gettext as _
 import logging
-from django.db.models import BooleanField, URLField, CharField, Model, ForeignKey, EmailField, PROTECT
 
+from django.db.models import PROTECT, BooleanField, CharField, EmailField, ForeignKey, Model, URLField
+from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
 

@@ -1,2 +1,0 @@
-CRYPTOGRAPHY_KEY=b'ls7rmj4Is6vT6Qgz1V-akYyhUlp4tOBcpfhYJcNDG0w='
-JWT_SECRET="nR5cCI6IkpXVb21lIjoicGF53wuqYrkA-xdO"

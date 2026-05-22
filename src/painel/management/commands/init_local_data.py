@@ -1,7 +1,9 @@
 # painel/management/commands/init_local_data.py
-from django.core.management.base import BaseCommand
 from django.conf import settings
-from painel.models import Theme, Ambiente
+from django.core.management.base import BaseCommand
+
+from painel.models import Ambiente, Theme
+
 
 class Command(BaseCommand):
     help = "Cadastra temas padrão para ambiente local"
@@ -11,7 +13,7 @@ class Command(BaseCommand):
         if not settings.DEBUG:
             self.stdout.write(self.style.ERROR("❌ Este comando não pode ser executado em produção!"))
             return
-        
+
         # Criação dos temas
         theme_old, created1 = Theme.objects.get_or_create(
             nome="ifrn23",

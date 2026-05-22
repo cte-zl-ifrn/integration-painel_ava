@@ -1,23 +1,35 @@
 # Painel AVA
 
-O Painel AVA é um dashboard com todos os cursos e inscrições que dos AVA que com os quais ele integra, desta forma cada usuário tem acesso aos cursos/diários em que está inscrito sem precisar procurar em vários Moodles.
+O Painel AVA é um dashboard com todos os cursos e inscrições que dos AVA que com os quais ele integra, desta forma cada
+usuário tem acesso aos cursos/diários em que está inscrito sem precisar procurar em vários Moodles.
 
-> ***Este projeto não integra o SUAP ao Moodle. Se tua necessidade é essa, procure o `integrador-ava`.***
+> ***Este projeto não integra o SUAP ao Moodle. Se tua necessidade é essa, procure
+> o `integrador-ava`.***
 
-> Neste projeto usamos o [Docker](https://docs.docker.com/engine/install/) e o [Docker Compose Plugin](https://docs.docker.com/compose/install/compose-plugin/#:~:text=%20Install%20the%20plugin%20manually%20%F0%9F%94%97%20%201,of%20Compose%20you%20want%20to%20use.%20More%20) (não o [docker-compose](https://docs.docker.com/compose/install/) 😎). O setup foi todo testado usando o Linux e Mac OS.
+O que usamos neste projeto?
 
+> Neste projeto usamos o [Docker](https://docs.docker.com/engine/install/) e o
+> [Docker Compose Plugin](https://docs.docker.com/compose/install/compose-plugin/)
+> (não o [docker-compose](https://docs.docker.com/compose/install/) 😎).
+> O setup foi todo testado usando o Linux e Mac OS.
 
 ## Como funciona
 
-**Como desenvolvedor** - no `local_settings.py` do SUAP configure as variáveis (`MOODLE_SYNC_URL` e `MOODLE_SYNC_TOKEN`), no Painel AVA configure o mesmo token que você configurou no SUAP. Para cada Moodle a ser integrado instale o plugin `auth_suap` e cadastre no Painel AVA como um "Ambiente".
+**Como desenvolvedor** - no `local_settings.py` do SUAP configure as variáveis (`MOODLE_SYNC_URL` e
+`MOODLE_SYNC_TOKEN`), no Painel AVA configure o mesmo token que você configurou no SUAP. Para cada Moodle a ser
+integrado instale o plugin `auth_suap` e cadastre no Painel AVA como um "Ambiente".
 
-**Como usuário** - no SUAP, o secretário acadêmico autoriza cada diário a ser integrado ao Moodle, na página do diário no SUAP o professor clica em "Sincronizar" e a mágica se faz, ou seja, o SUAP envia para o Painel AVA que, com base na sigla do campus, decide para qual Moodle encaminhar a requisição de integração, o Moodle cadastra/atualiza as categorias (Campus, Diário, Semestre, Turma), o curso, os pólos como grupos do curso e os professores e alunos, então inscreve os professores (Formador e Tutor) e os alunos, por fim, arrola os alunos nos grupos de seus respectivos pólos.
+**Como usuário** - no SUAP, o secretário acadêmico autoriza cada diário a ser integrado ao Moodle, na página do diário
+no SUAP o professor clica em "Sincronizar" e a mágica se faz, ou seja, o SUAP envia para o Painel AVA que, com base na
+sigla do campus, decide para qual Moodle encaminhar a requisição de integração, o Moodle cadastra/atualiza as categorias
+(Campus, Diário, Semestre, Turma), o curso, os pólos como grupos do curso e os professores e alunos, então inscreve os
+professores (Formador e Tutor) e os alunos, por fim, arrola os alunos nos grupos de seus respectivos pólos.
 
 As variáveis de ambiente no SUAP têm as seguintes definições:
 
--   `MOODLE_SYNC_URL` - URL do Painel AVA
--   `MOODLE_SYNC_TOKEN` - o token deve ser o mesmo que você vai configurar ao cadastrar o SUAP no Painel AVA, é usada para autenticação do SUAP, guarde segredo desta chave.
-
+- `MOODLE_SYNC_URL` - URL do Painel AVA
+- `MOODLE_SYNC_TOKEN` - o token deve ser o mesmo que você vai configurar ao cadastrar o SUAP no Painel AVA, é usada para
+  autenticação do SUAP, guarde segredo desta chave.
 
 ## Como construir a imagem localmente
 
@@ -34,6 +46,30 @@ git checkout producao
 docker build -t ctezlifrn/avapainel:producao .
 ```
 
+## Qualidade de código e cobertura
+
+O projeto usa gates de qualidade locais (pre-commit/pre-push) e no CI.
+
+### 1) Ativar pre-commit
+
+```bash
+cd  ~/projetos/IFRN/ava/integration/painel_ava
+pyenv install 3.14
+pyenv local 3.14
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade uv pip
+uv pip install --upgrade .
+uv pip install --upgrade -e ".[dev]"
+pre-commit install --hook-type pre-commit --hook-type pre-push
+
+# Para saber se  pré commit vai passar
+pre-commit run --all-files
+
+# Para saber se  pré push vai passar
+pre-commit run --hook-stage pre-push --all-files
+
+```
 
 ## Como implantar
 
@@ -127,11 +163,15 @@ Suba os serviços.
 docker compose up
 ```
 
-Acesse o https://ava.yourhost.edu.br/admin/, cadastre os AVA em **Ambientes**, o token que você gerar para cada ambiente deverá ser utilizado no plugin do local_suap que você instalar em cada AVA.
+Acesse o <https://ava.yourhost.edu.br/admin/>, cadastre os AVA em **Ambientes**, o token que você gerar para cada
+ambiente deverá ser utilizado no plugin do local_suap que você instalar em cada AVA.
 
 ## Como iniciar o desenvolvimento
 
-Este docker-compose assume que você não tenha aplicações rodando na porta 80, ou seja, pare o serviço que está na porta 80 ou faça as configurações necessárias vocês mesmo. O script `_/deploy` já cria automaticamente uma entrada no /etc/hosts, caso não exista, que aponta para localhost. Isso é necessário para simplificar o cenário de desenvolvimento local.
+Este docker-compose assume que você não tenha aplicações rodando na porta 80, ou seja, pare o serviço que está na
+porta 80 ou faça as configurações necessárias vocês mesmo. O script `_/deploy` já cria automaticamente uma entrada no
+`/etc/hosts`, caso não exista, que aponta para localhost. Isso é necessário para simplificar o cenário de
+desenvolvimento local.
 
 ```bash
 # Baixe o projeto na pasta de exemplo (se for outra, basta que altere os scripts)
@@ -152,7 +192,8 @@ cd ~/projetos/IFRN/ava/integracao/painel_ava
 code painel__ava.code-workspace
 ```
 
-> O **Painel** estará disponível em http://ava, o primeiro usuário a acessar será declarado como superusuário e poderá fazer tudo no sistema.
+> O **Painel** estará disponível em <http://ava>, o primeiro usuário a acessar será declarado como superusuário e poderá
+> fazer tudo no sistema.
 
 Caso você deseje fazer debug do Painel AVA, tente:
 
@@ -179,26 +220,36 @@ source ~/.zshrc
 
 ## oAuth2 do SUAP
 
--   É obrigatório ao menos um dos escopos `identificacao` ou `email`, os quais retornam os atributos:
-    -   `identificacao` - NUMÉRICO - **é o IFid do usuário**, no caso: matrícula para alunos ou servidores e CPF para demais colaboradores
-    -   `nome_social` - ALFANUMÉRICO - **nome social**, este é o informado pelo indivíduo, não se trata de apelido, mas sim de nome social, conforme legislação
-    -   `nome_usual` - ALFANUMÉRICO - **nome usual**, escolhido pelo indivíduo na interface do SUAP
-    -   `nome_registro` - ALFANUMÉRICO - **nome civil**, este é conforme está no registro civil do indivíduo
-    -   `nome` - ALFANUMÉRICO - **nome completo**, para compatibilidade com APIs que não sabem tratar nome e sobrenome separados
-    -   `primeiro_nome` - ALFANUMÉRICO - **primeiro nome**, para compatibilidade com APIs que não sabem tratar nome e sobrenome juntos
-    -   `ultimo_nome` - ALFANUMÉRICO - **último nome**, para compatibilidade com APIs que não sabem tratar nome e sobrenome juntos
-    -   `campus` - ALFANUMÉRICO - **sigla do campus** do aluno ou servidor, caso exista, não se aplica aos demais colaboradores
-    -   `email_preferencial` - EMAIL - **email preferencial** para comunicação, caso exista, para servidores é o mesmo que o `email`, para alunos e demais colaboradores `email_secundario`, salvo se a instituição tiver criado um mecanismo que permita ao usuário escolher qual é seu email preferencial.
-    -   `email` - EMAIL - **email do servidor**, caso exista, apenas para servidores
-    -   `email_secundario` - EMAIL - **email pessoal**, caso exista, o mesmo usado para recuperação de senha, para todos
-    -   `email_google_classroom` - EMAIL - **email do Google Suite**, caso exista, apenas para alunos e servidores
-    -   `email_academico` - EMAIL - **email da Microsoft 365**, caso exista, apenas para alunos e servidores
-    -   `foto` - URL - **URL da foto no SUAP**, assim poderá ser usada a mesma foto em todos os ambientes
--   Já o escopo `documentos_pessoais` retorna os atributos:
-    -   `cpf` - NUMÉRICO - **CPF** do indivíduo, útil para os casos de integração com gov.br ou para informar que possui outras contas no sistema. Poderá ser necessário novo login para trocar de conta.
-    -   `data_de_nascimento` - DATA - **data de nascimento**, ajuda a identificar indivíduos menos de idade, entre outros
-    -   `sexo` - ALFANUMÉRICO - **sexo**
-    -   No futuro poderá retornar dados de **necessidades especiais**, assim os sistemas já adaptarão as interfaces a estas necessidades.
+- É obrigatório ao menos um dos escopos `identificacao` ou `email`, os quais retornam os atributos:
+  - `identificacao` - NUMÉRICO - **é o IFid do usuário**, no caso: matrícula para alunos ou servidores e CPF para demais
+    colaboradores
+  - `nome_social` - ALFANUMÉRICO - **nome social**, este é o informado pelo indivíduo, não se trata de apelido, mas sim
+    de nome social, conforme legislação
+  - `nome_usual` - ALFANUMÉRICO - **nome usual**, escolhido pelo indivíduo na interface do SUAP
+  - `nome_registro` - ALFANUMÉRICO - **nome civil**, este é conforme está no registro civil do indivíduo
+  - `nome` - ALFANUMÉRICO - **nome completo**, para compatibilidade com APIs que não sabem tratar nome e sobrenome
+    separados
+  - `primeiro_nome` - ALFANUMÉRICO - **primeiro nome**, para compatibilidade com APIs que não sabem tratar nome e
+    sobrenome juntos
+  - `ultimo_nome` - ALFANUMÉRICO - **último nome**, para compatibilidade com APIs que não sabem tratar nome e sobrenome
+    juntos
+  - `campus` - ALFANUMÉRICO - **sigla do campus** do aluno ou servidor, caso exista, não se aplica aos demais
+    colaboradores
+  - `email_preferencial` - EMAIL - **email preferencial** para comunicação, caso exista, para servidores é o mesmo que
+    o `email`, para alunos e demais colaboradores `email_secundario`, salvo se a instituição tiver criado um mecanismo
+    que permita ao usuário escolher qual é seu email preferencial.
+  - `email` - EMAIL - **email do servidor**, caso exista, apenas para servidores
+  - `email_secundario` - EMAIL - **email pessoal**, caso exista, o mesmo usado para recuperação de senha, para todos
+  - `email_google_classroom` - EMAIL - **email do Google Suite**, caso exista, apenas para alunos e servidores
+  - `email_academico` - EMAIL - **email da Microsoft 365**, caso exista, apenas para alunos e servidores
+  - `foto` - URL - **URL da foto no SUAP**, assim poderá ser usada a mesma foto em todos os ambientes
+- Já o escopo `documentos_pessoais` retorna os atributos:
+  - `cpf` - NUMÉRICO - **CPF** do indivíduo, útil para os casos de integração com gov.br ou para informar que possui
+     outras contas no sistema. Poderá ser necessário novo login para trocar de conta.
+  - `data_de_nascimento` - DATA - **data de nascimento**, ajuda a identificar indivíduos menos de idade, entre outros
+  - `sexo` - ALFANUMÉRICO - **sexo**
+  - No futuro poderá retornar dados de **necessidades especiais**, assim os sistemas já adaptarão as interfaces a estas
+    necessidades.
 
 ## Screenshots
 
@@ -216,23 +267,23 @@ O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-4
 
 ### v3 - Uso comum por aluno, tutor e professor
 
-#### Desktop
+#### v3 Desktop
 
 ![screenshot](docs/images/screenshot.v3.jpg)
 
-#### Mobile
+#### v3 Mobile
 
 ![screenshot](docs/images/screenshot.mobile.v3.png)
 
 ### v2 - Hiper focado no aluno
 
-#### Desktop
+#### v2 Desktop
 
 ![screenshot](screenshot.v2.png)
 
 ### v1 - Esforço urgente, sem projeto de UX
 
-#### Desktop
+#### v1 Desktop
 
 ![screenshot](screenshot.v1.png)
 
@@ -252,28 +303,32 @@ O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-4
 
 ## Tipo de commits
 
--   `feat:` novas funcionalidades.
--   `fix:` correção de bugs.
--   `refactor:` refatoração ou performances (sem impacto em lógica).
--   `style:` estilo ou formatação de código (sem impacto em lógica).
--   `test:` testes.
--   `doc:` documentação no código ou do repositório.
--   `env:` CI/CD ou settings.
--   `build:` build ou dependências.
+- `feat:` novas funcionalidades.
+- `fix:` correção de bugs.
+- `refactor:` refatoração ou performances (sem impacto em lógica).
+- `style:` estilo ou formatação de código (sem impacto em lógica).
+- `test:` testes.
+- `doc:` documentação no código ou do repositório.
+- `env:` CI/CD ou settings.
+- `build:` build ou dependências.
 
-## Como listar os diários no dashboard do Painel AVA (Desenvolvimento local)
+## Como listar os diários no dashboard do Painel AVA (local dev)
 
 ### 1. No Painel
 
-**Identificação**
-- Clique na sua foto no canto superior e selecione **Painel AVA** no menu suspenso.
+#### Identificação
+
+- Clique na sua foto no canto superior e selecione **Painel AVA** no menu
+  suspenso.
 - Acesse **Ambientes > Adicionar**.
 
 **Preencha os campos:**
+
 - **Nome do ambiente:** Defina um nome à sua escolha
 - **Cor mestra:** Defina uma cor à sua escolha
 
-**Integração**
+#### Integração
+
 - **Ativo?:** Marque este campo
 - **URL:** `http://moodle`
 - **Token:** `changeme`
@@ -282,9 +337,12 @@ O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-4
 
 ### 2. No Moodle
 
-Para que o Painel consiga listar os cursos corretamente, o usuário logado no Painel precisa existir no Moodle **com o mesmo identificador (matrícula ou CPF)** e estar inscrito em ao menos um curso ativo.
+Para que o Painel consiga listar os cursos corretamente, o usuário logado
+no Painel precisa existir no Moodle **com o mesmo identificador (matrícula
+ou CPF)** e estar inscrito em ao menos um curso ativo.
 
 **Se o usuário ainda não existe no Moodle:**
+
 - Acesse **Administração do site > Usuários > Adicionar um novo usuário**
 - Preencha os campos com atenção:
   - **Identificação de usuário:** Matrícula ou CPF do usuário logado no Painel
@@ -294,16 +352,23 @@ Para que o Painel consiga listar os cursos corretamente, o usuário logado no Pa
 
 ---
 
-Agora, ao acessar o Painel AVA, serão listados todos os cursos ativos em que o usuário está inscrito no Moodle local.
+Agora, ao acessar o Painel AVA, serão listados todos os cursos ativos em
+que o usuário está inscrito no Moodle local.
 
 ## Construção do Novo Tema
 
-Estamos desenvolvendo um novo tema para o Painel AVA, com melhorias visuais e de usabilidade. Para garantir que a implementação atual não seja afetada durante o desenvolvimento, o novo tema está sendo disponibilizado no endpoint `/novo`.
+Estamos desenvolvendo um novo tema para o Painel AVA, com melhorias visuais
+e de usabilidade. Para garantir que a implementação atual não seja afetada
+durante o desenvolvimento, o novo tema está sendo disponibilizado no
+endpoint `/novo`.
 
-Além disso, as pastas `template` e `static` possuem uma subpasta chamada `novo`, onde estão sendo armazenados os arquivos específicos do novo tema. Isso permite que o desenvolvimento ocorra de forma isolada, sem interferir no tema atual.
+Além disso, as pastas `template` e `static` possuem uma subpasta chamada
+`novo`, onde estão sendo armazenados os arquivos específicos do novo tema.
+Isso permite que o desenvolvimento ocorra de forma isolada, sem interferir
+no tema atual.
 
-Durante o período de transição, ambos os temas estarão disponíveis, permitindo testes e ajustes antes da migração definitiva para o novo design.
-
+Durante o período de transição, ambos os temas estarão disponíveis, permitindo
+testes e ajustes antes da migração definitiva para o novo design.
 
 ```css
 /* add ao css do admin */

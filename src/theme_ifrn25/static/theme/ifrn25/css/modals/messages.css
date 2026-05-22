@@ -2,7 +2,7 @@
     max-height: 650px;
     padding-top: 20px;
     /* overflow-y: auto; */
-    
+
     .message-item {
         background: transparent;
         margin-bottom: 20px;
@@ -13,7 +13,7 @@
         width: 100%;
         transition: all 0.3s ease-in-out;
         cursor: pointer;
-        
+
         .message-avatar {
             width: 40px !important;
             height: 40px !important;
@@ -32,19 +32,19 @@
                 align-items: start;
                 justify-content: space-between;
                 width: 100%;
-        
+
                 .message-user {
                     font: normal normal 600 14px/19px Noto Sans;
                     color: var(--escuro-primario);
                     display: block;
                 }
-                
+
                 .message-date {
                     font: normal normal normal 12px/16px Noto Sans;
                     color: var(--cinza-secundario);
                 }
             }
-            
+
             .message-content {
                 display: flex;
                 align-items: center;
@@ -78,9 +78,9 @@
                 }
             }
         }
-        
+
     }
-    
+
 }
 
 .no-messages {

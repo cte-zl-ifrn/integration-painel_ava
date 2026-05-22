@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sc4py.env import env, env_as_int, env_as_bool, env_as_list
+from sc4py.env import env, env_as_bool, env_as_int, env_as_list
 
 EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_FILE_PATH = env("DJANGO_EMAIL_FILE_PATH", None)

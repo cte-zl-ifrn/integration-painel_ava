@@ -1,8 +1,7 @@
-from django.utils.translation import gettext as _
-from django.contrib.admin import register, TabularInline, StackedInline
-from base.admin import BaseModelAdmin
-from painel.models import Ambiente, Curso, Popup, Theme, ConfiguracaoAba
+from django.contrib.admin import register
 
+from base.admin import BaseModelAdmin
+from painel.models import Ambiente, ConfiguracaoAba, Curso, Popup, Theme
 
 ####
 # Inlines
@@ -32,11 +31,13 @@ class PopupAdmin(BaseModelAdmin):
     search_fields = ["titulo", "url", "mensagem"]
     list_filter = ["active"] + BaseModelAdmin.list_filter
 
+
 @register(Theme)
 class ThemeAdmin(BaseModelAdmin):
     list_display = ["nome", "active"]
     search_fields = ["nome"]
     list_filter = ["active"] + BaseModelAdmin.list_filter
+
 
 @register(ConfiguracaoAba)
 class ConfiguracaoAbaAdmin(BaseModelAdmin):

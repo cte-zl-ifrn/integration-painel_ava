@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from sc4py.env import env, env_as_bool, env_as_list
+
 from settings.indebug import DEBUG
 
 ALLOWED_HOSTS = env_as_list("DJANGO_ALLOWED_HOSTS", ["painel"] if env_as_bool("DJANGO_DEBUG", True) else [])
@@ -13,7 +14,7 @@ MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", "/app/media")
 MARKDOWNX_URLS_PATH = env("MARKDOWNX_URLS_PATH", "{ROOT_URL_PATH}/markdownx/markdownify/")
 MARKDOWNX_UPLOAD_URLS_PATH = env("MARKDOWNX_UPLOAD_URLS_PATH", "{ROOT_URL_PATH}/markdownx/upload/")
 
-STATIC_URL = env("DJANGO_STATIC_URL", f"static/")
+STATIC_URL = env("DJANGO_STATIC_URL", "static/")
 STATIC_ROOT = env("DJANGO_STATIC_ROOT", "/app/static")
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",

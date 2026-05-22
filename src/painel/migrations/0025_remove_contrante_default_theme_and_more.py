@@ -6,63 +6,63 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('painel', '0024_alter_arquivobackup_options_and_more'),
+        ("painel", "0024_alter_arquivobackup_options_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='contrante',
-            name='default_theme',
+            model_name="contrante",
+            name="default_theme",
         ),
         migrations.RemoveField(
-            model_name='historicalcurso',
-            name='contratante',
+            model_name="historicalcurso",
+            name="contratante",
         ),
         migrations.RemoveField(
-            model_name='ambiente',
-            name='contratante',
+            model_name="ambiente",
+            name="contratante",
         ),
         migrations.RemoveField(
-            model_name='historicalpopup',
-            name='contratante',
+            model_name="historicalpopup",
+            name="contratante",
         ),
         migrations.RemoveField(
-            model_name='historicalambiente',
-            name='contratante',
+            model_name="historicalambiente",
+            name="contratante",
         ),
         migrations.RemoveField(
-            model_name='popup',
-            name='contratante',
+            model_name="popup",
+            name="contratante",
         ),
         migrations.RemoveField(
-            model_name='curso',
-            name='contratante',
+            model_name="curso",
+            name="contratante",
         ),
         migrations.RemoveField(
-            model_name='historicalcontrante',
-            name='default_theme',
+            model_name="historicalcontrante",
+            name="default_theme",
         ),
         migrations.RemoveField(
-            model_name='historicalcontrante',
-            name='history_user',
+            model_name="historicalcontrante",
+            name="history_user",
         ),
         migrations.AlterField(
-            model_name='donoarquivobackup',
-            name='papel',
-            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name='papel original no curso'),
+            model_name="donoarquivobackup",
+            name="papel",
+            field=models.CharField(blank=True, max_length=2560, null=True, verbose_name="papel original no curso"),
         ),
         migrations.AlterField(
-            model_name='donobackup',
-            name='nome',
-            field=models.CharField(max_length=2560, verbose_name='nome do dono do backup'),
+            model_name="donobackup",
+            name="nome",
+            field=models.CharField(max_length=2560, verbose_name="nome do dono do backup"),
         ),
         migrations.DeleteModel(
-            name='AddedTheme',
+            name="AddedTheme",
         ),
         migrations.DeleteModel(
-            name='Contrante',
+            name="Contrante",
         ),
         migrations.DeleteModel(
-            name='HistoricalContrante',
+            name="HistoricalContrante",
         ),
     ]

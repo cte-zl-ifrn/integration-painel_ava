@@ -1,7 +1,6 @@
+from django.template import Library
 from django.templatetags.static import static
 from django.utils.html import format_html
-from django.template import Library
-
 
 register = Library()
 

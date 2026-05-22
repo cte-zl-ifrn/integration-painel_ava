@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('painel', '0022_arquivobackup_donobackup_donoarquivobackup'),
+        ("painel", "0022_arquivobackup_donobackup_donoarquivobackup"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='donobackup',
-            name='email',
-            field=models.EmailField(blank=True, max_length=2560, null=True, verbose_name='e-mail'),
+            model_name="donobackup",
+            name="email",
+            field=models.EmailField(blank=True, max_length=2560, null=True, verbose_name="e-mail"),
         ),
     ]

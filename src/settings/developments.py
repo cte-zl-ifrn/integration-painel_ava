@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from sc4py.env import env_as_list
-from settings.apps import INSTALLED_APPS
-from settings.middlewares import MIDDLEWARE
-from settings.indebug import DEBUG, TESTING_MODE
 
+from settings.apps import INSTALLED_APPS
+from settings.indebug import DEBUG, TESTING_MODE
+from settings.middlewares import MIDDLEWARE
 
 if DEBUG and not TESTING_MODE:
     try:
