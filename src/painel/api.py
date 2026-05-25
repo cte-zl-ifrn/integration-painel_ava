@@ -1,4 +1,5 @@
 import json
+import logging
 
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -10,6 +11,7 @@ from .brokers import SuapBroker, TokenBroker
 from .services import get_diarios, set_favourite_course, set_user_preference, set_visible_course
 
 api = NinjaAPI()
+logger = logging.getLogger(__name__)
 
 
 @api.api_operation(["GET", "OPTIONS"], "/diarios/")
@@ -109,8 +111,8 @@ def set_user_preference_endpoint(
             user.save(update_fields=["settings"])
             print(f"[OK] Preferência '{key}' atualizada localmente para {parsed_value}")
         except Exception as e:
-            print(f"[ERRO] Falha ao salvar preferência local '{key}': {e}")
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            logger.exception("Falha ao salvar preferência local '%s'", key)
+            return JsonResponse({"status": "error", "message": "Ocorreu um erro interno ao salvar a preferência."}, status=500)
 
         # --- Propaga para todos os ambientes Moodle ---
         from painel.models import Ambiente
