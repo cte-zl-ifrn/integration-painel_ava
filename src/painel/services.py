@@ -430,7 +430,7 @@ def get_diarios(
 
     results = cache.get(cache_key, None)
     if results is not None:
-        logger.debug(f"Results cache hit: {cache_key}")
+        logger.debug("Results cache hit")
         return results
 
     results = {
