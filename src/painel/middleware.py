@@ -104,19 +104,12 @@ class ExceptionMiddleware:
         try:
             return self.get_response(request)
         except Exception as e:
-            print("ExceptionMiddleware.__call__")
             if isinstance(e, psycopg_pool.PoolTimeout):
                 return HttpResponse("Erro de conexão com o banco!")
             if isinstance(e, psycopg.errors.Error):
                 return HttpResponse("Erro de conexão com o banco!")
-            print("ExceptionMiddleware Exception")
-            ttt = str(type(e))
-            print("ExceptionMiddleware@ttt", ttt)
-            print("ExceptionMiddleware@e", e)
-            logger.info(f"{ttt}-{e}")
-            return HttpResponse(
-                f"{ttt}-{e}, {isinstance(e, psycopg_pool.PoolTimeout)}, {isinstance(e, psycopg.errors.Error)}"
-            )
+            logger.exception("Unhandled exception in ExceptionMiddleware")
+            return HttpResponse("Erro interno do servidor!", status=500)
 
 
 class XForwardedForMiddleware(MiddlewareMixin):
