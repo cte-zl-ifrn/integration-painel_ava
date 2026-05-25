@@ -100,7 +100,11 @@ def authenticate(request: HttpRequest) -> HttpResponse:
                 "Authorization": f"Bearer {access_token.get('access_token')}",
                 "x-api-key": OAUTH["CLIENT_SECRET"],
             }
-            logger.debug(f"user_info_request_header: {headers}")
+            safe_headers = {
+                "Authorization": "[REDACTED]",
+                "x-api-key": "[REDACTED]",
+            }
+            logger.debug(f"user_info_request_header: {safe_headers}")
 
             scope = access_token.get("scope", "identificacao email documentos_pessoais")
             response = _get(f"{OAUTH['USERINFO_URL']}?scope={scope}", headers=headers)
