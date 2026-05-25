@@ -47,6 +47,8 @@ jobs:
 
   deploy:
     needs: publish-docker
+    permissions:
+      contents: read
     runs-on: [self-hosted, runner-dead]
     environment:
       name: production
