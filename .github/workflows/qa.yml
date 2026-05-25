@@ -3,6 +3,9 @@ name: QA
 on:
   workflow_dispatch: # Permite disparo manual se um dia você quiser descomentar
 
+permissions:
+  contents: read
+
 jobs:
   disabled:
     runs-on: ubuntu-latest
