@@ -235,7 +235,9 @@ def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
     if response.ok:
         return content
     else:
-        logger.error(f"Error fetching {url}: {response.status_code} - {response.reason}\n{content}")
+        split_url = urllib.parse.urlsplit(url)
+        safe_url = f"{split_url.scheme}://{split_url.netloc}{split_url.path}"
+        logger.error(f"Error fetching {safe_url}: {response.status_code} - {response.reason}")
         exc = HTTPException("%s - %s" % (response.status_code, response.reason))
         exc.status = response.status_code
         exc.reason = response.reason
