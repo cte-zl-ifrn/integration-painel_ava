@@ -23,7 +23,7 @@ if env("SENTRY_DNS") is not None:
         integrations=[
             DjangoIntegration(),
             RedisIntegration(),
-            LoggingIntegration(level=logging.INFO, event_level=logging.INFO),
+            LoggingIntegration(level=logging.INFO, event_level=logging.ERROR),
         ],
         default_integrations=env_as_bool("SENTRY_DEFAULT_INTEGRATIONS", True),
         # Informe em porcentual, ou seja, 50 significa que 100% de erros serão reportados.
