@@ -518,7 +518,7 @@ def get_diarios(
     ]
 
     cache.set(cache_key, results)
-    logger.debug(f"Putting cache for: {cache_key}")
+    logger.debug("Putting cache entry for get_diarios")
 
     return results
 
