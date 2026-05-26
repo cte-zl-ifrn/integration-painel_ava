@@ -175,6 +175,8 @@ def enrol_course(request, id_ambiente, id_curso):
     # Garante um e-mail válido
     email = user.email or f"{username}@sememail.ifrn.edu.br"
 
+    campus_sigla_usuario = user.campus_sigla
+
     # Faz a requisição enviando os dados de provisionamento JIT
     response = get_json_api(
         ambiente,
@@ -184,16 +186,8 @@ def enrol_course(request, id_ambiente, id_curso):
         firstname=primeiro_nome,
         lastname=ultimo_nome,
         email=email,
+        campus=campus_sigla_usuario
     )
-
-    if not response:
-        return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
-
-    keys = cache.get("keys") or []
-    for v in keys:
-        cache.delete(v)
-
-    return JsonResponse(response)
 
     if not response:
         return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)

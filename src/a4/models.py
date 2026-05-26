@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django.conf import settings
@@ -89,6 +90,19 @@ class Usuario(SafeDeleteModel, AbstractUser):
     @property
     def show_name(self):
         return self.nome_usual if self.nome_usual is not None and self.nome_usual != "" else self.username
+
+    @property
+    def campus_sigla(self) -> str:
+        if self.last_json:
+            try:
+                dados_login = json.loads(self.last_json)
+                if isinstance(dados_login, dict) and dados_login.get("campus"):
+                    return dados_login.get("campus")
+            except json.JSONDecodeError:
+                logger.warning(f"Erro ao decodificar last_json para o usuário {self.username}")
+
+        # Se falhar, retorna vazio
+        return ""
 
     @property
     def theme_selected(self) -> str:
