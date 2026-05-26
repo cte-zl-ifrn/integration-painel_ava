@@ -88,7 +88,7 @@ class UsuarioAdmin(BaseModelAdmin):
     def auth(self, obj):
         result = "✅ " if obj.is_active else "❌ "
         result += _("Colaborador") if obj.is_staff else _("Usuário")
-        result += " " + _("superusuário") if obj.is_staff else ""
+        result += " " + _("superusuário") if obj.is_superuser else ""
         return result
 
     @display
