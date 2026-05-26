@@ -89,19 +89,17 @@ class UsuarioAdmin(BaseModelAdmin):
         result = "✅ " if obj.is_active else "❌ "
         result += _("Colaborador") if obj.is_staff else _("Usuário")
         result += " " + _("superusuário") if obj.is_staff else ""
-        return format_html(result)
+        return result
 
     @display
     def photo(self, obj):
-        return format_html(f'<img width="56" height="56" src="{obj.foto_url}" />')
+        return format_html('<img width="56" height="56" src="{}"/>', obj.foto)
 
     @display(description=_("Ações"))
     def acoes(self, obj):
-        if not obj.is_superuser:
-            url = reverse("a4:personificar", args=[obj.username])
-            result = f'<a href="{url}">Personificar</a>'
-        else:
-            result = "-"
-        return format_html(result)
+        if obj.is_superuser:
+            return ""
+
+        return format_html('<a href="{}">Personificar</a>', reverse("a4:personificar", args=[obj.username]))
 
     acoes.allow_tags = True
