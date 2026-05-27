@@ -48,7 +48,7 @@ def readiness(request: HttpRequest) -> JsonResponse:
 
 
 def force_fail(request: HttpRequest) -> HttpResponse:
-    1 / 0
+    raise Exception("Erro forçado para teste de monitoramento")
 
 
 def force_db_fail(request: HttpRequest) -> HttpResponse:
