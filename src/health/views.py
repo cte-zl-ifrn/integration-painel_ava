@@ -52,9 +52,6 @@ def force_fail(request: HttpRequest) -> HttpResponse:
 
 
 def force_db_fail(request: HttpRequest) -> HttpResponse:
-    # if not settings.DEBUG:
-    #     return HttpResponse("OK")
-
     connection.connect()
 
     return HttpResponse("Pare o banco para forçar o erro.")
