@@ -24,8 +24,6 @@ class BaseChangeList(ChangeList):
             args=(quote(pk),),
             current_app=self.model_admin.admin_site.name,
         )
-        pk = getattr(result, self.pk_attname)
-        return f"/foos/foo/{pk}/"
 
 
 class BaseModelAdmin(ImportExportMixin, ExportActionMixin, ModelAdmin):
@@ -65,14 +63,11 @@ class BaseModelAdmin(ImportExportMixin, ExportActionMixin, ModelAdmin):
         form = ModelForm(instance=obj)
         formsets, inline_instances = self._create_formsets(request, obj, change=True)
 
-        # form = self._get_form_for_get_fields(request, obj)
-        # return [*form.base_fields, *self.get_readonly_fields(request, obj)]
         readonly_fields = [*form.base_fields, *self.get_readonly_fields(request, obj)]
         admin_form = AdminForm(form, list(fieldsets), {}, readonly_fields, model_admin=self)
         media = self.media + admin_form.media
 
         inline_formsets = self.get_inline_formsets(request, formsets, inline_instances, obj)
-        # inline_formsets = []
         for inline_formset in inline_formsets:
             media += inline_formset.media
             inline_formset.readonly_fields = flatten_fieldsets(inline_formset.fieldsets)
