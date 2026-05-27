@@ -1,6 +1,9 @@
 import datetime
+import logging
 
 from sc4py.env import env, env_as_bool, env_as_list
+
+logger = logging.getLogger(__name__)
 
 APP_VERSION = "1.2.2"
 
@@ -42,13 +45,13 @@ THIRD_APPS = env_as_list(
 try:
     import django_extensions  # noqa F401
 except ImportError:
-    print("django_extensions not installed, removing from INSTALLED_APPS")
+    logger.warning("django_extensions not installed, removing from INSTALLED_APPS")
     THIRD_APPS.remove("django_extensions")
 
 try:
     import sass_processor  # noqa F401
 except ImportError:
-    print("sass_processor NOT INSTALLED, removing from INSTALLED_APPS")
+    logger.warning("sass_processor NOT INSTALLED, removing from INSTALLED_APPS")
     THIRD_APPS.remove("sass_processor")
 
 DJANGO_APPS = env_as_list(
