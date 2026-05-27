@@ -913,7 +913,7 @@ const app = Vue.createApp({
         },
 
         async userTour01() {
-            let completou_tour = false
+            let completou_tour = false;
             try {
                 const response = await fetch('get_tour_status/');
                 const data = await response.json();
