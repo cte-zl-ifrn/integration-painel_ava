@@ -91,11 +91,11 @@ class SuapBroker:
         }
 
         try:
-            user, created = Usuario.objects.update_or_create(
+            Usuario.objects.update_or_create(
                 username=user_data_mapping["username"], defaults=user_data_mapping
             )
         except Exception as e:
-            print("e", e)
+            logger.error(f"Erro ao salvar usuário: {e}")
             return
 
 
