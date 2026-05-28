@@ -51,13 +51,12 @@ def authenticate(request: HttpRequest) -> HttpResponse:
 
     def validate_request() -> None or HttpResponse:
         if "error" in request.GET:
-            if request.GET["error"] == "access_denied":
-                return render(request, "a4/not_authorized.html")
-            else:
-                return render(request, "a4/not_authorized.html")
-
+            return render(request, "a4/not_authorized.html")
+            
         if "code" not in request.GET:
-            return oauth_error("")
+            return oauth_error("Código de autorização ausente.")
+
+        return None
 
     def check_access_token() -> dict or HttpResponse:
         response_text = None
