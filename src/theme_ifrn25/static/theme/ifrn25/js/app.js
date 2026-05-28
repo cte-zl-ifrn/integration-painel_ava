@@ -8,7 +8,6 @@ const app = Vue.createApp({
     data() {
         return {
             enableFilters: window.PAGE_CONFIG?.enableFilters ?? true,
-            enableFilters: window.PAGE_CONFIG?.enableFilters ?? true,
             isBottom: window.INITIAL_SETTINGS.menuPosition === 'bottom',
             sidebarContracted: false,
             modalOpen: false,
@@ -914,7 +913,7 @@ const app = Vue.createApp({
         },
 
         async userTour01() {
-            let completou_tour = false
+            let completou_tour = false;
             try {
                 const response = await fetch('get_tour_status/');
                 const data = await response.json();

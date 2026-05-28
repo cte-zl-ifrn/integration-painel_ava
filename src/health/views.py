@@ -48,13 +48,10 @@ def readiness(request: HttpRequest) -> JsonResponse:
 
 
 def force_fail(request: HttpRequest) -> HttpResponse:
-    1 / 0
+    raise Exception("Erro forçado para teste de monitoramento")
 
 
 def force_db_fail(request: HttpRequest) -> HttpResponse:
-    # if not settings.DEBUG:
-    #     return HttpResponse("OK")
-
     connection.connect()
 
     return HttpResponse("Pare o banco para forçar o erro.")

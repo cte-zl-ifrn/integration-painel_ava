@@ -2,10 +2,10 @@
 from sc4py.env import env, env_as_bool, env_as_int
 
 if env("GTAG_CODE") is not None:
-    GTAG_CODE = env("GTAG_CODE")
+    GTAG_CODE = env("GTAG_CODE") # noqa
 
 if env("CLARITY_CODE") is not None:
-    CLARITY_CODE = env("CLARITY_CODE")
+    CLARITY_CODE = env("CLARITY_CODE") # noqa
 
 if env("SENTRY_DNS") is not None:
     import logging

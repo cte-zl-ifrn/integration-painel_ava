@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 from sc4py.env import env, env_as_bool, env_as_int, env_as_list
 
-# def cors_allow_mysites(sender, request, **kwargs):
-#     return False
-#     return MySite.objects.filter(host=request.headers["origin"]).exists()
-# check_request_enabled.connect(cors_allow_mysites)
-
-
 SECRET_KEY = env("DJANGO_SECRET_KEY", "#warning: changeme")
 LOGIN_URL = env("DJANGO_LOGIN_URL", "http://localhost:8092/login/")
 LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://localhost:8092/")

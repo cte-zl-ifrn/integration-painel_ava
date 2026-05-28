@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -34,7 +36,6 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if DEBUG and not TESTING_MODE:
     try:
         from debug_toolbar.toolbar import debug_toolbar_urls
-
         urlpatterns += debug_toolbar_urls()
     except ImportError:
-        pass
+        logging.warning("Debug toolbar não encontrado, ignorando carregamento.")
