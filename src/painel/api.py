@@ -46,6 +46,7 @@ def diarios(
             page=page,
             page_size=page_size,
         )
+    return api.create_response(request, {"message": "Método não permitido"}, status=405)
 
 
 @api.get("/atualizacoes_counts/")
@@ -68,6 +69,8 @@ def set_favourite(request: HttpRequest, response: HttpResponse, ava: str, course
     elif request.method == "GET":
         response["Access-Control-Allow-Origin"] = "*"
         return set_favourite_course(logged_user(request).username, ava, courseid, favourite)
+        
+    return api.create_response(request, {"message": "Método não permitido"}, status=405)
 
 
 @api.get("/set_visible/")
@@ -140,6 +143,8 @@ def set_user_preference_endpoint(
             )
 
         return JsonResponse({"status": "ok"})
+    
+    return api.create_response(request, {"message": "Método não permitido"}, status=405)
 
 
 @api.api_operation(["POST", "OPTIONS"], "/authenticate/")
@@ -172,6 +177,8 @@ def authenticate(request: HttpRequest, response: HttpResponse) -> dict:
             "data": user_data,
             "token": token,
         }
+    
+    return api.create_response(request, {"message": "Método não permitido"}, status=405)
 
 
 @api.api_operation(["POST", "OPTIONS"], "/verify/")
@@ -201,3 +208,5 @@ def verify(request: HttpRequest, response: HttpResponse) -> dict:
             error_response["Access-Control-Allow-Origin"] = "*"
             return error_response
         return {"username": username}
+    
+    return api.create_response(request, {"message": "Método não permitido"}, status=405)

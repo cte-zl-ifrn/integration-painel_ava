@@ -172,12 +172,12 @@ class Popup(ActiveMixin, Model):
         verbose_name_plural = _("popups")
         ordering = ["start_at", "titulo"]
 
-    def __str__(self):
-        return f"{self.titulo} - {self.active_icon}"
+    def clean(self):
+        if self.start_at and self.end_at and self.start_at > self.end_at:
+            raise ValidationError({"end_at": _("O término deve ser maior do que o início.")})
 
     def save(self, *args, **kwargs):
-        if self.start_at > self.end_at:
-            return ValidationError("O término deve ser maior do que o início.")
+        self.full_clean() 
         super().save(*args, **kwargs)
         cache.delete("popups")
 
