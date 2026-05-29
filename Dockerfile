@@ -7,10 +7,14 @@ ARG BASEIMAGE=6.0.5.32
 FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS development
 
 RUN uv pip uninstall --system dsgovbr
-RUN uv pip install --system \
-                    black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
-                    Werkzeug  django-debug-toolbar debugpy \
-                    libsass django-compressor django-sass-processor
+
+RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ make \
+    && uv pip install --system \
+        black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
+        Werkzeug django-debug-toolbar debugpy \
+        libsass django-compressor django-sass-processor \
+    && apt-get purge -y --auto-remove gcc g++ make \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY src /app/src
 WORKDIR /app/src
