@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name="tipo_usuario",
             field=models.CharField(
                 blank=True,
-                choices=a4.models.TipoUsuario.choices,
+                choices=a4.models.TipoUsuario,
                 max_length=2560,
                 null=True,
                 verbose_name="tipo",
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name="tipo_usuario",
             field=models.CharField(
                 blank=True,
-                choices=a4.models.TipoUsuario.choices,
+                choices=a4.models.TipoUsuario,
                 max_length=2560,
                 null=True,
                 verbose_name="tipo",

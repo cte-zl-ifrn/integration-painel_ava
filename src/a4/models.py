@@ -56,7 +56,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     nome_social = CharField(_("nome social"), max_length=2560, null=True, blank=True)
     nome_usual = CharField(_("nome de apresentação"), max_length=2560, null=True, blank=True)
     nome = CharField(_("nome no SUAP"), max_length=2560, null=True, blank=True)
-    tipo_usuario = CharField(_("tipo"), max_length=2560, choices=TipoUsuario.choices, null=True, blank=True)
+    tipo_usuario = CharField(_("tipo"), max_length=2560, choices=TipoUsuario, null=True, blank=True)
     foto = CharField(_("URL da foto"), max_length=2560, null=True, blank=True)
     email = EmailField(_("e-Mail preferêncial"), max_length=2560, null=True, blank=False)
     email_secundario = EmailField(_("e-Mail pessoal"), max_length=2560, null=True, blank=True)
