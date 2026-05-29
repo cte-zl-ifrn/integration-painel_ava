@@ -3,46 +3,44 @@ ARG BASEIMAGE=6.0.5.32
 #########################
 # 1. Base stage
 ########################################################################
-FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS base
+FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS build
 
-RUN uv pip uninstall --system dsgovbr || true
+COPY --chown=root:app src /app/src
 
-#########################
-# 2. Development stage
-########################################################################
-FROM base AS development
-
-RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ make \
-    && uv pip install --system \
-        black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
-        Werkzeug django-debug-toolbar debugpy \
-        libsass django-compressor django-sass-processor \
-    && apt-get purge -y --auto-remove gcc g++ make \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY src /app/src
 WORKDIR /app/src
 
-RUN mkdir -p /app/static \
-    && python manage.py compilescss \
-    && python manage.py collectstatic --noinput \
-    && ls -l /app/static \
-    && find /app -type d -name "__pycache__" -exec rm -rf {} + \
-    && find /usr/local/lib/python3.14/site-packages/ -type d -name "__pycache__" -exec rm -rf {} +
+RUN uv pip install --system \
+        django-compressor django-sass-processor
 
-USER app
-EXPOSE 8000
-CMD  ["python", "manage.py", "runserver_plus", "0.0.0.0:8000"]
+RUN python manage.py collectstatic --noinput -v 0 \
+    && find /app/static -type d -name "__pycache__" -exec rm -rf {} + \
+    && find /usr/local/lib/python3.14/site-packages/ -type d -name "__pycache__" -exec rm -rf {} + \
+    && ls -l /app/static
 
 
 #########################
-# 3. Production stage
+# 2. Production stage
 ########################################################################
-FROM base AS production
+FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS production
 
-COPY --chown=root:app --from=development /app /app
+COPY --chown=root:app --from=build /app /app
 
 USER app
 EXPOSE 8000
 WORKDIR /app/src
 CMD  ["gunicorn"]
+
+
+#########################
+# 3. Development stage
+########################################################################
+FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS development
+
+RUN uv pip install --system \
+        django-compressor django-sass-processor \
+        black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
+        Werkzeug django-debug-toolbar debugpy
+
+USER app
+EXPOSE 8000
+CMD  ["python", "manage.py", "runserver_plus", "0.0.0.0:8000"]
