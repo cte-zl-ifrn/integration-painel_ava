@@ -40,10 +40,13 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          target: production
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.MAIN_IMAGE }}:${{ github.event.release.tag_name || 'latest' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     needs: publish-docker
