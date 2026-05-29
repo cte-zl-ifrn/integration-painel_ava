@@ -75,5 +75,6 @@ jobs:
           ssh root@${{ secrets.K8S_HOST }} "
             helm upgrade --install painel /tmp/painel-chart \
               --namespace ava \
-              --set image.repository=${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }}
+              --set image.repository=${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }} \
+              --set image.tag=${{github.event.release.tag_name}}
           "
