@@ -28,7 +28,9 @@ COPY --chown=root:app --from=build /app /app
 USER app
 EXPOSE 8000
 WORKDIR /app/src
-CMD  ["gunicorn"]
+ENTRYPOINT []
+
+CMD ["gunicorn", "painel.wsgi:application", "--bind", "0.0.0.0:8000"]
 
 
 #########################
