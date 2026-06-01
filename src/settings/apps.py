@@ -5,7 +5,7 @@ from sc4py.env import env, env_as_bool, env_as_list
 
 logger = logging.getLogger(__name__)
 
-APP_VERSION = "1.0.75"
+APP_VERSION = "1.0.76"
 
 LAST_STARTUP = int(datetime.datetime.timestamp(datetime.datetime.now()) * 1000)
 
