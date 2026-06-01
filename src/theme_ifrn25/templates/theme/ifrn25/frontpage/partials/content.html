@@ -19,7 +19,6 @@
     </div>
 
     <div class="content">
-        <!-- MODAIS CONTINUAM EXATAMENTE IGUAIS -->
         <div class="sidebar-modal" :class="{'open': modalOpen}">
             <div class="modal-content" :class="'modal-' + modalType">
 
@@ -40,7 +39,6 @@
                 </div>
 
                 <div class="modal-content-header-messages" v-if="messagesModalOpen">
-                    <!-- Conteúdo do modal de mensagens mantido... -->
                     <div class="modal-content-header-messages-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" v-model="messageSearchQuery" placeholder="Pesquisar..." class="modal-content-header-messages-search-input" />
@@ -67,15 +65,12 @@
             </div>
         </div>
 
-        <!-- 2. CONTEÚDO DAS ABAS (Onde a mágica acontece) -->
         <div class="tab-content">
 
-            <!-- Cria um painel dinâmico para CADA aba visível -->
             <div class="tab-pane" v-for="tabItem in visibleTabs" :key="tabItem.key"
                  :class="{ active: activeTabKey === tabItem.key }"
                  v-show="activeTabKey === tabItem.key">
 
-                <!-- EXCEÇÃO A: Backup/Reutilizáveis têm um layout muito específico -->
                 <div v-if="tabItem.key === 'reutilizaveis'">
                     <div class="card-container" v-if="salasPorCategoria['reutilizaveis']?.length > 0">
                         <div class="card" v-for="item in salasPorCategoria['reutilizaveis']" :key="item.id">
@@ -95,15 +90,11 @@
                     </div>
                 </div>
 
-                <!-- EXCEÇÃO B: Autoinscrições usam um container próprio -->
                 <div v-else-if="tabItem.key === 'autoinscricoes'">
                     {% include "theme/ifrn25/frontpage/partials/modals/card-container-autoinscricoes.html" with list_name="salasPorCategoria['autoinscricoes']" list_gender="o" %}
                 </div>
 
-                <!-- PADRÃO: Diários, Coordenações, Práticas, Projetos... -->
                 <div v-else>
-                    <!-- Truque genial: Passamos "salasPorCategoria[tabItem.key]" para o Django.
-                         Quando o Django compilar a página, o Vue.js vai ler a string resultante e montar a aba correta! -->
                     {% include "theme/ifrn25/frontpage/partials/modals/card-container.html" with list_name="salasPorCategoria[tabItem.key]" list_gender="o" %}
                 </div>
 

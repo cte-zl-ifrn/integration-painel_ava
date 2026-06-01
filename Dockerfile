@@ -47,6 +47,8 @@ RUN uv pip install --system \
         black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
         Werkzeug django-debug-toolbar debugpy
 
+WORKDIR /app/src
+
 USER app
 EXPOSE 8000
 CMD  ["python", "manage.py", "runserver_plus", "0.0.0.0:8000"]
