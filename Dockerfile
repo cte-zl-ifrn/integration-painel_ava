@@ -3,14 +3,19 @@ ARG BASEIMAGE=6.0.5.32
 #########################
 # 1. Base stage
 ########################################################################
-FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS build
-
-COPY --chown=root:app src /app/src
-
-WORKDIR /app/src
+FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS base
 
 RUN uv pip install --system \
         django-compressor django-sass-processor
+
+
+#########################
+# 2. Build stage
+########################################################################
+FROM base AS build
+
+COPY --chown=root:app src /app/src
+WORKDIR /app/src
 
 RUN python manage.py collectstatic --noinput -v 0 \
     && find /app/static -type d -name "__pycache__" -exec rm -rf {} + \
@@ -19,9 +24,9 @@ RUN python manage.py collectstatic --noinput -v 0 \
 
 
 #########################
-# 2. Production stage
+# 3. Production stage
 ########################################################################
-FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS production
+FROM base AS production
 
 COPY --chown=root:app --from=build /app /app
 
@@ -30,16 +35,15 @@ EXPOSE 8000
 WORKDIR /app/src
 ENTRYPOINT []
 
-CMD ["gunicorn", "painel.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn"]
 
 
 #########################
-# 3. Development stage
+# 4. Development stage (Ferramentas locais)
 ########################################################################
-FROM ctezlifrn/avaintegrationbase:$BASEIMAGE AS development
+FROM base AS development
 
 RUN uv pip install --system \
-        django-compressor django-sass-processor \
         black ruff doc8 pytest pytest-cov python-dotenv pytest-coverage-gate pytest-django \
         Werkzeug django-debug-toolbar debugpy
 

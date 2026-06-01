@@ -1,7 +1,7 @@
 import multiprocessing
 import os
 
-from sc4py.envs import env_as_bool
+from sc4py.env import env_as_bool
 
 wsgi_app = "wsgi:application"
 bind_port = os.getenv("VIRTUAL_PORT", "8000")
