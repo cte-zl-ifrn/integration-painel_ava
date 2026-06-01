@@ -246,7 +246,6 @@
                     display: none;
                     flex-direction: column;
                     min-height: 0;
-                    overflow: hidden;
 
                     .no-data {
                         margin-top: 2rem;
