@@ -29,7 +29,7 @@ data:
   # ======================
   # Static & Frontend
   # ======================
-  DJANGO_STATIC_URL: "https://ava-painel-statics.pages.dev/"
+  #DJANGO_STATIC_URL: "https://ava-painel-statics.pages.dev/"
 
   # ======================
   # OAuth (SUAP)

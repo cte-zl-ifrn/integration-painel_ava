@@ -2,7 +2,7 @@ replicaCount: 3
 
 image:
   repository: ctezlifrn/avapainel
-  tag: producao
+  tag: 1.0.74
   pullPolicy: Always
 
 securityContext:
@@ -11,7 +11,7 @@ securityContext:
 service:
   type: ClusterIP
   port: 80
-  targetPort: 80
+  targetPort: 8000
 
 vault:
   enabled: true
