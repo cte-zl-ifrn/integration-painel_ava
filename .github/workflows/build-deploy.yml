@@ -1,9 +1,12 @@
 name: Pipeline - Painel AVA
 
 on:
+  push:
+    branches:
+      - main
   release:
     types: [published]
-  workflow_dispatch: # Mantido aqui apenas caso precise rodar manualmente pelo painel do GitHub
+  workflow_dispatch:
 
 env:
   MAIN_IMAGE: ctezlifrn/avapainel
@@ -11,14 +14,14 @@ env:
 jobs:
   publish-docker:
     runs-on: ubuntu-latest
+    if: |
+      startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     permissions:
       id-token: write
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.release.tag_name || github.ref_name }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -29,6 +32,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v4
         with:
+          registry: ${{ vars.DOCKERHUB_HOST }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
@@ -41,19 +45,21 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ env.MAIN_IMAGE }}:${{ github.event.release.tag_name || github.ref_name }}
+            ${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }}:${{ github.ref_name }}
 
-  deploy:
-    needs: publish-docker
-    permissions:
-      contents: read
+  deploy-to-test:
     runs-on: [self-hosted, runner-dead]
+    needs: publish-docker
+    # Filtra estritamente para rodar apenas se a tag terminar com '-test'
+    if: |
+      always() && needs.publish-docker.result == 'success' &&
+      startsWith(github.ref, 'refs/tags/') && endsWith(github.ref_name, '-test')
     environment:
-      name: production
+      name: test
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup known_hosts
         run: |
@@ -67,12 +73,40 @@ jobs:
 
       - name: Executar Upgrade no Helm
         run: |
-          # Captura a tag da release atual ou o nome da branch/tag se rodado manualmente
-          TARGET_TAG="${{ github.event.release.tag_name || github.ref_name }}"
-          
           ssh root@${{ secrets.K8S_HOST }} "
             helm upgrade --install painel /tmp/painel-chart \
               --namespace ava \
               --set image.repository=${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }} \
-              --set image.tag=${TARGET_TAG}
+              --set image.tag=${{ github.ref_name }}
           "
+
+  deploy-to-prod:
+    runs-on: [self-hosted, runner-dead]
+    needs: publish-docker
+    # Filtra estritamente para rodar se for uma tag que NÃO possui o sufixo '-test'
+    if: |
+      always() && needs.publish-docker.result == 'success' &&
+      startsWith(github.ref, 'refs/tags/') && !endsWith(github.ref_name, '-test')
+    environment:
+      name: production
+    strategy:
+      fail-fast: false # Se falhar em um servidor, continua no outro
+      matrix:
+        host: [ "${{ vars.PROD_HOST_1 }}", "${{ vars.PROD_HOST_2 }}" ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ matrix.host }} >> ~/.ssh/known_hosts
+
+      - name: Executar Upgrade via Docker Compose em ${{ matrix.host }}
+        run: |
+          # 1. Atualiza a tag da imagem no docker-compose.yml
+          ssh root@${{ matrix.host }} "sed -i 's|image: ctezlifrn/avapainel:.*|image: ctezlifrn/avapainel:${{ github.ref_name }}|g' /var/dockers/docker-compose.yml"
+          
+          # 2. Faz o pull da nova imagem, derruba o container antigo e sobe o novo
+          ssh root@${{ matrix.host }} "cd /var/dockers && docker compose pull painel && docker compose down painel && docker compose up -d painel"
