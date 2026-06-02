@@ -49,6 +49,7 @@ logging.config.dictConfig(
             **{"WSGIRequestHandler": {"level": "WARNING"}},
             **{"staticfiles": {"level": "WARNING"}},
             **{"urllib3_logger": {"level": "WARNING"}},
+            **{"urllib3.connectionpool": {"level": "WARNING"}},
             **{app: {"level": "DEBUG"} for app in INSTALLED_APPS},
         ),
     }
