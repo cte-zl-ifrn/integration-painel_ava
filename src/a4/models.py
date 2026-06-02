@@ -209,14 +209,30 @@ class Usuario(SafeDeleteModel, AbstractUser):
 
     @property
     def contexto(self) -> dict:
-        """Lê o 'last_json' e a lista de 'vinculos' para montar um dicionário de contexto."""
+        """Lê o 'last_json' e a lista de 'outras_matriculas' para montar um dicionário de contexto."""
         try:
             last_json = json.loads(self.last_json) or {}
         except Exception as e:
             sentry_sdk.capture_exception(e)
             last_json = {}
-        last_json["vinculos"] = (self.vinculos or {}).get("results", [])
+            
+        matriculas = (self.vinculos or {}).get("results", [])
+        
+        # Garante que as chaves existam para evitar que a regra quebre com valores nulos
+        for m in matriculas:
+            if not m.get("detalhamento"):
+                m["detalhamento"] = {}
+                
+            m["detalhamento"].setdefault("nivel_ensino", "")
+            m["detalhamento"].setdefault("modalidade", "")
+            m["detalhamento"].setdefault("curso", "")
+            m.setdefault("campus", "")
+            m.setdefault("tipo", "")
+            m.setdefault("estrangeiro", False)
+            
+        last_json["outras_matriculas"] = matriculas
         return last_json
+
 
     def check_autoinscricao(self, regra: str) -> bool:
         try:
@@ -227,12 +243,18 @@ class Usuario(SafeDeleteModel, AbstractUser):
             return False
 
         try:
-            return rule.matches(self.contexto)
+            resultado = rule.matches(self.contexto)
+            
+            if resultado:
+                logger.info(f"Usuário {self.username} PASSOU na regra {regra}")
+            else:
+                logger.info(f"Usuário {self.username} FOI BLOQUEADO na regra {regra}")
+                
+            return resultado
+            
         except Exception as e:
-            logger.error(f"Usuário {self.username} não passou na regra {regra}: {e}")
+            logger.error(f"Erro ao avaliar regra para {self.username}: {e}")
             return False
-        finally:
-            logger.error(f"Usuário {self.username} PASSOU na regra {regra}")
 
 
 class UsuarioAnonimo:
