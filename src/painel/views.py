@@ -2,7 +2,6 @@ import json
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -186,15 +185,11 @@ def enrol_course(request, id_ambiente, id_curso):
         firstname=primeiro_nome,
         lastname=ultimo_nome,
         email=email,
-        campus=campus_sigla_usuario
+        campus=campus_sigla_usuario,
     )
 
     if not response:
         return JsonResponse({"status": "error", "message": "Falha de comunicação com o AVA."}, status=500)
-
-    keys = cache.get("keys") or []
-    for v in keys:
-        cache.delete(v)
 
     return JsonResponse(response)
 
@@ -212,9 +207,5 @@ def unenrol_course(request, id_ambiente, id_curso):
             {"status": "error", "message": "Falha de comunicação com o AVA ao tentar suspender a matrícula."},
             status=500,
         )
-
-    keys = cache.get("keys") or []
-    for v in keys:
-        cache.delete(v)
 
     return JsonResponse(response)
