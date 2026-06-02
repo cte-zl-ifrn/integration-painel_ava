@@ -1,6 +1,8 @@
 import json
 import logging
 
+import rule_engine
+import sentry_sdk
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.auth.models import Group as OrignalGroup
@@ -204,6 +206,33 @@ class Usuario(SafeDeleteModel, AbstractUser):
                 logger.debug(f"colocando no cache o usuário: {username}")
                 cache.set(userkey, user)
         return user
+
+    @property
+    def contexto(self) -> dict:
+        """Lê o 'last_json' e a lista de 'vinculos' para montar um dicionário de contexto."""
+        try:
+            last_json = json.loads(self.last_json) or {}
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            last_json = {}
+        last_json["vinculos"] = (self.vinculos or {}).get("results", [])
+        return last_json
+
+    def check_autoinscricao(self, regra: str) -> bool:
+        try:
+            rule = rule_engine.Rule(regra)
+        except Exception as e:
+            logger.error(f"Regra inválida: {e}. {regra}")
+            sentry_sdk.capture_exception(e)
+            return False
+
+        try:
+            return rule.matches(self.contexto)
+        except Exception as e:
+            logger.error(f"Usuário {self.username} não passou na regra {regra}: {e}")
+            return False
+        finally:
+            logger.error(f"Usuário {self.username} PASSOU na regra {regra}")
 
 
 class UsuarioAnonimo:
