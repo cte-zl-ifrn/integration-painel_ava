@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Union
 import requests
 import sentry_sdk
 from django.conf import settings
-from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
@@ -40,8 +39,6 @@ CODIGO_COORDENACAO_SUFIXO_INDEX = 2
 CODIGO_PRATICA_REGEX = re.compile("^(\\d\\d\\d\\d\\d)\\.(\\d*)\\.(\\d*)\\.(.*)\\.(\\d{11,14}\\d*)$")
 CODIGO_PRATICA_ELEMENTS_COUNT = 5
 CODIGO_PRATICA_SUFIXO_INDEX = 4
-
-CURSOS_CACHE = {}
 
 CHANGE_URL = re.compile("/course/view.php\\?")
 
@@ -245,17 +242,6 @@ def get_diarios(
         sortedlist = sorted(deduplicated, key=lambda e: e["label"], reverse=reverse)
         return sortedlist
 
-    cache_key = (
-        f"get_diarios:{username.lower()}:{semestre}:{situacao}:{disciplina}:{curso}:{ambiente}:{q}:{page}:{page_size}"
-    )
-
-    results = cache.get(cache_key, None)
-    if results is not None and not settings.DEBUG:
-        logger.debug("Results cache hit")
-        return results
-    else:
-        logger.debug("Results cache miss")
-
     has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()
     ambientes = [ava for ava in Ambiente.cached() if (has_ambiente and int(ambiente) == ava.id) or not has_ambiente]
     logger.debug(f"Ambientes selecionados para consulta: {[a.moodle_base_api_url for a in ambientes]}")
@@ -341,9 +327,6 @@ def get_diarios(
         }
         for x in ArquivoBackup.objects.filter(donoarquivobackup__dono_backup__username=username)
     ]
-
-    cache.set(cache_key, results)
-    logger.debug("Putting cache entry for get_diarios")
 
     return results
 
