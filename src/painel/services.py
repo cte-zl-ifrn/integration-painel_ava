@@ -85,7 +85,7 @@ def get_json_api(ava: Ambiente, service: str, **params: dict):
     url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
     try:
         return get_json(url, headers={"Authentication": f"Token {ava.token}"})
-    except requests.exceptions.RequestException:
+    except (requests.exceptions.RequestException, HTTPException):
         return None
 
 
