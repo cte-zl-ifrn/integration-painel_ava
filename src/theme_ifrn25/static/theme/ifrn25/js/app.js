@@ -732,7 +732,8 @@ const app = Vue.createApp({
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                alert("Erro de comunicação com o servidor.");
+                const message = error.response?.data?.message || "Erro de comunicação com o servidor.";
+                alert(message);
             } finally {
                 this.loading = false;
             }
@@ -757,6 +758,8 @@ const app = Vue.createApp({
                 }
             } catch (error) {
                 console.error('Erro:', error);
+                const message = error.response?.data?.message || "Erro de comunicação com o servidor.";
+                alert(message);
             } finally {
                 this.loading = false;
             }
@@ -791,7 +794,8 @@ const app = Vue.createApp({
                     }
                 } catch (error) {
                     console.error('Erro:', error);
-                    alert("Erro de comunicação com o servidor ao cancelar a matrícula.");
+                    const message = error.response?.data?.message || "Erro de comunicação com o servidor ao cancelar a matrícula.";
+                    alert(message);
                 } finally {
                     this.loading = false;
                 }
@@ -1074,7 +1078,7 @@ const app = Vue.createApp({
                         },
                     },
                 ];
-                if (this.diarios.length > 0) {
+                if (this.diarios && this.diarios.length > 0) {
                     steps.splice(1, 0, {
                         element: ".text-decoration-none",
                         title: "Sua sala de aula",
