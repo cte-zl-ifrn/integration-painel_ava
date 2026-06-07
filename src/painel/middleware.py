@@ -4,6 +4,7 @@ import psycopg
 import psycopg_pool
 from django.conf import settings
 from django.contrib import auth
+from django.core.exceptions import DisallowedHost, SuspiciousOperation
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 
@@ -108,6 +109,16 @@ class ExceptionMiddleware:
                 return HttpResponse("Erro de conexão com o banco!")
             if isinstance(e, psycopg.errors.Error):
                 return HttpResponse("Erro de conexão com o banco!")
+            if isinstance(e, DisallowedHost):
+                from django.template import loader
+                try:
+                    template = loader.get_template("400_disallowed_host.html")
+                    content = template.render()
+                    return HttpResponse(content, status=400)
+                except Exception:
+                    return HttpResponse("Acesso não permitido (Disallowed Host)", status=400)
+            if isinstance(e, SuspiciousOperation):
+                raise
             logger.exception("Unhandled exception in ExceptionMiddleware")
             return HttpResponse("Erro interno do servidor!", status=500)
 
