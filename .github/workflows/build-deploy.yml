@@ -44,8 +44,7 @@ jobs:
           target: production
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }}:${{ github.ref_name }}
+          tags: ${{ env.MAIN_IMAGE }}:${{ github.ref_name }}
 
   deploy-to-test:
     runs-on: [self-hosted, runner-dead]
