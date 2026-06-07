@@ -4,6 +4,7 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 from a4.models import Usuario, logged_user
@@ -22,6 +23,7 @@ def __get_theme_prefix(request: HttpRequest) -> str:
 
 
 @login_required
+@ensure_csrf_cookie
 def dashboard(request: HttpRequest) -> HttpResponse:
     abas_db = ConfiguracaoAba.objects.all()
 
@@ -126,6 +128,7 @@ def get_tour_status(request: HttpRequest) -> HttpResponse:
     return JsonResponse({"completed_tour": completed})
 
 
+@ensure_csrf_cookie
 def curso_detalhes(request, id_ambiente, id_curso):
     ambiente = get_object_or_404(Ambiente, id=id_ambiente)
 
