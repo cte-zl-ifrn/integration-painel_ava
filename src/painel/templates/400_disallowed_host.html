@@ -1,0 +1,15 @@
+{% extends "a4/base_error.html" %}
+
+{% block page_title %}Acesso Não Permitido{% endblock page_title %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">
+        <strong>Host Não Permitido (Disallowed Host)</strong>
+    </div>
+    <p>
+        O endereço de host que você tentou utilizar não está configurado na lista de hosts permitidos (<code>ALLOWED_HOSTS</code>) deste servidor.
+    </p>
+    <div class="buttons">
+        <a class="btn btn-secondary" href="javascript:history.back()">Voltar</a>
+    </div>
+{% endblock content %}
