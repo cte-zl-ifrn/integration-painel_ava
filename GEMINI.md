@@ -19,5 +19,10 @@ This file helps Gemini understand our project's conventions and settings.
 ## How to Run Tests
 
 ```bash
-pytest
+sas test painel
 ```
+
+## How to use Docker Compose
+
+In this project we use `sas` as short to `docker compose`.
+
