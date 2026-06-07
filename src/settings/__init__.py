@@ -7,6 +7,7 @@ from settings.internationalizations import *  # noqa
 from settings.loggings import *  # noqa
 from settings.middlewares import *  # noqa
 from settings.observabilities import *  # noqa
+from settings.project import *  # noqa
 from settings.routings import *  # noqa
 from settings.sass import *  # noqa
 from settings.sessions import *  # noqa
