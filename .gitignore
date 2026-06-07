@@ -107,3 +107,4 @@ venv.bak/
 .idea
 confs/enabled/
 volumes/
+src/junit.xml
