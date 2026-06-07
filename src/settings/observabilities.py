@@ -16,7 +16,7 @@ if env("SENTRY_DNS") is not None:
     from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
     from sentry_sdk.integrations.redis import RedisIntegration
 
-    from .apps import APP_VERSION
+    from settings.project import APP_VERSION
 
     SENTRY_SETTINGS = dict(
         dsn=env("SENTRY_DNS"),
