@@ -20,11 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 def _post(*args, **kwargs) -> requests.Response:
-    return requests.post(*args, verify=settings.OAUTH["VERIFY_SSL"], timeout=2, **kwargs)
+    return requests.post(*args, verify=settings.OAUTH["VERIFY_SSL"], timeout=settings.DEFAULT_HTTP_TIMEOUT, **kwargs)
 
 
 def _get(*args, **kwargs) -> requests.Response:
-    return requests.get(*args, verify=settings.OAUTH["VERIFY_SSL"], timeout=2, **kwargs)
+    return requests.get(*args, verify=settings.OAUTH["VERIFY_SSL"], timeout=settings.DEFAULT_HTTP_TIMEOUT, **kwargs)
 
 
 def login(request: HttpRequest) -> HttpResponse:

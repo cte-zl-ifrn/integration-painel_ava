@@ -55,7 +55,7 @@ def _filtrar_autoinscricoes(autoinscricoes: list, username_logado: str) -> list:
 
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):
-    response = requests.get(url, headers=headers, timeout=2, **kwargs)
+    response = requests.get(url, headers=headers, timeout=settings.DEFAULT_HTTP_TIMEOUT, **kwargs)
     byte_array_content = response.content
     content = byte_array_content.decode(encoding) if decode and encoding is not None else byte_array_content
     if response.ok:
