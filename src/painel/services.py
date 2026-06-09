@@ -103,87 +103,87 @@ def get_diarios(
 
     CHAVES_ESTATICAS = ["semestres", "disciplinas", "cursos", "ambientes", "autoinscricoes", "reutilizaveis"]
 
+    def _merge_course(diario: dict, ambiente: dict):
+        # ========== 1. DADOS NOVOS (CUSTOM FIELDS) ==========
+        co_curso = diario.get("curso_codigo")
+        turma_nova = diario.get("turma_ano_periodo")
+        componente_novo = diario.get("disciplina_sigla")
+        id_diario_novo = diario.get("diario_id")
+
+        # ========== 2. FALLBACK LEGADO (RegEx) ==========
+        codigo = diario.get("shortname", "")
+        diario_re = CODIGO_DIARIO_REGEX.findall(codigo)
+        coordenacao_re = CODIGO_COORDENACAO_REGEX.findall(codigo)
+        pratica_re = CODIGO_PRATICA_REGEX.findall(codigo)
+
+        # --- CURSO ---
+        if not co_curso:
+            if diario_re and len(diario_re[0]) > CODIGO_DIARIO_CURSO_INDEX:
+                co_curso = diario_re[0][CODIGO_DIARIO_CURSO_INDEX]
+            elif pratica_re and len(pratica_re[0]) > CODIGO_DIARIO_CURSO_INDEX:
+                co_curso = pratica_re[0][CODIGO_DIARIO_CURSO_INDEX]
+            elif coordenacao_re and len(coordenacao_re[0]) > CODIGO_COORDENACAO_CURSO_INDEX:
+                co_curso = coordenacao_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
+
+        if co_curso:
+            curso_bd = next(iter(Curso.cached_by_codigos([co_curso])), None)
+            if curso_bd is not None:
+                diario["curso"] = {"codigo": curso_bd.codigo, "nome": curso_bd.nome}
+            else:
+                diario["curso"] = {"codigo": co_curso, "nome": diario.get("curso_descricao") or f"Curso {co_curso}"}
+        else:
+            diario["curso"] = {"codigo": "", "nome": diario.get("curso_descricao") or "Curso Desconhecido"}
+
+        # --- TURMA ---
+        if turma_nova:
+            diario["turma"] = turma_nova
+        elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
+            diario["turma"] = ".".join(diario_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
+        elif pratica_re and len(pratica_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
+            diario["turma"] = ".".join(pratica_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
+
+        # --- COMPONENTE ---
+        if componente_novo:
+            diario["componente"] = componente_novo
+        elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_DISCIPLINA_INDEX:
+            diario["componente"] = diario_re[0][CODIGO_DIARIO_DISCIPLINA_INDEX]
+        elif pratica_re and len(pratica_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
+            diario["componente"] = pratica_re[0][CODIGO_PRATICA_SUFIXO_INDEX]
+
+        # --- ID DO DIÁRIO ---
+        if id_diario_novo:
+            diario["id_diario"] = str(id_diario_novo)
+            diario["id_diario_clean"] = int(id_diario_novo) if str(id_diario_novo).isnumeric() else None
+        elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_ID_DIARIO_INDEX:
+            id_diario_hash = diario_re[0][CODIGO_DIARIO_ID_DIARIO_INDEX]
+            diario["id_diario"] = id_diario_hash
+            diario["id_diario_clean"] = int(id_diario_hash[1:]) if id_diario_hash else None
+
+        # ========== 3. URLs EXTRAS ==========
+        def _merge_extra_urls(diario: dict, ava: dict):
+            id_diario = diario.get("id_diario_clean", None)
+
+            if diario.get("can_set_visibility") and id_diario:
+                diario["can_check_grades"] = True
+                diario["checkgradesurl"] = reverse(
+                    "painel:checkgrades", kwargs={"id_ambiente": ava["ambiente"]["id"], "id_diario": id_diario}
+                )
+                diario["mensagemurl"] = f"{settings.OAUTH['BASE_URL']}/edu/enviar_mensagem/?diario={id_diario}"
+
+            if id_diario:
+                diario["suapsurl"] = f"{settings.OAUTH['BASE_URL']}/edu/meu_diario/{id_diario}/1/"
+                if diario.get("can_set_visibility"):
+                    diario["gradesurl"] = re.sub("/course/view", "/grade/report/grader/index", diario["viewurl"])
+                else:
+                    diario["gradesurl"] = re.sub("/course/view", "/grade/report/overview/index", diario["viewurl"])
+
+        if diario.get("id_diario_clean"):
+            _merge_extra_urls(diario, ambiente)
+
+        return {**diario, **ambiente}
+
     def _get_diarios(params: Dict[str, Any]):
         logger.debug(f"Consultando API do Moodle para o ambiente {params['ambiente'].nome} com os parâmetros: {params}")
-
-        def _merge_course(diario: dict, ambiente: dict):
-            # ========== 1. DADOS NOVOS (CUSTOM FIELDS) ==========
-            co_curso = diario.get("curso_codigo")
-            turma_nova = diario.get("turma_ano_periodo")
-            componente_novo = diario.get("disciplina_sigla")
-            id_diario_novo = diario.get("diario_id")
-
-            # ========== 2. FALLBACK LEGADO (RegEx) ==========
-            codigo = diario.get("shortname", "")
-            diario_re = CODIGO_DIARIO_REGEX.findall(codigo)
-            coordenacao_re = CODIGO_COORDENACAO_REGEX.findall(codigo)
-            pratica_re = CODIGO_PRATICA_REGEX.findall(codigo)
-
-            # --- CURSO ---
-            if not co_curso:
-                if diario_re and len(diario_re[0]) > CODIGO_DIARIO_CURSO_INDEX:
-                    co_curso = diario_re[0][CODIGO_DIARIO_CURSO_INDEX]
-                elif pratica_re and len(pratica_re[0]) > CODIGO_DIARIO_CURSO_INDEX:
-                    co_curso = pratica_re[0][CODIGO_DIARIO_CURSO_INDEX]
-                elif coordenacao_re and len(coordenacao_re[0]) > CODIGO_COORDENACAO_CURSO_INDEX:
-                    co_curso = coordenacao_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
-
-            if co_curso:
-                curso_bd = next(iter(Curso.cached_by_codigos([co_curso])), None)
-                if curso_bd is not None:
-                    diario["curso"] = {"codigo": curso_bd.codigo, "nome": curso_bd.nome}
-                else:
-                    diario["curso"] = {"codigo": co_curso, "nome": diario.get("curso_descricao") or f"Curso {co_curso}"}
-            else:
-                diario["curso"] = {"codigo": "", "nome": diario.get("curso_descricao") or "Curso Desconhecido"}
-
-            # --- TURMA ---
-            if turma_nova:
-                diario["turma"] = turma_nova
-            elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
-                diario["turma"] = ".".join(diario_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
-            elif pratica_re and len(pratica_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
-                diario["turma"] = ".".join(pratica_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
-
-            # --- COMPONENTE ---
-            if componente_novo:
-                diario["componente"] = componente_novo
-            elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_DISCIPLINA_INDEX:
-                diario["componente"] = diario_re[0][CODIGO_DIARIO_DISCIPLINA_INDEX]
-            elif pratica_re and len(pratica_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
-                diario["componente"] = pratica_re[0][CODIGO_PRATICA_SUFIXO_INDEX]
-
-            # --- ID DO DIÁRIO ---
-            if id_diario_novo:
-                diario["id_diario"] = str(id_diario_novo)
-                diario["id_diario_clean"] = int(id_diario_novo) if str(id_diario_novo).isnumeric() else None
-            elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_ID_DIARIO_INDEX:
-                id_diario_hash = diario_re[0][CODIGO_DIARIO_ID_DIARIO_INDEX]
-                diario["id_diario"] = id_diario_hash
-                diario["id_diario_clean"] = int(id_diario_hash[1:]) if id_diario_hash else None
-
-            # ========== 3. URLs EXTRAS ==========
-            def _merge_extra_urls(diario: dict, ava: dict):
-                id_diario = diario.get("id_diario_clean", None)
-
-                if diario.get("can_set_visibility") and id_diario:
-                    diario["can_check_grades"] = True
-                    diario["checkgradesurl"] = reverse(
-                        "painel:checkgrades", kwargs={"id_ambiente": ava["ambiente"]["id"], "id_diario": id_diario}
-                    )
-                    diario["mensagemurl"] = f"{settings.OAUTH['BASE_URL']}/edu/enviar_mensagem/?diario={id_diario}"
-
-                if id_diario:
-                    diario["suapsurl"] = f"{settings.OAUTH['BASE_URL']}/edu/meu_diario/{id_diario}/1/"
-                    if diario.get("can_set_visibility"):
-                        diario["gradesurl"] = re.sub("/course/view", "/grade/report/grader/index", diario["viewurl"])
-                    else:
-                        diario["gradesurl"] = re.sub("/course/view", "/grade/report/overview/index", diario["viewurl"])
-
-            if diario.get("id_diario_clean"):
-                _merge_extra_urls(diario, ambiente)
-
-            return {**diario, **ambiente}
 
         try:
             ambiente = params["ambiente"]
@@ -195,7 +195,7 @@ def get_diarios(
                 }
             }
 
-            querystrings = {k: v for k, v in params.items() if k not in ["ambiente", "results"]}
+            querystrings = {k: v for k, v in params.items() if k not in ["ambiente", "results"] and str(v).strip() !=""}
 
             if "q" in querystrings:
                 querystrings["q"] = urllib.parse.quote(querystrings["q"])
