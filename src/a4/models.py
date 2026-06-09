@@ -172,7 +172,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     def zoom_level(self) -> int:
         try:
             return int(self.settings.get("accessibility", {}).get("zoom_level", 100))
-        except AttributeError, ValueError, TypeError:
+        except (AttributeError, ValueError, TypeError):
             return 100
 
     @property
@@ -215,17 +215,24 @@ class Usuario(SafeDeleteModel, AbstractUser):
         except Exception as e:
             sentry_sdk.capture_exception(e)
             last_json = {}
-            
-        matriculas = (self.vinculos or {}).get("results", [])
+        
+        vinc = self.vinculos if isinstance(self.vinculos, dict) else {}
+        matriculas = vinc.get("results", [])
         
         # Garante que as chaves existam para evitar que a regra quebre com valores nulos
         for m in matriculas:
+            # Se o SUAP mandar "detalhamento": null
             if not m.get("detalhamento"):
                 m["detalhamento"] = {}
                 
             m["detalhamento"].setdefault("nivel_ensino", "")
             m["detalhamento"].setdefault("modalidade", "")
             m["detalhamento"].setdefault("curso", "")
+            
+            # Evita o crash no rule_engine.
+            if m["detalhamento"].get("ativo") is None:
+                m["detalhamento"]["ativo"] = False
+                
             m.setdefault("campus", "")
             m.setdefault("tipo", "")
             m.setdefault("estrangeiro", False)
