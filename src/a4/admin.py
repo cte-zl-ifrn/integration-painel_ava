@@ -5,6 +5,8 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
+from django.conf import settings
+
 
 from base.admin import BaseModelAdmin
 
@@ -73,14 +75,8 @@ class UsuarioAdmin(BaseModelAdmin):
             },
         ),
     ]
-    readonly_fields: Sequence[str] = [
-        "date_joined",
-        "first_login",
-        "last_login",
-        "last_json",
-        "vinculos",
-        "observacao_erro_vinculo",
-    ]
+    readonly_fields: Sequence[str] = ["date_joined", "first_login", "last_login", "observacao_erro_vinculo"] \
+        + ([] if settings.DEBUG else ["last_json", "vinculos"])
     # autocomplete_fields: Sequence[str] = ['groups']
     resource_classes = [UsuarioResource]
 
