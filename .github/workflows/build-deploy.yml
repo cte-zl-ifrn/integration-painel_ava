@@ -95,15 +95,5 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ matrix.host }} >> ~/.ssh/known_hosts
-
       - name: Executar Upgrade via Docker Compose em ${{ matrix.host }}
-        run: |
-          # 1. Atualiza a tag da imagem no docker-compose.yml
-          ssh root@${{ matrix.host }} "sed -i sed 's/image: ctezlifrn\/avapainel:.*/image: ctezlifrn\/avapainel:${{ github.ref_name }}/g' /var/dockers/docker-compose.yml"
-          
-          # 2. Faz o pull da nova imagem, derruba o container antigo e sobe o novo
-          ssh root@${{ matrix.host }} "cd /var/dockers && docker compose pull painel && docker compose down painel && docker compose up -d painel"
+        run: ssh root@${{ matrix.host }} "/var/dockers/deploy.sh ${{ github.ref_name }}"
