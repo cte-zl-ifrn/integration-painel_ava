@@ -31,7 +31,7 @@ if env("SENTRY_DNS") is not None:
         # before_send=,
         # before_breadcrumb=,
         # Informe em porcentual, ou seja, 50 significa que 100% de erros serão reportados.
-        traces_sample_rate=env_as_int("SENTRY_TRACES_SAMPLE_RATE", 100) / 100.0,
+        profiles_sample_rate=env_as_int("SENTRY_PROFILES_SAMPLE_RATE", 100) / 100.0,
         # traces_sampler=
         # If you wish to associate users to errors (assuming you are using django.contrib.auth)
         # you may enable sending PII data.
@@ -41,6 +41,7 @@ if env("SENTRY_DNS") is not None:
         max_breadcrumbs=env_as_int("SENTRY_MAX_BREADCRUMBS", 100),
         ignore_errors=[DisallowedHost],
         release=env("SENTRY_RELEASE", APP_VERSION),
+        profiles_sample_rate=env_as_int("SENTRY_PROFILES_SAMPLE_RATE", 100) / 100.0,
         # attach_stacktrace=env('SENTRY_ATTACH_STACKTRACE', 'off'),
         # server_name=env('SENTRY_SERVER_NAME', 'off'),
         # in_app_include=env_as_list('SENTRY_IN_APP_INCLUDE', []),
