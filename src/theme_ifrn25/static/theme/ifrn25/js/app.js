@@ -498,7 +498,7 @@ const app = Vue.createApp({
                 if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
                 this.loadingTimeoutId = setTimeout(() => {
                     this.isTakingLong = true;
-                }, 5000);
+                }, 2000);
             }
 
             try {
