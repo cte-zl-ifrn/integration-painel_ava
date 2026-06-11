@@ -251,16 +251,12 @@ class Usuario(SafeDeleteModel, AbstractUser):
 
         try:
             resultado = rule.matches(self.contexto)
-            
-            if resultado:
-                logger.info(f"Usuário {self.username} PASSOU na regra {regra}")
-            else:
-                logger.info(f"Usuário {self.username} FOI BLOQUEADO na regra {regra}")
-                
+            sucesso = "PASSOU" if resultado else "FOI BLOQUEADO"
+            logger.debug(f'Usuário {self.username} {sucesso} na regra "{regra}"')
             return resultado
-            
         except Exception as e:
-            logger.error(f"Erro ao avaliar regra para {self.username}: {e}")
+            logger.error(f'Erro ao avaliar para {self.username} a regra "{regra}". Erro: {e}')
+            sentry_sdk.capture_exception(e)
             return False
 
 
