@@ -123,6 +123,8 @@ const app = Vue.createApp({
             salasPorCategoria: getSalasIniciais(), // Inicializado dinamicamente via banco ou fallback
             activeTabKey: 'diarios',
             loading: true,
+            isTakingLong: false,
+            loadingTimeoutId: null,
         };
     },
     watch: {
@@ -492,6 +494,11 @@ const app = Vue.createApp({
 
             if (exibirLoading) {
                 this.loading = true;
+                this.isTakingLong = false;
+                if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+                this.loadingTimeoutId = setTimeout(() => {
+                    this.isTakingLong = true;
+                }, 5000);
             }
 
             try {
@@ -515,6 +522,8 @@ const app = Vue.createApp({
             } finally {
                 if (exibirLoading) {
                     this.loading = false;
+                    if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+                    this.isTakingLong = false;
                 }
             }
         },
