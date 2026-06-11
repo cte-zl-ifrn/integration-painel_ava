@@ -31,7 +31,7 @@ if env("SENTRY_DNS") is not None:
         # before_send=,
         # before_breadcrumb=,
         # Informe em porcentual, ou seja, 50 significa que 100% de erros serão reportados.
-        profiles_sample_rate=env_as_int("SENTRY_PROFILES_SAMPLE_RATE", 100) / 100.0,
+        traces_sample_rate=env_as_int("SENTRY_TRACES_SAMPLE_RATE", 100) / 100.0,
         # traces_sampler=
         # If you wish to associate users to errors (assuming you are using django.contrib.auth)
         # you may enable sending PII data.
