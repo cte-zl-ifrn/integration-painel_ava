@@ -1,5 +1,23 @@
 import * as VueSelect from './vue-select.js';
 
+const getSalasIniciais = () => {
+    const nomesAdmin = window.PAGE_CONFIG?.nomesAbas || {};
+    const salas = {};
+    const keys = Object.keys(nomesAdmin);
+    
+    if (keys.length > 0) {
+        keys.forEach(key => {
+            if (nomesAdmin[key].sempreVisivel) {
+                salas[key] = [];
+            }
+        });
+    } else {
+        salas['diarios'] = [];
+        salas['coordenacoes'] = [];
+    }
+    return salas;
+};
+
 const app = Vue.createApp({
     delimiters: ["[[", "]]"],
     components: {
@@ -102,9 +120,11 @@ const app = Vue.createApp({
             disciplinas: [],
             cursos: [],
             ambientes: [],
-            salasPorCategoria: {}, // Vai guardar { 'diarios': [...], 'praticas': [...] }
+            salasPorCategoria: getSalasIniciais(), // Inicializado dinamicamente via banco ou fallback
             activeTabKey: 'diarios',
-            loading: false,
+            loading: true,
+            isTakingLong: false,
+            loadingTimeoutId: null,
         };
     },
     watch: {
@@ -225,6 +245,8 @@ const app = Vue.createApp({
         if (this.enableFilters) {
             this.loadFilters();
             this.filterCards();
+        } else {
+            this.loading = false;
         }
         this.sidebarContracted = this.isMobile();
     },
@@ -472,6 +494,11 @@ const app = Vue.createApp({
 
             if (exibirLoading) {
                 this.loading = true;
+                this.isTakingLong = false;
+                if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+                this.loadingTimeoutId = setTimeout(() => {
+                    this.isTakingLong = true;
+                }, 5000);
             }
 
             try {
@@ -495,6 +522,8 @@ const app = Vue.createApp({
             } finally {
                 if (exibirLoading) {
                     this.loading = false;
+                    if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+                    this.isTakingLong = false;
                 }
             }
         },
@@ -521,7 +550,7 @@ const app = Vue.createApp({
         handleFilterResponse(data) {
             const chavesDeFiltro = ['periodos', 'semestres', 'disciplinas', 'cursos', 'ambientes', 'modulos'];
 
-            this.salasPorCategoria = {};
+            this.salasPorCategoria = getSalasIniciais();
 
             Object.keys(data).forEach(key => {
                 if (chavesDeFiltro.includes(key)) {
