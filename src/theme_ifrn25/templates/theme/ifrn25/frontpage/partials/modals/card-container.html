@@ -32,7 +32,7 @@
             <span class="painel-card-header-shortname">[[ item.shortname ]]</span>
         </a>
         <div class="painel-card-details">
-            <div class="painel-card-details-progress">
+            <div class="painel-card-details-progress" v-if="item.hasprogress">
                 <div class="painel-progress-bar-container">
                     <div class="painel-progress-bar" :style="{ width: item.progress + '%' }"></div>
                 </div>
