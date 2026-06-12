@@ -95,5 +95,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ matrix.host }} >> ~/.ssh/known_hosts
+
       - name: Executar Upgrade via Docker Compose em ${{ matrix.host }}
         run: ssh root@${{ matrix.host }} "/var/dockers/deploy.sh ${{ github.ref_name }}"
