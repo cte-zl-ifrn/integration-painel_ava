@@ -4,7 +4,7 @@ const getSalasIniciais = () => {
     const nomesAdmin = window.PAGE_CONFIG?.nomesAbas || {};
     const salas = {};
     const keys = Object.keys(nomesAdmin);
-    
+
     if (keys.length > 0) {
         keys.forEach(key => {
             if (nomesAdmin[key].sempreVisivel) {
@@ -536,6 +536,7 @@ const app = Vue.createApp({
                 isfavourite: curso.isfavourite || false,
                 environment: curso.ambiente ? curso.ambiente.titulo : '',
                 ambiente_id: curso.ambiente ? curso.ambiente.id : null,
+                hasprogress: curso.hasprogress || 0,
                 progress: curso.progress || 0,
                 visible: curso.visible == 1 || curso.visible === true,
                 can_set_visibility: curso.can_set_visibility || 0,

@@ -452,6 +452,7 @@
                                     align-items: center;
                                     justify-content: space-between;
                                     gap: .75rem;
+                                    margin-left: auto;
                                 }
 
                                 .painel-card-details-info-published,
