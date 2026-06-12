@@ -38,6 +38,15 @@
                 </div>
                 <span>[[ item.progress ]]% concluído</span>
             </div>
+            <div class="painel-card-details-progress" 
+                v-else-if="item.can_set_visibility && filters.situacao === 'inprogress'" 
+                title="Configure o acompanhamento de conclusão no Moodle para exibir a barra de progresso" 
+                style="cursor: help;">
+                <i class="fa-solid fa-triangle-exclamation text-warning" style="font-size: 14px;"></i>
+                <span class="text-warning" style="color: #856404 !important; font-weight: 500;">
+                    Progresso não configurado
+                </span>
+            </div>
             <div class="painel-card-details-info">
                 <div class="painel-card-info-icon">
                     <i class="fa-solid fa-graduation-cap"></i>
