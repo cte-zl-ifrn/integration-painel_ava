@@ -306,10 +306,24 @@ def get_diarios(
 
     results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
 
+    def course_sort_key(e):
+        ano_periodo_str = str(e.get("turma_ano_periodo") or "")
+        ano_periodo = 0
+        
+        match = re.search(r"(\d{4})\.?(\d)", ano_periodo_str)
+        if match:
+            ano_periodo = int(match.group(1) + match.group(2))
+        else:
+            match = re.search(r"(\d{4})", ano_periodo_str)
+            if match:
+                ano_periodo = int(match.group(1) + "0")
+                
+        return (-ano_periodo, (e.get("fullname") or "").lower())
+
     for k in results.keys():
         if k not in CHAVES_ESTATICAS and isinstance(results[k], list):
             if len(results[k]) > 0 and isinstance(results[k][0], dict) and "fullname" in results[k][0]:
-                results[k] = sorted(results[k], key=lambda e: e.get("fullname", ""))
+                results[k] = sorted(results[k], key=course_sort_key)
 
     results["reutilizaveis"] = [
         {
