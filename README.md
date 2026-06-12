@@ -34,7 +34,7 @@ As variáveis de ambiente no SUAP têm as seguintes definições:
 ## Como construir a imagem localmente
 
 ```bash
-cd ~/projetos/IFRN/ava/integration/painel_ava
+cd ~/projetos/IFRN/sas/integration/painel_ava
 
 git checkout proximo
 docker build -t ctezlifrn/avapainel:proximo .
@@ -53,7 +53,7 @@ O projeto usa gates de qualidade locais (pre-commit/pre-push) e no CI.
 ### 1) Ativar pre-commit
 
 ```bash
-cd  ~/projetos/IFRN/ava/integration/painel_ava
+cd  ~/projetos/IFRN/suap-ava-suite/painel_ava
 pyenv install 3.14
 pyenv local 3.14
 python -m venv .venv
@@ -175,11 +175,11 @@ desenvolvimento local.
 
 ```bash
 # Baixe o projeto na pasta de exemplo (se for outra, basta que altere os scripts)
-mkdir -p ~/projetos/IFRN/ava/integracao
-git clone git@github.com:cte-zl-ifrn/painel__ava.git ~/projetos/IFRN/ava/integracao/painel_ava
+mkdir -p ~/projetos/IFRN/suap-ava-suite
+git clone git@github.com:cte-zl-ifrn/painel__ava.git ~/projetos/IFRN/suap-ava-suite/painel_ava
 
 
-cd ~/projetos/IFRN/ava/integracao/painel_ava
+cd ~/projetos/IFRN/suap-ava-suite/painel_ava
 
 # Configura o teu /etc/hosts para atender por http://ava
 ./painel env setup
@@ -207,14 +207,14 @@ Caso você deseje fazer debug do Painel AVA, tente:
 #### No bash
 
 ```bash
-echo 'PATH=$PATH:~/projetos/IFRN/ava/integracao/painel_ava' >> ~/.bashrc
+echo 'PATH=$PATH:~/projetos/IFRN/suap-ava-suite/painel_ava' >> ~/.bashrc
 source ~/.bashrc
 ```
 
 #### No zsh
 
 ```bash
-echo 'PATH=$PATH:~/projetos/IFRN/ava/integracao/painel_ava' >> ~/.zshrc
+echo 'PATH=$PATH:~/projetos/IFRN/suap-ava-suite/painel_ava' >> ~/.zshrc
 source ~/.zshrc
 ```
 
