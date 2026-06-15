@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Union
 import requests
 import sentry_sdk
 from django.conf import settings
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
@@ -43,12 +44,8 @@ CODIGO_PRATICA_SUFIXO_INDEX = 4
 CHANGE_URL = re.compile("/course/view.php\\?")
 
 
-def _filtrar_autoinscricoes(autoinscricoes: list, username_logado: str) -> list:
-    if not autoinscricoes:
-        return []
-
-    usuario_db = Usuario.objects.filter(username=username_logado).first()
-    if not usuario_db:
+def _filtrar_autoinscricoes(autoinscricoes: list, usuario_db) -> list:
+    if not autoinscricoes or not usuario_db:
         return []
 
     return [c for c in autoinscricoes if usuario_db.check_autoinscricao(c.get("restricoes_de_autoinscricao", ""))]
@@ -102,6 +99,8 @@ def get_diarios(
 ) -> dict:
 
     CHAVES_ESTATICAS = ["semestres", "disciplinas", "cursos", "ambientes", "autoinscricoes", "reutilizaveis"]
+    cursos_by_codigo = {c.codigo: c for c in Curso.cached()}
+    usuario_db = Usuario.cached(username)
 
     def _merge_course(diario: dict, ambiente: dict):
         # ========== 1. DADOS NOVOS (CUSTOM FIELDS) ==========
@@ -126,7 +125,7 @@ def get_diarios(
                 co_curso = coordenacao_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
 
         if co_curso:
-            curso_bd = next(iter(Curso.cached_by_codigos([co_curso])), None)
+            curso_bd = cursos_by_codigo.get(co_curso)
             if curso_bd is not None:
                 diario["curso"] = {"codigo": curso_bd.codigo, "nome": curso_bd.nome}
             else:
@@ -203,8 +202,8 @@ def get_diarios(
             result = get_json_api(ambiente, "get_diarios", **querystrings) or {}
 
             # Filtragem de autoinscrições baseada no perfil do usuário
-            username_logado = params.get("username", "")
-            result["autoinscricoes"] = _filtrar_autoinscricoes(result.get("autoinscricoes", []), username_logado)
+            usuario_db_param = params.get("usuario_db")
+            result["autoinscricoes"] = _filtrar_autoinscricoes(result.get("autoinscricoes", []), usuario_db_param)
 
             for k, v in result.items():
                 # 1. Se a chave for nova (ex: 'projetos'), cria a lista vazia no dicionário global
@@ -262,6 +261,7 @@ def get_diarios(
         {
             "ambiente": ava,
             "username": username.lower(),
+            "usuario_db": usuario_db,
             "semestre": semestre,
             "situacao": situacao,
             "disciplina": disciplina,
@@ -290,19 +290,22 @@ def get_diarios(
     ] + sorted(results["ambientes"], key=lambda e: e["label"])
 
     codigos = [x["id"] for x in results["cursos"]]
-    cursos = {c.codigo: c.nome for c in Curso.cached_by_codigos(codigos)}
+    cursos = {cod: cursos_by_codigo[cod].nome for cod in codigos if cod in cursos_by_codigo}
+    
+    cursos_a_criar = []
     for c in results["cursos"]:
         if c["id"] in cursos:
             c["label"] = f"{cursos[c['id']]}"
         else:
             c["label"] = f"Curso [{c['id']}], favor solicitar o cadastro"
-            try:
-                curso = Curso()
-                curso.codigo = c["id"]
-                curso.nome = f"Curso [{c['id']}], favor solicitar o cadastro"
-                curso.save()
-            except Exception as e:
-                logger.error(f"Erro ({e}) ao tentar cadastrar o curso {c}")
+            cursos_a_criar.append(Curso(codigo=c["id"], nome=f"Curso [{c['id']}], favor solicitar o cadastro"))
+
+    if cursos_a_criar:
+        try:
+            Curso.objects.bulk_create(cursos_a_criar, ignore_conflicts=True)
+            cache.delete("cursos")
+        except Exception as e:
+            logger.error(f"Erro ao tentar cadastrar cursos em lote: {e}")
 
     results["cursos"] = [{"id": "", "label": "Cursos..."}] + deduplicate_and_sort(results["cursos"])
 
@@ -339,7 +342,9 @@ def get_diarios(
                 for d in x.donoarquivobackup_set.all()
             ],
         }
-        for x in ArquivoBackup.objects.filter(donoarquivobackup__dono_backup__username=username)
+        for x in ArquivoBackup.objects.filter(
+            donoarquivobackup__dono_backup__username=username
+        ).prefetch_related("donoarquivobackup_set__dono_backup")
     ]
 
     return results
