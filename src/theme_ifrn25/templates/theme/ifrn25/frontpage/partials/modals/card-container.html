@@ -1,8 +1,8 @@
 <!-- Se estiver carregando, mostra animação/skeleton -->
 <div class="card-container loading" v-if="loading">
-    <div class="alert alert-warning" style="margin-bottom: 1rem; width: 100%; max-width: 1360px; margin-left: auto; margin-right: auto;" v-if="isTakingLong">
+    <!-- <div class="alert alert-warning" style="margin-bottom: 1rem; width: 100%; max-width: 1360px; margin-left: auto; margin-right: auto;" v-if="isTakingLong">
         <i class="fa-solid fa-clock"></i> Isso está demorando mais que o normal. Por favor, aguarde enquanto buscamos seus dados...
-    </div>
+    </div> -->
     <div class="card-skeleton" v-for="n in 4" :key="n">
         <div class="header-skeleton">
             <div class="title-skeleton"></div>
