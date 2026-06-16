@@ -492,14 +492,14 @@ const app = Vue.createApp({
                 this.closeSidebarModal();
             }
 
-            // if (exibirLoading) {
-            //     this.loading = true;
-            //     this.isTakingLong = false;
-            //     if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
-            //     this.loadingTimeoutId = setTimeout(() => {
-            //         this.isTakingLong = true;
-            //     }, 2000);
-            // }
+            if (exibirLoading) {
+                this.loading = true;
+                this.isTakingLong = false;
+                if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+                this.loadingTimeoutId = setTimeout(() => {
+                    this.isTakingLong = true;
+                }, 8000);
+            }
 
             try {
                 const params = new URLSearchParams({
