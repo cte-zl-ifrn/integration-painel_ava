@@ -3,6 +3,7 @@ import json
 import logging
 import re
 import urllib.parse
+from functools import lru_cache
 from http.client import HTTPException
 from typing import Any, Dict, List, Union
 
@@ -82,7 +83,8 @@ def get_json_api(ava: Ambiente, service: str, **params: dict):
     url = f"{ava.moodle_base_api_url}/?{service}&{querystring}"
     try:
         return get_json(url, headers={"Authentication": f"Token {ava.token}"})
-    except (requests.exceptions.RequestException, HTTPException):
+    except (requests.exceptions.RequestException, HTTPException) as e:
+        logger.error(f"⚠️ TIMEOUT OU ERRO DE REDE no Moodle '{ava.nome}' ao acessar {url}: {e}")
         return None
 
 
@@ -99,7 +101,17 @@ def get_diarios(
 ) -> dict:
 
     CHAVES_ESTATICAS = ["semestres", "disciplinas", "cursos", "ambientes", "autoinscricoes", "reutilizaveis"]
-    cursos_by_codigo = {c.codigo: c for c in Curso.cached()}
+    
+    @lru_cache(maxsize=1024)
+    def get_curso_cached(co_curso):
+        cache_key = f"curso:{co_curso}"
+        curso_bd = cache.get(cache_key)
+        if not curso_bd:
+            curso_bd = Curso.objects.filter(codigo=co_curso).first()
+            if curso_bd:
+                cache.set(cache_key, curso_bd, timeout=86400)
+        return curso_bd
+
     usuario_db = Usuario.cached(username)
 
     def _merge_course(diario: dict, ambiente: dict):
@@ -125,7 +137,7 @@ def get_diarios(
                 co_curso = coordenacao_re[0][CODIGO_COORDENACAO_CURSO_INDEX]
 
         if co_curso:
-            curso_bd = cursos_by_codigo.get(co_curso)
+            curso_bd = get_curso_cached(co_curso)
             if curso_bd is not None:
                 diario["curso"] = {"codigo": curso_bd.codigo, "nome": curso_bd.nome}
             else:
@@ -290,7 +302,11 @@ def get_diarios(
     ] + sorted(results["ambientes"], key=lambda e: e["label"])
 
     codigos = [x["id"] for x in results["cursos"]]
-    cursos = {cod: cursos_by_codigo[cod].nome for cod in codigos if cod in cursos_by_codigo}
+    cursos = {}
+    for cod in codigos:
+        curso_bd = get_curso_cached(cod)
+        if curso_bd:
+            cursos[cod] = curso_bd.nome
     
     cursos_a_criar = []
     for c in results["cursos"]:

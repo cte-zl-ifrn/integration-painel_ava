@@ -196,6 +196,7 @@ def authenticate(request: HttpRequest) -> HttpResponse:
                     user.first_login = now()
                     user.save()
                 Usuario.objects.filter(username=username).update(**defaults)
+                cache.delete(f"username:{username}")
             return user
         except Exception as e:
             sentry_sdk.capture_exception(e)
