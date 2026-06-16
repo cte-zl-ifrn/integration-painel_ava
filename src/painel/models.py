@@ -140,21 +140,7 @@ class Curso(Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        logger.debug("limpando o cache dos cursos")
-        cache.delete("cursos")
-
-    @staticmethod
-    def cached() -> list:
-        all_instances = cache.get("cursos")
-        if all_instances is None:
-            all_instances = [x for x in Curso.objects.all()]
-            logger.debug(f"colocando no cache os cursos: {all_instances}")
-            cache.set("cursos", all_instances)
-        return all_instances or []
-
-    @staticmethod
-    def cached_by_codigos(codigos: list) -> list:
-        return [x for x in Curso.cached() if x.codigo in codigos]
+        cache.delete(f"curso:{self.codigo}")
 
 
 class Popup(ActiveMixin, Model):
