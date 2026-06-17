@@ -516,6 +516,7 @@ const app = Vue.createApp({
                 const data = await res.json();
 
                 this.handleFilterResponse(data);
+                this.loadProgress();
             } catch (error) {
                 console.error("Error fetching data:", error);
                 this.diarios = [];
@@ -536,8 +537,9 @@ const app = Vue.createApp({
                 isfavourite: curso.isfavourite || false,
                 environment: curso.ambiente ? curso.ambiente.titulo : '',
                 ambiente_id: curso.ambiente ? curso.ambiente.id : null,
-                hasprogress: curso.hasprogress || 0,
-                progress: curso.progress || 0,
+                hasprogress: false,
+                progress: null,
+                progress_loading: true,
                 visible: curso.visible == 1 || curso.visible === true,
                 can_set_visibility: curso.can_set_visibility || 0,
                 url: curso.viewurl || curso.url || '',
@@ -581,6 +583,47 @@ const app = Vue.createApp({
             if (filterType === 'situacao') return; // Impede remoção do filtro padrão
             this.filters[filterType] = null;
             this.filterCards();
+        },
+        async loadProgress() {
+            try {
+                const params = new URLSearchParams({
+                    ambiente: this.filters.ambiente || "",
+                });
+
+                const res = await fetch(`/api/v1/progresso/?${params.toString()}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                
+                if (data.progresso && data.progresso.length > 0) {
+                    this.updateProgressInCards(data.progresso);
+                } else {
+                    this.updateProgressInCards([]); 
+                }
+            } catch (error) {
+                console.error("Error fetching progress:", error);
+                this.updateProgressInCards([]);
+            }
+        },
+        updateProgressInCards(progressData) {
+            const progressMap = {};
+            progressData.forEach(p => {
+                const key = `${p.ambiente_id}_${p.id}`;
+                progressMap[key] = p;
+            });
+
+            Object.keys(this.salasPorCategoria).forEach(category => {
+                this.salasPorCategoria[category].forEach(card => {
+                    const key = `${card.ambiente_id}_${card.id}`;
+                    if (progressMap[key]) {
+                        card.hasprogress = progressMap[key].hasprogress;
+                        card.progress = progressMap[key].progress;
+                    } else {
+                        card.hasprogress = false;
+                        card.progress = null;
+                    }
+                    card.progress_loading = false;
+                });
+            });
         },
         resetFilters() {
             this.filters = {
