@@ -8,7 +8,7 @@ from ninja import NinjaAPI
 from a4.models import Usuario, logged_user
 
 from .brokers import SuapBroker, TokenBroker
-from .services import get_diarios, set_favourite_course, set_user_preference, set_visible_course
+from .services import get_diarios, get_progresso, set_favourite_course, set_user_preference, set_visible_course
 
 api = NinjaAPI()
 logger = logging.getLogger(__name__)
@@ -45,6 +45,28 @@ def diarios(
             q=q,
             page=page,
             page_size=page_size,
+        )
+    return api.create_response(request, {"message": "Método não permitido"}, status=405)
+
+
+@api.api_operation(["GET", "OPTIONS"], "/progresso/")
+def progresso(
+    request: HttpRequest,
+    response: HttpResponse,
+    ambiente: str = None,
+    cursos: str = None,
+):
+    if request.method == "OPTIONS":
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    elif request.method == "GET":
+        response["Access-Control-Allow-Origin"] = "*"
+        return get_progresso(
+            username=logged_user(request).username,
+            ambiente=ambiente,
+            cursos=cursos,
         )
     return api.create_response(request, {"message": "Método não permitido"}, status=405)
 

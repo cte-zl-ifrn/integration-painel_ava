@@ -385,3 +385,45 @@ def set_user_preference(username: str, ava: str, name: str, value: str) -> dict:
     ava = get_object_or_404(Ambiente, nome=ava)
 
     return get_json_api(ava, "set_user_preference", username=username.lower(), name=name, value=value) or {}
+
+
+def get_progresso(username: str, ambiente: str = None, cursos: str = None) -> dict:
+    import threading
+    lock = threading.Lock()
+    
+    has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()
+    ambientes = [ava for ava in Ambiente.cached() if (has_ambiente and int(ambiente) == ava.id) or not has_ambiente]
+    
+    results = []
+
+    def _get_progresso_moodle(params: dict):
+        ava = params["ambiente"]
+        querystrings = {"username": params["username"]}
+        if params.get("cursos"):
+            querystrings["cursos"] = params["cursos"]
+        
+        try:
+            data = get_json_api(ava, "get_progresso", **querystrings) or []
+            if data:
+                for item in data:
+                    item["ambiente_id"] = ava.id
+                
+                with lock:
+                    params["results"].extend(data)
+        except Exception as e:
+            logger.error(f"Erro em get_progresso ({ava.nome}): {e}")
+
+    requests_args = [
+        {
+            "ambiente": ava,
+            "username": username.lower(),
+            "cursos": cursos,
+            "results": results,
+        }
+        for ava in ambientes
+    ]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        executor.map(_get_progresso_moodle, requests_args)
+
+    return {"progresso": results}
