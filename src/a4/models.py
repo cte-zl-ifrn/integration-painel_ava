@@ -3,6 +3,7 @@ import logging
 
 import rule_engine
 import sentry_sdk
+from functools import lru_cache
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.auth.models import Group as OrignalGroup
@@ -16,6 +17,9 @@ from simple_history.models import HistoricalRecords
 
 logger = logging.getLogger(__name__)
 
+@lru_cache(maxsize=2048)
+def get_compiled_rule(regra: str):
+    return rule_engine.Rule(regra)
 
 def logged_user(request: HttpRequest):
     username = request.session.get("usuario_personificado", request.user.username)
@@ -172,7 +176,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     def zoom_level(self) -> int:
         try:
             return int(self.settings.get("accessibility", {}).get("zoom_level", 100))
-        except AttributeError, ValueError, TypeError:
+        except (AttributeError, ValueError, TypeError):
             return 100
 
     @property
@@ -204,8 +208,13 @@ class Usuario(SafeDeleteModel, AbstractUser):
             user = Usuario.objects.filter(username=username).first()
             if user is not None and user.is_authenticated and user.is_active:
                 logger.debug(f"colocando no cache o usuário: {username}")
-                cache.set(userkey, user)
+                cache.set(userkey, user, timeout=3600)
         return user
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.username:
+            cache.delete(f"username:{self.username}")
 
     @property
     def contexto(self) -> dict:
@@ -215,45 +224,49 @@ class Usuario(SafeDeleteModel, AbstractUser):
         except Exception as e:
             sentry_sdk.capture_exception(e)
             last_json = {}
-            
-        matriculas = (self.vinculos or {}).get("results", [])
+        
+        vinc = self.vinculos if isinstance(self.vinculos, dict) else {}
+        matriculas = vinc.get("results", [])
         
         # Garante que as chaves existam para evitar que a regra quebre com valores nulos
         for m in matriculas:
+            # Se o SUAP mandar "detalhamento": null
             if not m.get("detalhamento"):
                 m["detalhamento"] = {}
                 
             m["detalhamento"].setdefault("nivel_ensino", "")
             m["detalhamento"].setdefault("modalidade", "")
             m["detalhamento"].setdefault("curso", "")
+            
+            # Evita o crash no rule_engine.
+            if m["detalhamento"].get("ativo") is None:
+                m["detalhamento"]["ativo"] = False
+                
             m.setdefault("campus", "")
             m.setdefault("tipo", "")
+            m.setdefault("situacao_diario", "")
             m.setdefault("estrangeiro", False)
             
         last_json["outras_matriculas"] = matriculas
         return last_json
 
-
     def check_autoinscricao(self, regra: str) -> bool:
+        if not regra or not str(regra).strip():
+            return False
+
         try:
-            rule = rule_engine.Rule(regra)
+            rule = get_compiled_rule(regra)
         except Exception as e:
             logger.error(f"Regra inválida: {e}. {regra}")
-            sentry_sdk.capture_exception(e)
             return False
 
         try:
             resultado = rule.matches(self.contexto)
-            
-            if resultado:
-                logger.info(f"Usuário {self.username} PASSOU na regra {regra}")
-            else:
-                logger.info(f"Usuário {self.username} FOI BLOQUEADO na regra {regra}")
-                
+            sucesso = "PASSOU" if resultado else "FOI BLOQUEADO"
+            logger.debug(f'Usuário {self.username} {sucesso} na regra "{regra}"')
             return resultado
-            
         except Exception as e:
-            logger.error(f"Erro ao avaliar regra para {self.username}: {e}")
+            logger.error(f'Erro ao avaliar para {self.username} a regra "{regra}". Erro: {e}')
             return False
 
 

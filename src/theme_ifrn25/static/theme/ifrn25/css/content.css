@@ -60,7 +60,7 @@
             flex: 1;
             min-height: 0;
             display: flex;
-            overflow: auto;
+            overflow: hidden;
             background-color: var(--general-white);
             gap: 1rem;
 
@@ -240,6 +240,7 @@
                 flex-direction: column;
                 min-width: 0;
                 padding-right: 1rem;
+                overflow: auto;
 
                 .tab-pane {
                     flex: 1;
@@ -451,6 +452,7 @@
                                     align-items: center;
                                     justify-content: space-between;
                                     gap: .75rem;
+                                    margin-left: auto;
                                 }
 
                                 .painel-card-details-info-published,

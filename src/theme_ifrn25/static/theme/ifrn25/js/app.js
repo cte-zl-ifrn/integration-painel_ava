@@ -1,5 +1,23 @@
 import * as VueSelect from './vue-select.js';
 
+const getSalasIniciais = () => {
+    const nomesAdmin = window.PAGE_CONFIG?.nomesAbas || {};
+    const salas = {};
+    const keys = Object.keys(nomesAdmin);
+
+    if (keys.length > 0) {
+        keys.forEach(key => {
+            if (nomesAdmin[key].sempreVisivel) {
+                salas[key] = [];
+            }
+        });
+    } else {
+        salas['diarios'] = [];
+        salas['coordenacoes'] = [];
+    }
+    return salas;
+};
+
 const app = Vue.createApp({
     delimiters: ["[[", "]]"],
     components: {
@@ -102,9 +120,11 @@ const app = Vue.createApp({
             disciplinas: [],
             cursos: [],
             ambientes: [],
-            salasPorCategoria: {}, // Vai guardar { 'diarios': [...], 'praticas': [...] }
+            salasPorCategoria: getSalasIniciais(), // Inicializado dinamicamente via banco ou fallback
             activeTabKey: 'diarios',
-            loading: false,
+            loading: true,
+            isTakingLong: false,
+            loadingTimeoutId: null,
         };
     },
     watch: {
@@ -225,6 +245,8 @@ const app = Vue.createApp({
         if (this.enableFilters) {
             this.loadFilters();
             this.filterCards();
+        } else {
+            this.loading = false;
         }
         this.sidebarContracted = this.isMobile();
     },
@@ -472,6 +494,11 @@ const app = Vue.createApp({
 
             if (exibirLoading) {
                 this.loading = true;
+                this.isTakingLong = false;
+                if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+                this.loadingTimeoutId = setTimeout(() => {
+                    this.isTakingLong = true;
+                }, 8000);
             }
 
             try {
@@ -489,12 +516,15 @@ const app = Vue.createApp({
                 const data = await res.json();
 
                 this.handleFilterResponse(data);
+                this.loadProgress();
             } catch (error) {
                 console.error("Error fetching data:", error);
                 this.diarios = [];
             } finally {
                 if (exibirLoading) {
                     this.loading = false;
+                    if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+                    this.isTakingLong = false;
                 }
             }
         },
@@ -507,7 +537,9 @@ const app = Vue.createApp({
                 isfavourite: curso.isfavourite || false,
                 environment: curso.ambiente ? curso.ambiente.titulo : '',
                 ambiente_id: curso.ambiente ? curso.ambiente.id : null,
-                progress: curso.progress || 0,
+                hasprogress: false,
+                progress: null,
+                progress_loading: true,
                 visible: curso.visible == 1 || curso.visible === true,
                 can_set_visibility: curso.can_set_visibility || 0,
                 url: curso.viewurl || curso.url || '',
@@ -521,7 +553,7 @@ const app = Vue.createApp({
         handleFilterResponse(data) {
             const chavesDeFiltro = ['periodos', 'semestres', 'disciplinas', 'cursos', 'ambientes', 'modulos'];
 
-            this.salasPorCategoria = {};
+            this.salasPorCategoria = getSalasIniciais();
 
             Object.keys(data).forEach(key => {
                 if (chavesDeFiltro.includes(key)) {
@@ -551,6 +583,47 @@ const app = Vue.createApp({
             if (filterType === 'situacao') return; // Impede remoção do filtro padrão
             this.filters[filterType] = null;
             this.filterCards();
+        },
+        async loadProgress() {
+            try {
+                const params = new URLSearchParams({
+                    ambiente: this.filters.ambiente || "",
+                });
+
+                const res = await fetch(`/api/v1/progresso/?${params.toString()}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                
+                if (data.progresso && data.progresso.length > 0) {
+                    this.updateProgressInCards(data.progresso);
+                } else {
+                    this.updateProgressInCards([]); 
+                }
+            } catch (error) {
+                console.error("Error fetching progress:", error);
+                this.updateProgressInCards([]);
+            }
+        },
+        updateProgressInCards(progressData) {
+            const progressMap = {};
+            progressData.forEach(p => {
+                const key = `${p.ambiente_id}_${p.id}`;
+                progressMap[key] = p;
+            });
+
+            Object.keys(this.salasPorCategoria).forEach(category => {
+                this.salasPorCategoria[category].forEach(card => {
+                    const key = `${card.ambiente_id}_${card.id}`;
+                    if (progressMap[key]) {
+                        card.hasprogress = progressMap[key].hasprogress;
+                        card.progress = progressMap[key].progress;
+                    } else {
+                        card.hasprogress = false;
+                        card.progress = null;
+                    }
+                    card.progress_loading = false;
+                });
+            });
         },
         resetFilters() {
             this.filters = {

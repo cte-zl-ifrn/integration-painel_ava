@@ -3,6 +3,7 @@ from settings.apps import *  # noqa
 from settings.caches import *  # noqa
 from settings.databases import *  # noqa
 from settings.emails import *  # noqa
+from settings.integrations import *  # noqa
 from settings.internationalizations import *  # noqa
 from settings.loggings import *  # noqa
 from settings.middlewares import *  # noqa

@@ -41,6 +41,7 @@ if env("SENTRY_DNS") is not None:
         max_breadcrumbs=env_as_int("SENTRY_MAX_BREADCRUMBS", 100),
         ignore_errors=[DisallowedHost],
         release=env("SENTRY_RELEASE", APP_VERSION),
+        profiles_sample_rate=env_as_int("SENTRY_PROFILES_SAMPLE_RATE", 100) / 100.0,
         # attach_stacktrace=env('SENTRY_ATTACH_STACKTRACE', 'off'),
         # server_name=env('SENTRY_SERVER_NAME', 'off'),
         # in_app_include=env_as_list('SENTRY_IN_APP_INCLUDE', []),

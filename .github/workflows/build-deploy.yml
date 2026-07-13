@@ -1,9 +1,7 @@
 name: Pipeline - Painel AVA
 
 on:
-  push:
-    branches:
-      - main
+
   release:
     types: [published]
   workflow_dispatch:
@@ -75,7 +73,7 @@ jobs:
           ssh root@${{ secrets.K8S_HOST }} "
             helm upgrade --install painel /tmp/painel-chart \
               --namespace ava \
-              --set image.repository=${{ vars.DOCKERHUB_HOST }}/${{ env.MAIN_IMAGE }} \
+              --set image.repository=${{ env.MAIN_IMAGE }} \
               --set image.tag=${{ github.ref_name }}
           "
 
@@ -103,9 +101,4 @@ jobs:
           ssh-keyscan -H ${{ matrix.host }} >> ~/.ssh/known_hosts
 
       - name: Executar Upgrade via Docker Compose em ${{ matrix.host }}
-        run: |
-          # 1. Atualiza a tag da imagem no docker-compose.yml
-          ssh root@${{ matrix.host }} "sed -i 's|image: ctezlifrn/avapainel:.*|image: ctezlifrn/avapainel:${{ github.ref_name }}|g' /var/dockers/docker-compose.yml"
-          
-          # 2. Faz o pull da nova imagem, derruba o container antigo e sobe o novo
-          ssh root@${{ matrix.host }} "cd /var/dockers && docker compose pull painel && docker compose down painel && docker compose up -d painel"
+        run: ssh root@${{ matrix.host }} "/var/dockers/deploy.sh ${{ github.ref_name }}"

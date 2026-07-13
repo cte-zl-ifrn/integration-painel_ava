@@ -29,7 +29,7 @@ def readiness(request: HttpRequest) -> JsonResponse:
         cache_result = cache.get("check_health") == "OK"
 
     try:
-        resp = urlopen("https://suap.ifrn.edu.br/comum/solicitar_trocar_senha/", timeout=2)
+        resp = urlopen("https://suap.ifrn.edu.br/comum/solicitar_trocar_senha/", timeout=settings.DEFAULT_HTTP_TIMEOUT)
     except Exception as e:
         logging.error(e)
         suap_result = False

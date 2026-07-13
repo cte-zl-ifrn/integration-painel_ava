@@ -32,7 +32,7 @@ class SuapBroker:
             response = requests.get(
                 f"{settings.SUAP['BASE_URL']}/api/v2/minhas-informacoes/meus-dados/",
                 headers={"Authorization": f"Bearer {self.__access_token}"},
-                timeout=2,
+                timeout=settings.DEFAULT_HTTP_TIMEOUT,
             )
             response.raise_for_status()
             result = response.json()
@@ -46,7 +46,7 @@ class SuapBroker:
             response = requests.post(
                 f"{settings.SUAP['BASE_URL']}/api/token/pair",
                 json={"username": username, "password": password},
-                timeout=2,
+                timeout=settings.DEFAULT_HTTP_TIMEOUT,
             )
             response.raise_for_status()
             self.__access_token = response.json()["access"]
