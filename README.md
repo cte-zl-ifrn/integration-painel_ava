@@ -27,63 +27,14 @@ ou melhor, faça um fork e abra uma pull request.
 2. Se for para **fechamento de parceria**, é melhor procurar a [Diretoria de Educação a Distância e Tecnologias
 Educacionais (DEAD)](mailto:dead.zl@ifrn.du.br) do IFRN.
 
-## Screenshots
+## Screenshots da versão corrente
 
-
-### v6 - Novos recursos (alpha)
-
-#### Desktop
-
-![screenshot](docs/images/screenshot.v6.web.png)
-
-#### Mobile
-
-![screenshot](docs/images/screenshot.v6.mobile.png)
-
-
-### v5 - Simplificação da UX
-
-#### Desktop
+### Desktop
 
 ![screenshot](docs/images/screenshot.v5.web.png)
 
-#### Mobile
+### Mobile
 
 ![screenshot](docs/images/screenshot.v5.mobile.png)
 
-
-#### Desktop
-
-![screenshot](docs/images/screenshot.v4.web.png)
-
-### v4 - Melhorias na UX
-
-#### Desktop
-
-![screenshot](docs/images/screenshot.v4.web.png)
-
-#### Mobile
-
-![screenshot](docs/images/screenshot.v4.mobile.png)
-
-### v3 - Uso comum por aluno, tutor e professor
-
-#### v3 Desktop
-
-![screenshot](docs/images/screenshot.v3.web.jpg)
-
-#### v3 Mobile
-
-![screenshot](docs/images/screenshot.v3.mobile.png)
-
-### v2 - Hiper focado no aluno
-
-#### v2 Desktop
-
-![screenshot](docs/images/screenshot.v2.web.png)
-
-### v1 - Esforço urgente, sem projeto de UX
-
-#### v1 Desktop
-
-![screenshot](docs/images/screenshot.v1.web.png)
+Confira a [evolução do design](docs/evolucao-do-design.md).
