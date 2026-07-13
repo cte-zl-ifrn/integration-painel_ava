@@ -29,8 +29,6 @@ Educacionais (DEAD)](mailto:dead.zl@ifrn.du.br) do IFRN.
 
 ## Screenshots
 
-O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-47ad-ab16-74ac81ca0c2a-558f/) e [mobile](https://xd.adobe.com/view/28b2f455-b115-4363-954f-77b5bcf1dba1-7de1/).
-
 
 ### v6 - Novos recursos (alpha)
 
