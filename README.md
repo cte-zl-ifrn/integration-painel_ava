@@ -1,5 +1,7 @@
 # Painel AVA
 
+> **_APENAS PARA DESENVOLVIMENTO_** no IFRN, **USE apenas neste sentido**.
+
 O Painel AVA é um dashboard com todos os cursos e inscrições que dos AVA que com os quais ele integra, desta forma cada
 usuário tem acesso aos cursos/diários em que está inscrito sem precisar procurar em vários Moodles.
 
