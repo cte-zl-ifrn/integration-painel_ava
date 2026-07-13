@@ -82,10 +82,10 @@ O design ficará como os designs [web](https://xd.adobe.com/view/00dc014e-8919-4
 
 #### v2 Desktop
 
-![screenshot](screenshot.v2.web.png)
+![screenshot](docs/images/screenshot.v2.web.png)
 
 ### v1 - Esforço urgente, sem projeto de UX
 
 #### v1 Desktop
 
-![screenshot](screenshot.v1.web.png)
+![screenshot](docs/images/screenshot.v1.web.png)
