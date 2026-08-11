@@ -108,6 +108,7 @@ def test_curso_detalhes_sets_csrf_cookie(mock_get_json_api, client):
 @patch("painel.services.get_json")
 def test_get_json_api_catches_http_exception(mock_get_json):
     from http.client import HTTPException
+
     mock_get_json.side_effect = HTTPException("502 - Bad Gateway")
 
     ambiente = Ambiente.objects.create(
@@ -118,6 +119,7 @@ def test_get_json_api_catches_http_exception(mock_get_json):
     )
 
     from painel.services import get_json_api
+
     result = get_json_api(ambiente, "enrol_course", courseid=123, username="testuser")
     assert result is None
 
@@ -143,6 +145,11 @@ def test_enrol_course_handles_api_http_exception(mock_get_json_api, client):
     assert response.json() == {"status": "error", "message": "Falha de comunicação com o AVA."}
 
 
+def test_api_docs_returns_200(client):
+    response = client.get("/api/v1/docs")
+    assert response.status_code == 200
 
 
-
+def test_api_openapi_json_returns_200(client):
+    response = client.get("/api/v1/openapi.json")
+    assert response.status_code == 200

@@ -25,4 +25,3 @@ sas test painel
 ## How to use Docker Compose
 
 In this project we use `sas` as short to `docker compose`.
-

@@ -1,6 +1,5 @@
 from django.urls import path
 
-from .api import api
 from .apps import PainelConfig
 from .views import (
     change_menu_position,
@@ -19,7 +18,6 @@ app_name = PainelConfig.name
 
 urlpatterns = [
     path("", dashboard, name="dashboard"),
-    path("api/v1/", api.urls),
     path("curso/<int:id_ambiente>/<int:id_curso>/", curso_detalhes, name="curso_detalhes"),
     path("curso/<int:id_ambiente>/<int:id_curso>/enrol/", enrol_course, name="enrol_course_api"),
     path("curso/<int:id_ambiente>/<int:id_curso>/unenrol/", unenrol_course, name="unenrol_course"),

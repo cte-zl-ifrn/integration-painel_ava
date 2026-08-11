@@ -6,11 +6,13 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from ninja import NinjaAPI
 
 from a4.models import Usuario, logged_user
+from backup.api import router as backup_router
 
 from .brokers import SuapBroker, TokenBroker
 from .services import get_diarios, get_progresso, set_favourite_course, set_user_preference, set_visible_course
 
 api = NinjaAPI()
+api.add_router("", backup_router)
 logger = logging.getLogger(__name__)
 
 
@@ -91,7 +93,7 @@ def set_favourite(request: HttpRequest, response: HttpResponse, ava: str, course
     elif request.method == "GET":
         response["Access-Control-Allow-Origin"] = "*"
         return set_favourite_course(logged_user(request).username, ava, courseid, favourite)
-        
+
     return api.create_response(request, {"message": "Método não permitido"}, status=405)
 
 
@@ -135,9 +137,11 @@ def set_user_preference_endpoint(
             user.settings[category][key] = parsed_value
             user.save(update_fields=["settings"])
             print(f"[OK] Preferência '{key}' atualizada localmente para {parsed_value}")
-        except Exception as e:
+        except Exception:
             logger.exception("Falha ao salvar preferência local '%s'", key)
-            return JsonResponse({"status": "error", "message": "Ocorreu um erro interno ao salvar a preferência."}, status=500)
+            return JsonResponse(
+                {"status": "error", "message": "Ocorreu um erro interno ao salvar a preferência."}, status=500
+            )
 
         # --- Propaga para todos os ambientes Moodle ---
         from painel.models import Ambiente
@@ -165,7 +169,7 @@ def set_user_preference_endpoint(
             )
 
         return JsonResponse({"status": "ok"})
-    
+
     return api.create_response(request, {"message": "Método não permitido"}, status=405)
 
 
@@ -199,7 +203,7 @@ def authenticate(request: HttpRequest, response: HttpResponse) -> dict:
             "data": user_data,
             "token": token,
         }
-    
+
     return api.create_response(request, {"message": "Método não permitido"}, status=405)
 
 
@@ -230,5 +234,5 @@ def verify(request: HttpRequest, response: HttpResponse) -> dict:
             error_response["Access-Control-Allow-Origin"] = "*"
             return error_response
         return {"username": username}
-    
+
     return api.create_response(request, {"message": "Método não permitido"}, status=405)
