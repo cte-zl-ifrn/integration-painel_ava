@@ -11,6 +11,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.viewcode",
     "sphinx.ext.githubpages",
+    "django_docs_theme",
 ]
 
 templates_path = ["_templates"]
@@ -21,7 +22,7 @@ html_theme = "django_docs_theme"
 html_theme_options = {
     "project_name": "Painel AVA",
     "tagline": "Middleware que conecta Sistemas de Gestão Acadêmica ao Moodle",
-    "github_url": "https://github.com/cte-zl-ifrn/integration-integrador_ava",
+    "github_url": "https://github.com/suap-ava-suite/djangoapp-painel_ava",
     "doc_path": "docs/",
     "show_edit_on_github": True,
     "enable_dark_mode": True,

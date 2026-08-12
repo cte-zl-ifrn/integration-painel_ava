@@ -46,7 +46,7 @@ Homepage = "https://github.com/cte-zl-ifrn/integration-integrador_ava"
 Source = "https://github.com/cte-zl-ifrn/integration-integrador_ava"
 "Bug Tracker" = "https://github.com/cte-zl-ifrn/integration-integrador_ava/issues"
 Download = "https://github.com/cte-zl-ifrn/integration-integrador_ava/releases/"
-Docs = "https://cte-zl-ifrn.github.io/integration-integrador_ava/"
+Docs = "https://suap-ava-suite.github.io/djangoapp-painel_ava/"
 
 [tool.setuptools.packages.find]
 where = ["."]
