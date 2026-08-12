@@ -1,0 +1,82 @@
+===========================================
+Instalação e Teste Local da Documentação
+===========================================
+
+Este documento explica como instalar as dependências necessárias, compilar e testar localmente a geração da
+documentação do **Painel AVA** (``integrador-ava``) utilizando o tema Sphinx **``django-docs-theme``**.
+
+1. Requisitos Prévios
+======================
+
+- Python 3.12+ (ou 3.14)
+- Ambiente virtual (``venv``) ativado
+
+2. Instalação das Dependências
+==============================
+
+No diretório raiz do projeto ``painel_ava``, ative seu ambiente virtual e instale os pacotes de documentação
+definidos no ``pyproject.toml``:
+
+.. code-block:: bash
+
+   # Ativar o ambiente virtual
+   source .venv/bin/activate
+
+   # Instalar as dependências de documentação
+   pip install sphinx myst-parser django-docs-theme>=0.1.4
+
+Ou via extras declarados no ``pyproject.toml``:
+
+.. code-block:: bash
+
+   pip install -e ".[docs]"
+
+3. Compilação Local da Documentação
+===================================
+
+Para gerar os arquivos HTML estáticos da documentação:
+
+Opção A: Usando o comando ``sphinx-build`` (Recomendado)
+--------------------------------------------------------
+
+O parâmetro ``-W`` garante que avisos de sintaxe ou links quebrados sejam tratados como erros, garantindo uma
+compilação 100% limpa:
+
+.. code-block:: bash
+
+   sphinx-build -W -b html docs docs/_build/html
+
+Opção B: Usando o ``Makefile``
+------------------------------
+
+Você também pode navegar até a pasta ``docs/`` e utilizar o Makefile:
+
+.. code-block:: bash
+
+   cd docs
+   make html
+
+Os arquivos HTML gerados estarão localizados em ``docs/_build/html/``.
+
+4. Servidor HTTP Local e Testes no Navegador
+============================================
+
+Para visualizar e testar interativamente a documentação no seu navegador sem erros de rotas estáticas:
+
+.. code-block:: bash
+
+   # 1. Entrar na pasta do build HTML
+   cd docs/_build/html
+
+   # 2. Iniciar o servidor HTTP do Python na porta 8000
+   python3 -m http.server 8000
+
+Abra seu navegador no endereço: `http://localhost:8000 <http://localhost:8000>`_
+
+5. Automação CI/CD no GitHub Actions
+====================================
+
+O repositório possui um workflow automatizado em ``.github/workflows/docs.yml`` que executa as seguintes etapas:
+
+1. **Pull Requests**: Valida se a documentação compila sem avisos ou erros (``sphinx-build -W``).
+2. **Push na branch main**: Compila a documentação e publica automaticamente a versão atualizada no **GitHub Pages**.

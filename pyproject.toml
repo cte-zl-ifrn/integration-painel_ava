@@ -31,6 +31,14 @@ dev = [
     "pytest-django>=4.12.0",
     "django-sass-processor==1.4.2",
     "django-debug-toolbar",
+    "sphinx>=7.0.0",
+    "myst-parser>=2.0.0",
+    "django-docs-theme>=0.1.4",
+]
+docs = [
+    "sphinx>=7.0.0",
+    "myst-parser>=2.0.0",
+    "django-docs-theme>=0.1.4",
 ]
 
 [project.urls]
