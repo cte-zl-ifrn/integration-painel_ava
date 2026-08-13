@@ -33,12 +33,12 @@ dev = [
     "django-debug-toolbar",
     "sphinx>=7.0.0",
     "myst-parser>=2.0.0",
-    "django-docs-theme>=0.1.7",
+    "django-docs-theme>=0.1.8",
 ]
 docs = [
     "sphinx>=7.0.0",
     "myst-parser>=2.0.0",
-    "django-docs-theme>=0.1.7",
+    "django-docs-theme>=0.1.8",
 ]
 
 [project.urls]
