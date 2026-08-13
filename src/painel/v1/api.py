@@ -7,9 +7,14 @@ from ninja import NinjaAPI
 
 from a4.models import Usuario, logged_user
 from backup.api import router as backup_router
-
-from .brokers import SuapBroker, TokenBroker
-from .services import get_diarios, get_progresso, set_favourite_course, set_user_preference, set_visible_course
+from painel.v1.brokers import SuapBroker, TokenBroker
+from painel.v1.services import (
+    get_diarios,
+    get_progresso,
+    set_favourite_course,
+    set_user_preference,
+    set_visible_course,
+)
 
 api = NinjaAPI()
 api.add_router("", backup_router)
@@ -84,7 +89,6 @@ def atualizacoes_counts(request: HttpRequest):
 
 @api.api_operation(["GET", "OPTIONS"], "/set_favourite/")
 def set_favourite(request: HttpRequest, response: HttpResponse, ava: str, courseid: int, favourite: int):
-    print(f"set_favourite: {ava=}, {courseid=}, {favourite=}")
     if request.method == "OPTIONS":
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
@@ -123,7 +127,6 @@ def set_user_preference_endpoint(
 
         username = user.username
 
-        # --- Atualização local ---
         try:
             user.refresh_from_db(fields=["settings"])
             if user.settings is None:
@@ -136,14 +139,12 @@ def set_user_preference_endpoint(
 
             user.settings[category][key] = parsed_value
             user.save(update_fields=["settings"])
-            print(f"[OK] Preferência '{key}' atualizada localmente para {parsed_value}")
         except Exception:
             logger.exception("Falha ao salvar preferência local '%s'", key)
             return JsonResponse(
                 {"status": "error", "message": "Ocorreu um erro interno ao salvar a preferência."}, status=500
             )
 
-        # --- Propaga para todos os ambientes Moodle ---
         from painel.models import Ambiente
 
         ambientes = Ambiente.objects.all()
@@ -153,10 +154,8 @@ def set_user_preference_endpoint(
 
         for amb in ambientes:
             try:
-                print(f"[SYNC] Enviando preferência para {amb.nome}...")
                 set_user_preference(username, ava=amb.nome, name=name, value=value)
-            except Exception as e:
-                print(f"[ERRO] Falha ao sincronizar com {amb.nome}: {e}")
+            except Exception:
                 erros.append(amb.nome)
 
         if erros:

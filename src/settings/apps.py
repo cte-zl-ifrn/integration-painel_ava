@@ -23,8 +23,11 @@ MY_APPS = env_as_list(
         "theme_ifrn25",
         "backup",
         "painel",
+        "painel.v1",
+        "painel.v2",
         "health",
         "base",
+        "mocks",
     ],
 )
 

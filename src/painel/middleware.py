@@ -8,8 +8,8 @@ from django.core.exceptions import DisallowedHost, SuspiciousOperation
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 
-from painel.brokers import TokenBroker
 from painel.models import Ambiente
+from painel.v1.brokers import TokenBroker
 
 logger = logging.getLogger(__name__)
 
@@ -111,6 +111,7 @@ class ExceptionMiddleware:
                 return HttpResponse("Erro de conexão com o banco!")
             if isinstance(e, DisallowedHost):
                 from django.template import loader
+
                 try:
                     template = loader.get_template("400_disallowed_host.html")
                     content = template.render()

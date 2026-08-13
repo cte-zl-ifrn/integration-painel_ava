@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 
 from a4.models import Usuario, logged_user
 from painel.models import Ambiente, ConfiguracaoAba, Situacao, Theme
-from painel.services import get_json_api
+from painel.v1.services import get_json_api
 
 logger = logging.getLogger(__name__)
 

@@ -16,8 +16,7 @@ from django.urls import reverse
 
 from a4.models import Usuario
 from backup.models import ArquivoBackup
-
-from .models import Ambiente, Curso
+from painel.models import Ambiente, Curso
 
 logger = logging.getLogger(__name__)
 
@@ -115,19 +114,16 @@ def get_diarios(
     usuario_db = Usuario.cached(username)
 
     def _merge_course(diario: dict, ambiente: dict):
-        # ========== 1. DADOS NOVOS (CUSTOM FIELDS) ==========
         co_curso = diario.get("curso_codigo")
         turma_nova = diario.get("turma_ano_periodo")
         componente_novo = diario.get("disciplina_sigla")
         id_diario_novo = diario.get("diario_id")
 
-        # ========== 2. FALLBACK LEGADO (RegEx) ==========
         codigo = diario.get("shortname", "")
         diario_re = CODIGO_DIARIO_REGEX.findall(codigo)
         coordenacao_re = CODIGO_COORDENACAO_REGEX.findall(codigo)
         pratica_re = CODIGO_PRATICA_REGEX.findall(codigo)
 
-        # --- CURSO ---
         if not co_curso:
             if diario_re and len(diario_re[0]) > CODIGO_DIARIO_CURSO_INDEX:
                 co_curso = diario_re[0][CODIGO_DIARIO_CURSO_INDEX]
@@ -145,7 +141,6 @@ def get_diarios(
         else:
             diario["curso"] = {"codigo": "", "nome": diario.get("curso_descricao") or "Curso Desconhecido"}
 
-        # --- TURMA ---
         if turma_nova:
             diario["turma"] = turma_nova
         elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
@@ -153,7 +148,6 @@ def get_diarios(
         elif pratica_re and len(pratica_re[0]) > CODIGO_DIARIO_TURMA_INDEX:
             diario["turma"] = ".".join(pratica_re[0][0 : CODIGO_DIARIO_TURMA_INDEX + 1])
 
-        # --- COMPONENTE ---
         if componente_novo:
             diario["componente"] = componente_novo
         elif diario_re and len(diario_re[0]) > CODIGO_DIARIO_DISCIPLINA_INDEX:
@@ -161,7 +155,6 @@ def get_diarios(
         elif pratica_re and len(pratica_re[0]) > CODIGO_PRATICA_SUFIXO_INDEX:
             diario["componente"] = pratica_re[0][CODIGO_PRATICA_SUFIXO_INDEX]
 
-        # --- ID DO DIÁRIO ---
         if id_diario_novo:
             diario["id_diario"] = str(id_diario_novo)
             diario["id_diario_clean"] = int(id_diario_novo) if str(id_diario_novo).isnumeric() else None
@@ -170,7 +163,6 @@ def get_diarios(
             diario["id_diario"] = id_diario_hash
             diario["id_diario_clean"] = int(id_diario_hash[1:]) if id_diario_hash else None
 
-        # ========== 3. URLs EXTRAS ==========
         def _merge_extra_urls(diario: dict, ava: dict):
             id_diario = diario.get("id_diario_clean", None)
 
@@ -215,16 +207,13 @@ def get_diarios(
 
             result = get_json_api(ambiente, "get_diarios", **querystrings) or {}
 
-            # Filtragem de autoinscrições baseada no perfil do usuário
             usuario_db_param = params.get("usuario_db")
             result["autoinscricoes"] = _filtrar_autoinscricoes(result.get("autoinscricoes", []), usuario_db_param)
 
             for k, v in result.items():
-                # 1. Se a chave for nova (ex: 'projetos'), cria a lista vazia no dicionário global
                 if k not in params["results"]:
                     params["results"][k] = []
 
-                # 2. Tratamento específico para autoinscrições (vitrine)
                 if k == "autoinscricoes":
 
                     def _merge_vitrine(curso_vitrine: dict, amb_dict: dict):
@@ -238,11 +227,9 @@ def get_diarios(
 
                     params["results"][k] += [_merge_vitrine(c, ambientedict) for c in v or []]
 
-                # 3. Tratamento para filtros (não precisam de merge de curso)
                 elif k in CHAVES_ESTATICAS:
                     params["results"][k] += v or []
 
-                # 4. Tratamento DINÂMICO para todas as salas (diarios, praticas, nova_sala...)
                 else:
                     params["results"][k] += [_merge_course(diario, ambientedict) for diario in v or []]
 

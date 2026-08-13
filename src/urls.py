@@ -6,7 +6,8 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 
-from painel.api import api as painel_api
+from painel.v1.api import api as painel_api_v1
+from painel.v2.api import api_v2 as painel_api_v2
 from settings.indebug import DEBUG, TESTING_MODE
 
 admin.site.site_title = "Painel AVA :.: Administração"
@@ -21,7 +22,8 @@ urlpatterns = [
                 path("admin/login/", RedirectView.as_view(url="/login/")),
                 path("painel/", RedirectView.as_view(url="/")),
                 path("admin/", admin.site.urls),
-                path("api/v1/", painel_api.urls),
+                path("api/v1/", painel_api_v1.urls),
+                path("api/v2/", painel_api_v2.urls),
                 path("", include("a4.urls")),
                 path("", include("health.urls")),
                 path("", include("painel.urls")),
@@ -29,7 +31,6 @@ urlpatterns = [
             ]
         ),
     ),
-    # path("", RedirectView.as_view(url=settings.ROOT_URL_PATH)),
 ]
 
 
