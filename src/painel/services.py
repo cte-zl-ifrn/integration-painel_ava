@@ -45,7 +45,7 @@ CODIGO_PRATICA_SUFIXO_INDEX = 4
 CHANGE_URL = re.compile("/course/view.php\\?")
 
 
-def _filtrar_autoinscricoes(autoinscricoes: list, usuario_db) -> list:
+def _filtrar_autoinscricoes(autoinscricoes: list, usuario_db: Usuario) -> list:
     if not autoinscricoes or not usuario_db:
         return []
 
@@ -101,7 +101,7 @@ def get_diarios(
 ) -> dict:
 
     CHAVES_ESTATICAS = ["semestres", "disciplinas", "cursos", "ambientes", "autoinscricoes", "reutilizaveis"]
-    
+
     @lru_cache(maxsize=1024)
     def get_curso_cached(co_curso):
         cache_key = f"curso:{co_curso}"
@@ -206,7 +206,9 @@ def get_diarios(
                 }
             }
 
-            querystrings = {k: v for k, v in params.items() if k not in ["ambiente", "results"] and str(v).strip() !=""}
+            querystrings = {
+                k: v for k, v in params.items() if k not in ["ambiente", "results"] and str(v).strip() != ""
+            }
 
             if "q" in querystrings:
                 querystrings["q"] = urllib.parse.quote(querystrings["q"])
@@ -307,7 +309,7 @@ def get_diarios(
         curso_bd = get_curso_cached(cod)
         if curso_bd:
             cursos[cod] = curso_bd.nome
-    
+
     cursos_a_criar = []
     for c in results["cursos"]:
         if c["id"] in cursos:
@@ -328,7 +330,7 @@ def get_diarios(
     def course_sort_key(e):
         ano_periodo_str = str(e.get("turma_ano_periodo") or "")
         ano_periodo = 0
-        
+
         match = re.search(r"(\d{4})\.?(\d)", ano_periodo_str)
         if match:
             ano_periodo = int(match.group(1) + match.group(2))
@@ -336,7 +338,7 @@ def get_diarios(
             match = re.search(r"(\d{4})", ano_periodo_str)
             if match:
                 ano_periodo = int(match.group(1) + "0")
-                
+
         return (-ano_periodo, (e.get("fullname") or "").lower())
 
     for k in results.keys():
@@ -358,9 +360,9 @@ def get_diarios(
                 for d in x.donoarquivobackup_set.all()
             ],
         }
-        for x in ArquivoBackup.objects.filter(
-            donoarquivobackup__dono_backup__username=username
-        ).prefetch_related("donoarquivobackup_set__dono_backup")
+        for x in ArquivoBackup.objects.filter(donoarquivobackup__dono_backup__username=username).prefetch_related(
+            "donoarquivobackup_set__dono_backup"
+        )
     ]
 
     return results
@@ -389,11 +391,12 @@ def set_user_preference(username: str, ava: str, name: str, value: str) -> dict:
 
 def get_progresso(username: str, ambiente: str = None, cursos: str = None) -> dict:
     import threading
+
     lock = threading.Lock()
-    
+
     has_ambiente = ambiente != "" and ambiente is not None and f"{ambiente}".isnumeric()
     ambientes = [ava for ava in Ambiente.cached() if (has_ambiente and int(ambiente) == ava.id) or not has_ambiente]
-    
+
     results = []
 
     def _get_progresso_moodle(params: dict):
@@ -401,13 +404,13 @@ def get_progresso(username: str, ambiente: str = None, cursos: str = None) -> di
         querystrings = {"username": params["username"]}
         if params.get("cursos"):
             querystrings["cursos"] = params["cursos"]
-        
+
         try:
             data = get_json_api(ava, "get_progresso", **querystrings) or []
             if data:
                 for item in data:
                     item["ambiente_id"] = ava.id
-                
+
                 with lock:
                     params["results"].extend(data)
         except Exception as e:
