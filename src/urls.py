@@ -24,6 +24,7 @@ urlpatterns = [
                 path("admin/", admin.site.urls),
                 path("api/v1/", painel_api_v1.urls),
                 path("api/v2/", painel_api_v2.urls),
+                path("", include("django_suap_auth.urls")),
                 path("", include("a4.urls")),
                 path("", include("health.urls")),
                 path("", include("painel.urls")),

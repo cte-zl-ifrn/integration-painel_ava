@@ -1,13 +1,22 @@
 from typing import Dict
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from a4.models import logged_user
 from painel import get_active_themes, get_installed_themes
 from painel.models import Ambiente, Popup
+
+
+def logged_user(request: HttpRequest):
+    username = request.session.get("usuario_personificado", getattr(request.user, "username", None))
+    if not username:
+        return request.user
+    User = get_user_model()
+    user = User.objects.filter(username=username).first()
+    return user if user is not None else request.user
 
 
 def popup(request: HttpRequest) -> Dict[str, Popup]:

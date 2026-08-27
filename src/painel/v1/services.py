@@ -8,6 +8,7 @@ from http.client import HTTPException
 from typing import Any, Dict, List, Union
 
 import requests
+import rule_engine
 import sentry_sdk
 from django.conf import settings
 from django.core.cache import cache
@@ -44,11 +45,80 @@ CODIGO_PRATICA_SUFIXO_INDEX = 4
 CHANGE_URL = re.compile("/course/view.php\\?")
 
 
-def _filtrar_autoinscricoes(autoinscricoes: list, usuario_db: Usuario) -> list:
+@lru_cache(maxsize=2048)
+def get_compiled_rule(regra: str):
+    return rule_engine.Rule(regra)
+
+
+def get_user_context(usuario_db) -> dict:
+    profile = getattr(usuario_db, "suap_profile", None)
+    if profile is None:
+        # Fallback para compatibilidade caso usuario_db seja um a4.Usuario antigo
+        if hasattr(usuario_db, "contexto"):
+            return usuario_db.contexto
+        return {}
+
+    raw_data_obj = getattr(profile, "raw_data", None)
+    last_json = dict(getattr(raw_data_obj, "data", {})) if raw_data_obj else {}
+
+    matriculas = []
+    if hasattr(profile, "vinculos"):
+        for v in profile.vinculos.all():
+            det = dict(v.detalhamento or {})
+            det.setdefault("nivel_ensino", v.nivel_ensino or "")
+            det.setdefault("modalidade", v.modalidade or "")
+            det.setdefault("curso", v.curso or "")
+            if det.get("ativo") is None:
+                det["ativo"] = v.ativo if v.ativo is not None else False
+
+            matriculas.append(
+                {
+                    "identificador": v.identificador or "",
+                    "tipo": v.tipo or "",
+                    "campus": v.campus or "",
+                    "cargo": v.cargo or "",
+                    "categoria": v.categoria or "",
+                    "modalidade": v.modalidade or "",
+                    "nivel_ensino": v.nivel_ensino or "",
+                    "curso": v.curso or "",
+                    "ativo": v.ativo if v.ativo is not None else False,
+                    "estrangeiro": v.estrangeiro or False,
+                    "detalhamento": det,
+                }
+            )
+
+    last_json["outras_matriculas"] = matriculas
+    return last_json
+
+
+def check_autoinscricao(regra: str, usuario_db) -> bool:
+    if not regra or not str(regra).strip() or not usuario_db:
+        return False
+
+    try:
+        rule = get_compiled_rule(regra)
+    except Exception as e:
+        logger.error(f"Regra inválida: {e}. {regra}")
+        return False
+
+    contexto = get_user_context(usuario_db)
+    try:
+        resultado = rule.matches(contexto)
+        username = getattr(usuario_db, "username", "unknown")
+        sucesso = "PASSOU" if resultado else "FOI BLOQUEADO"
+        logger.debug(f'Usuário {username} {sucesso} na regra "{regra}". Contexto: {contexto}')
+        return resultado
+    except Exception as e:
+        username = getattr(usuario_db, "username", "unknown")
+        logger.error(f'Erro ao avaliar para {username} a regra "{regra}". Erro: {e}. Contexto: {contexto}')
+        return False
+
+
+def _filtrar_autoinscricoes(autoinscricoes: list, usuario_db) -> list:
     if not autoinscricoes or not usuario_db:
         return []
 
-    return [c for c in autoinscricoes if usuario_db.check_autoinscricao(c.get("restricoes_de_autoinscricao", ""))]
+    return [c for c in autoinscricoes if check_autoinscricao(c.get("restricoes_de_autoinscricao", ""), usuario_db)]
 
 
 def requests_get(url, headers={}, encoding="utf-8", decode=True, **kwargs):

@@ -82,9 +82,10 @@ class AuthMobileUserMiddleware:
             if not username:
                 return JsonResponse({"error": {"message": "Invalid authentication token", "code": 403}}, status=403)
 
-            from a4.models import Usuario
+            from django.contrib.auth import get_user_model
 
-            user = Usuario.cached(username)
+            User = get_user_model()
+            user = User.objects.filter(username=username).first()
             if not user:
                 return JsonResponse({"error": {"message": "Usuário não encontrado", "code": 404}}, status=404)
 

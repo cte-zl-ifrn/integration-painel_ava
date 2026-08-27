@@ -40,6 +40,8 @@ THIRD_APPS = env_as_list(
         "admin_auto_filters",
         "django_extensions",
         "sass_processor",
+        "django_suap_auth",
+        "django_suap_auth.profile",
     ],
 )
 

@@ -1,51 +1,47 @@
 # -*- coding: utf-8 -*-
-from sc4py.env import env, env_as_bool, env_as_int, env_as_list
+from sc4py.env import env, env_as_list
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "#warning: changeme")
 LOGIN_URL = env("DJANGO_LOGIN_URL", "http://localhost:8092/login/")
 LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://localhost:8092/")
 LOGOUT_REDIRECT_URL = env("DJANGO_LOGOUT_REDIRECT_URL", "https://suap.ifrn.edu.br/comum/logout/")
-AUTH_USER_MODEL = env("DJANGO_AUTH_USER_MODEL", "a4.Usuario")
-AUTHENTICATION_BACKENDS = env_as_list("vAUTHENTICATION_BACKENDS", ["django.contrib.auth.backends.ModelBackend"])
+AUTH_USER_MODEL = env("DJANGO_AUTH_USER_MODEL", "auth.User")
+AUTHENTICATION_BACKENDS = env_as_list(
+    "AUTHENTICATION_BACKENDS",
+    ["django_suap_auth.profile.backends.SuapProfileAuthBackend", "django.contrib.auth.backends.ModelBackend"],
+)
 AUTH_PASSWORD_VALIDATORS = env_as_list("DJANGO_AUTH_PASSWORD_VALIDATORS", [])
 
-
-# CORS_ALLOWED_ORIGINS = env_as_list("DJANGO_CORS_ALLOWED_ORIGINS", ["sameorigin"])
-# CORS_ALLOWED_ORIGIN_REGEXES = env_as_list("DJANGO_CORS_ALLOWED_ORIGIN_REGEXES", [])
-# CORS_ALLOW_ALL_ORIGINS = env_as_bool("DJANGO_CORS_ALLOW_ALL_ORIGINS", False)
-# CORS_URLS_REGEX = env_as_list("DJANGO_CORS_URLS_REGEX", r"^.*$")
-# CORS_ALLOW_METHODS = env_as_list("DJANGO_CORS_ALLOW_METHODS", ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"])
-# CORS_ALLOW_HEADERS = env_as_list("DJANGO_CORS_ALLOW_HEADERS", ["content-type", "user-agent"])
-# CORS_EXPOSE_HEADERS = env_as_list("DJANGO_CORS_EXPOSE_HEADERS", [])
-# CORS_PREFLIGHT_MAX_AGE = env_as_int("DJANGO_CORS_PREFLIGHT_MAX_AGE", 86400)
-# CORS_ALLOW_CREDENTIALS = env_as_bool("DJANGO_CORS_ALLOW_CREDENTIALS", False)
-# CORS_ALLOW_PRIVATE_NETWORK = env_as_bool("DJANGO_CORS_ALLOW_PRIVATE_NETWORK", False)
-
-
-CSRF_COOKIE_AGE = env_as_int("DJANGO_CSRF_COOKIE_AGE", 60 * 60 * 24 * 365)
-CSRF_COOKIE_DOMAIN = env("DJANGO_CSRF_COOKIE_DOMAIN", None)
-CSRF_COOKIE_HTTPONLY = env_as_bool("DJANGO_CSRF_COOKIE_HTTPONLY", False)
-CSRF_COOKIE_NAME = env("DJANGO_CSRF_COOKIE_NAME", "csrftoken")
-CSRF_COOKIE_PATH = env("DJANGO_CSRF_COOKIE_PATH", "/")
-CSRF_COOKIE_SAMESITE = env("DJANGO_CSRF_COOKIE_SAMESITE", "Lax")
-CSRF_COOKIE_SECURE = env_as_bool("DJANGO_CSRF_COOKIE_SECURE", False)
-CSRF_USE_SESSIONS = env_as_bool("DJANGO_CSRF_USE_SESSIONS", False)
-CSRF_FAILURE_VIEW = env("DJANGO_CSRF_FAILURE_VIEW", "django.views.csrf.csrf_failure")
-CSRF_HEADER_NAME = env("DJANGO_CSRF_HEADER_NAME", "HTTP_X_CSRFTOKEN")
-CSRF_TRUSTED_ORIGINS = env_as_list("DJANGO_CSRF_TRUSTED_ORIGINS", [])
-
-
 oauth_base_url = env("OAUTH_BASE_URL", "https://suap.ifrn.edu.br")
-OAUTH = {
-    "BASE_URL": oauth_base_url,
-    "AUTHORIZE_URL": env("OAUTH_AUTHORIZE_URL", f"{oauth_base_url}/o/authorize/"),
-    "TOKEN_URL": env("OAUTH_TOKEN_URL", f"{oauth_base_url}/o/token/"),
-    "USERINFO_URL": env("OAUTH_USERINFO_URL", f"{oauth_base_url}/api/rh/eu/"),
-    "VINCULOS_URL": env("OAUTH_VINCULOS_URL", f"{oauth_base_url}/api/rh/meus-vinculos/"),
+SUAP_AUTH = {
     "CLIENT_ID": env("OAUTH_CLIENT_ID", "#warning: changeme"),
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "#warning: changeme"),
     "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
-    "VERIFY_SSL": env_as_bool("OAUTH_VERIFY_SSL", True),
+    "BASE_URL": oauth_base_url,
+    "SCOPES": ["identificacao", "email", "documentos_pessoais"],
+    "USER_LOOKUP_FIELD": "username",
+    "USER_ATTR_MAP": {
+        "username": "identificacao",
+        "nome_registro": "nome_registro",
+        "nome_social": "nome_social",
+        "nome_usual": "nome_usual",
+        "first_name": "primeiro_nome",
+        "last_name": "ultimo_nome",
+        "email": "email_preferencial",
+        "email_corporativo": "email",
+        "email_google_classroom": "email_google_classroom",
+        "email_academico": "email_academico",
+        "email_secundario": "email_secundario",
+        "foto": "foto",
+        "tipo_usuario": "tipo_usuario",
+    },
+    "USER_JSON_FIELD": "raw_data",
+    "USER_INFO_ENDPOINTS": [
+        "/api/rh/eu/",
+        {"endpoint": "/api/rh/meus-vinculos/", "namespace": "vinculos", "required": False},
+    ],
+    "USER_DEFAULTS": {"is_active": True},
+    "FIRST_USER_DEFAULTS": {"is_staff": True, "is_superuser": True},
 }
 
 SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "#warning: changeme")
