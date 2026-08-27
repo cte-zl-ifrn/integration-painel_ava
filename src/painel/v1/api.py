@@ -1,12 +1,13 @@
 import json
 import logging
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from ninja import NinjaAPI
 
-from a4.models import Usuario, logged_user
 from backup.api import router as backup_router
+from painel.context_processors import logged_user
 from painel.v1.brokers import SuapBroker, TokenBroker
 from painel.v1.services import (
     get_diarios,
@@ -119,7 +120,8 @@ def set_user_preference_endpoint(
         response["Access-Control-Allow-Origin"] = "*"
 
         if username:
-            user = Usuario.cached(username) or Usuario.objects.filter(username=username).first()
+            User = get_user_model()
+            user = User.objects.filter(username=username).first()
             if not user:
                 return JsonResponse({"status": "error", "message": f"Usuário '{username}' não encontrado"}, status=404)
         else:

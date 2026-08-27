@@ -11,11 +11,11 @@ import requests
 import rule_engine
 import sentry_sdk
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
-from a4.models import Usuario
 from backup.models import ArquivoBackup
 from painel.models import Ambiente, Curso
 
@@ -181,7 +181,8 @@ def get_diarios(
                 cache.set(cache_key, curso_bd, timeout=86400)
         return curso_bd
 
-    usuario_db = Usuario.cached(username)
+    User = get_user_model()
+    usuario_db = User.objects.filter(username=username).first()
 
     def _merge_course(diario: dict, ambiente: dict):
         co_curso = diario.get("curso_codigo")

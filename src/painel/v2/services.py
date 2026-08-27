@@ -1,7 +1,8 @@
 import logging
 from enum import Enum
 
-from a4.models import Usuario
+from django.contrib.auth import get_user_model
+
 from painel.models import Ambiente
 from painel.v2.brokers import SuapBroker
 
@@ -178,22 +179,26 @@ class TokenService:
 class UsuarioService:
     @classmethod
     def info(cls, username: str) -> dict:
-        user = (
-            Usuario.cached(username)
-            if hasattr(Usuario, "cached")
-            else Usuario.objects.filter(username=username).first()
-        )
+        User = get_user_model()
+        user = User.objects.filter(username=username).first()
         if not user:
             return {"id": 0, "username": username}
+
+        profile = getattr(user, "suap_profile", None)
+
+        nome_usual = getattr(profile, "nome_usual", None) or user.first_name
+        nome_registro = getattr(profile, "nome_registro", None) or f"{user.first_name} {user.last_name}".strip()
+        tipo = getattr(profile, "tipo_usuario", "Servidor")
+        foto = getattr(profile, "url_foto_150x200", "")
 
         return {
             "id": user.id,
             "matricula": user.username,
             "identificacao": user.username,
-            "nome_social": user.nome_usual or user.first_name,
-            "nome_registro": user.nome_registro or f"{user.first_name} {user.last_name}".strip(),
+            "nome_social": getattr(profile, "nome_social", None) or nome_usual,
+            "nome_registro": nome_registro,
             "ultimo_nome": user.last_name,
-            "nome_usual": user.nome_usual or user.first_name,
+            "nome_usual": nome_usual,
             "cpf": "",
             "rg": "",
             "passaporte": "",
@@ -203,19 +208,19 @@ class UsuarioService:
             "data_de_nascimento": "",
             "naturalidade": "",
             "email": user.email,
-            "email_secundario": "",
-            "email_google_classroom": "",
-            "email_academico": "",
-            "email_preferencial": user.email,
-            "foto": user.foto or "",
-            "url_foto_75x100": user.foto or "",
-            "url_foto_150x200": user.foto or "",
-            "tipo_vinculo": user.tipo_usuario or "Servidor",
-            "tipo_usuario": user.tipo_usuario or "Servidor",
+            "email_secundario": getattr(profile, "email_secundario", ""),
+            "email_google_classroom": getattr(profile, "email_google_classroom", ""),
+            "email_academico": getattr(profile, "email_academico", ""),
+            "email_preferencial": getattr(profile, "email_preferencial", None) or user.email,
+            "foto": foto,
+            "url_foto_75x100": foto,
+            "url_foto_150x200": foto,
+            "tipo_vinculo": tipo,
+            "tipo_usuario": tipo,
             "vinculo": {
                 "turno": "",
                 "campus_curso": "",
-                "campus": "",
+                "campus": getattr(profile, "campus_sigla", ""),
                 "curso": "",
                 "matriz": "",
                 "cargo": "",
@@ -226,52 +231,34 @@ class UsuarioService:
                 "situacao_sistemica": "",
                 "matricula_regular": True,
             },
-            "vinculos": [
-                {
-                    "detalhamento": {
-                        "modalidade": "",
-                        "nivel_ensino": "",
-                        "ativo": True,
-                        "cargo": "",
-                        "categoria": user.tipo_usuario or "Servidor",
-                    },
-                    "estrangeiro": False,
-                }
-            ],
+            "vinculos": [],
         }
 
     @classmethod
     def preferencia_get(cls, username: str) -> dict:
-        user = (
-            Usuario.cached(username)
-            if hasattr(Usuario, "cached")
-            else Usuario.objects.filter(username=username).first()
-        )
+        User = get_user_model()
+        user = User.objects.filter(username=username).first()
         if not user:
             return {"zoom": "100%", "configuracao": "Padrão"}
-        zoom = (
-            user.settings.get("accessibility", {}).get("zoom_level", 100)
-            if hasattr(user, "settings") and isinstance(user.settings, dict)
-            else 100
-        )
+        profile = getattr(user, "suap_profile", user)
+        settings_dict = getattr(profile, "settings", {}) or {}
+        zoom = settings_dict.get("accessibility", {}).get("zoom_level", 100) if isinstance(settings_dict, dict) else 100
         return {"zoom": f"{zoom}%", "configuracao": "Padrão"}
 
     @classmethod
     def preferencia_patch(cls, username: str, data: dict) -> dict:
-        user = (
-            Usuario.cached(username)
-            if hasattr(Usuario, "cached")
-            else Usuario.objects.filter(username=username).first()
-        )
+        User = get_user_model()
+        user = User.objects.filter(username=username).first()
         if user:
-            if not isinstance(user.settings, dict):
-                user.settings = {}
-            acc = user.settings.setdefault("accessibility", {})
+            profile = getattr(user, "suap_profile", user)
+            if not isinstance(profile.settings, dict):
+                profile.settings = {}
+            acc = profile.settings.setdefault("accessibility", {})
             if "zoom" in data:
                 val_str = str(data["zoom"]).replace("%", "")
                 if val_str.isnumeric():
                     acc["zoom_level"] = int(val_str)
-            user.save()
+            profile.save()
         return data
 
 

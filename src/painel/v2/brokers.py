@@ -6,11 +6,10 @@ from datetime import timezone
 import jwt
 import requests
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
-
-from a4.models import Usuario
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +103,15 @@ class SuapBroker:
         }
 
         try:
-            Usuario.objects.update_or_create(username=user_data_mapping["username"], defaults=user_data_mapping)
+            User = get_user_model()
+            User.objects.update_or_create(
+                username=user_data_mapping["username"],
+                defaults={
+                    "first_name": user_data_mapping.get("first_name", ""),
+                    "last_name": user_data_mapping.get("last_name", ""),
+                    "email": user_data_mapping.get("email", ""),
+                },
+            )
         except Exception as e:
             logger.error(f"Erro ao salvar usuário: {e}")
             return
