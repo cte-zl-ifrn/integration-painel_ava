@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.auth.models import Group as OrignalGroup
 from django.core.cache import cache
-from django.db.models import CharField, DateTimeField, EmailField, JSONField, TextField
+from django.db.models import CharField, DateTimeField, EmailField, JSONField, ManyToManyField, TextField
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
 from django_better_choices import Choices
@@ -49,6 +49,16 @@ class UsuarioManager(SafeDeleteManager, UserManager):
 
 
 class Usuario(SafeDeleteModel, AbstractUser):
+    groups = ManyToManyField(
+        "auth.Group",
+        related_name="a4_usuario_groups",
+        blank=True,
+    )
+    user_permissions = ManyToManyField(
+        "auth.Permission",
+        related_name="a4_usuario_permissions",
+        blank=True,
+    )
     username = CharField(
         _("IFRN-id"),
         max_length=2560,
@@ -178,7 +188,7 @@ class Usuario(SafeDeleteModel, AbstractUser):
     def zoom_level(self) -> int:
         try:
             return int(self.settings.get("accessibility", {}).get("zoom_level", 100))
-        except AttributeError, ValueError, TypeError:
+        except Exception:
             return 100
 
     @property
