@@ -38,8 +38,10 @@ def _get_current_username(request: HttpRequest) -> str:
             return username
     try:
         user = logged_user(request)
-        if user and user.username:
+        if user and getattr(user, "is_authenticated", False) and user.username:
             return user.username
+        if hasattr(request, "user") and getattr(request.user, "is_authenticated", False) and request.user.username:
+            return request.user.username
     except Exception as e:
         logger.debug(f"Erro ao recuperar usuario logado: {e}")
     return "testuser"

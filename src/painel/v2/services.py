@@ -182,7 +182,24 @@ class UsuarioService:
         User = get_user_model()
         user = User.objects.filter(username=username).first()
         if not user:
-            return {"id": 0, "username": username}
+            return {
+                "id": 0,
+                "matricula": username,
+                "identificacao": username,
+                "nome_social": username,
+                "nome_registro": username,
+                "ultimo_nome": "",
+                "nome_usual": username,
+                "email": f"{username}@sememail.ifrn.edu.br",
+                "email_preferencial": f"{username}@sememail.ifrn.edu.br",
+                "foto": "",
+                "url_foto_75x100": "",
+                "url_foto_150x200": "",
+                "tipo_vinculo": "Servidor",
+                "tipo_usuario": "Servidor",
+                "vinculo": {},
+                "vinculos": [],
+            }
 
         profile = getattr(user, "suap_profile", None)
 
@@ -240,8 +257,8 @@ class UsuarioService:
         user = User.objects.filter(username=username).first()
         if not user:
             return {"zoom": "100%", "configuracao": "Padrão"}
-        profile = getattr(user, "suap_profile", user)
-        settings_dict = getattr(profile, "settings", {}) or {}
+        profile = getattr(user, "suap_profile", None)
+        settings_dict = getattr(profile, "settings", {}) if profile else {}
         zoom = settings_dict.get("accessibility", {}).get("zoom_level", 100) if isinstance(settings_dict, dict) else 100
         return {"zoom": f"{zoom}%", "configuracao": "Padrão"}
 
@@ -250,15 +267,23 @@ class UsuarioService:
         User = get_user_model()
         user = User.objects.filter(username=username).first()
         if user:
-            profile = getattr(user, "suap_profile", user)
-            if not isinstance(profile.settings, dict):
-                profile.settings = {}
-            acc = profile.settings.setdefault("accessibility", {})
-            if "zoom" in data:
-                val_str = str(data["zoom"]).replace("%", "")
-                if val_str.isnumeric():
-                    acc["zoom_level"] = int(val_str)
-            profile.save()
+            profile = getattr(user, "suap_profile", None)
+            if profile is None:
+                try:
+                    from django_suap_auth.profile.models import Perfil
+
+                    profile, _ = Perfil.objects.get_or_create(user=user)
+                except Exception:
+                    profile = None
+            if profile is not None:
+                if not isinstance(profile.settings, dict):
+                    profile.settings = {}
+                acc = profile.settings.setdefault("accessibility", {})
+                if "zoom" in data:
+                    val_str = str(data["zoom"]).replace("%", "")
+                    if val_str.isnumeric():
+                        acc["zoom_level"] = int(val_str)
+                profile.save()
         return data
 
 

@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import RedirectView
 
@@ -24,6 +25,7 @@ urlpatterns = [
                 path("admin/", admin.site.urls),
                 path("api/v1/", painel_api_v1.urls),
                 path("api/v2/", painel_api_v2.urls),
+                path("logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
                 path("", include("django_suap_auth.urls")),
                 path("", include("a4.urls")),
                 path("", include("health.urls")),
