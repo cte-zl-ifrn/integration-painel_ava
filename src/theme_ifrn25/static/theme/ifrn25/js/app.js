@@ -451,7 +451,6 @@ const app = Vue.createApp({
                     this.notificationsModalOpen = false;
                     this.messagesModalOpen = false;
                     this.filterModalOpen = false;
-                    this.profileModalOpen = false;
                     return 'Menu do Usuário';
                 default:
                     return '';

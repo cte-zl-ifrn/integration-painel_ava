@@ -3,7 +3,7 @@ import logging
 from django.http import HttpRequest
 from ninja import NinjaAPI
 
-from a4.models import logged_user
+from django_suap_auth.impersonation.helpers import get_active_user as logged_user
 from painel.v2.brokers import SuapBroker
 from painel.v2.schemas import (
     ConversationPatchInput,

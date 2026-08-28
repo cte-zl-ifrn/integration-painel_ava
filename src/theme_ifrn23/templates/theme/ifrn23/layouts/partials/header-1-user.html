@@ -82,7 +82,7 @@
         </li>
         {% if personificando %}
             <li>
-                <a class="dropdown-item" href="{% url 'a4:despersonificar' %}">Voltar a ser {{ user.show_name }}</a>
+                <a class="dropdown-item" href="{% url 'suap_auth_impersonation:stop_impersonating' %}">Voltar a ser {{ user.show_name }}</a>
             </li>
         {% else %}
             {% if user.is_superuser %}
@@ -104,7 +104,7 @@
             {% endif %}
         {% endif %}
         <li>
-            <a class="dropdown-item" href="{% url 'a4:logout' %}">Sair</a>
+            <a class="dropdown-item" href="{% url 'suap_auth:logout' %}">Sair</a>
         </li>
     </ul>
 </div>

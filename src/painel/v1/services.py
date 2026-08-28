@@ -53,7 +53,7 @@ def get_compiled_rule(regra: str):
 def get_user_context(usuario_db) -> dict:
     profile = getattr(usuario_db, "suap_profile", None)
     if profile is None:
-        # Fallback para compatibilidade caso usuario_db seja um a4.Usuario antigo
+        # Fallback para compatibilidade caso usuario_db seja um modelo legado
         if hasattr(usuario_db, "contexto"):
             return usuario_db.contexto
         return {}

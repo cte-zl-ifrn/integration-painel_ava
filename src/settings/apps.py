@@ -40,8 +40,10 @@ THIRD_APPS = env_as_list(
         "admin_auto_filters",
         "django_extensions",
         "sass_processor",
+        "django_json_widget",
         "django_suap_auth",
         "django_suap_auth.profile",
+        "django_suap_auth.impersonation",
     ],
 )
 
@@ -68,11 +70,7 @@ DJANGO_APPS = env_as_list(
         "django.contrib.staticfiles",
     ],
 )
-HACK_APPS = env_as_list(
-    "HACK_APPS",
-    ["a4"],
-)
-INSTALLED_APPS = MY_APPS + THIRD_APPS + DJANGO_APPS + HACK_APPS
+INSTALLED_APPS = MY_APPS + THIRD_APPS + DJANGO_APPS + ["dsgovbr"]
 
 
 SITE_ID = 1

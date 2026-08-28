@@ -17,7 +17,8 @@
                     <span>{{ logged_user.show_name }}</span>
                 </div>
             {% else %}
-                <div class="sidebar-user-content-profile" id="btn-toggle-profile">
+                <div class="sidebar-user-content-profile" @click="toggleModalWithContent('profile')"
+                     :class="{'active': modalType === 'profile'}" id="btn-toggle-profile">
                     <img src="{% static 'theme/ifrn25/img/user.png' %}" alt="Imagem de perfil" class="profile-image">
                     <span>{{ logged_user.show_name }}</span>
                 </div>

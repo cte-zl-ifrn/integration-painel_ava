@@ -2,9 +2,9 @@
 from sc4py.env import env, env_as_list
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "#warning: changeme")
-LOGIN_URL = env("DJANGO_LOGIN_URL", "http://localhost:8092/login/")
-LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "http://localhost:8092/")
-LOGOUT_REDIRECT_URL = env("DJANGO_LOGOUT_REDIRECT_URL", "https://suap.ifrn.edu.br/comum/logout/")
+LOGIN_URL = env("DJANGO_LOGIN_URL", "/auth/suap/login/")
+LOGIN_REDIRECT_URL = env("DJANGO_LOGIN_REDIRECT_URL", "/")
+LOGOUT_REDIRECT_URL = env("DJANGO_LOGOUT_REDIRECT_URL", "/auth/suap/logout/")
 AUTH_USER_MODEL = env("DJANGO_AUTH_USER_MODEL", "auth.User")
 AUTHENTICATION_BACKENDS = env_as_list(
     "AUTHENTICATION_BACKENDS",
@@ -16,7 +16,7 @@ oauth_base_url = env("OAUTH_BASE_URL", "https://suap.ifrn.edu.br")
 SUAP_AUTH = {
     "CLIENT_ID": env("OAUTH_CLIENT_ID", "#warning: changeme"),
     "CLIENT_SECRET": env("OAUTH_CLIENT_SECRET", "#warning: changeme"),
-    "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "http://painel/authenticate/"),
+    "REDIRECT_URI": env("OAUTH_REDIRECT_URI", "/auth/suap/callback/"),
     "BASE_URL": oauth_base_url,
     "SCOPES": ["identificacao", "email", "documentos_pessoais"],
     "USER_LOOKUP_FIELD": "username",
@@ -35,13 +35,14 @@ SUAP_AUTH = {
         "foto": "foto",
         "tipo_usuario": "tipo_usuario",
     },
-    "USER_JSON_FIELD": "raw_data",
+    "USER_DEFAULTS": {"is_active": True},
+    "FIRST_USER_DEFAULTS": {"is_staff": True, "is_superuser": True},
+    "BACKEND": "django_suap_auth.profile.backends.SuapProfileAuthBackend",
+    "USER_JSON_FIELD": "suap_data",
     "USER_INFO_ENDPOINTS": [
         "/api/rh/eu/",
         {"endpoint": "/api/rh/meus-vinculos/", "namespace": "vinculos", "required": False},
     ],
-    "USER_DEFAULTS": {"is_active": True},
-    "FIRST_USER_DEFAULTS": {"is_staff": True, "is_superuser": True},
 }
 
 SUAP_INTEGRADOR_KEY = env("SUAP_INTEGRADOR_KEY", "#warning: changeme")

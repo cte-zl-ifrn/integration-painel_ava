@@ -6,17 +6,14 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
+from django_suap_auth.impersonation.helpers import get_active_user, is_impersonating
+
 from painel import get_active_themes, get_installed_themes
 from painel.models import Ambiente, Popup
 
 
 def logged_user(request: HttpRequest):
-    username = request.session.get("usuario_personificado", getattr(request.user, "username", None))
-    if not username:
-        return request.user
-    User = get_user_model()
-    user = User.objects.filter(username=username).first()
-    return user if user is not None else request.user
+    return get_active_user(request)
 
 
 def popup(request: HttpRequest) -> Dict[str, Popup]:
@@ -24,13 +21,12 @@ def popup(request: HttpRequest) -> Dict[str, Popup]:
 
 
 def layout_settings(request: HttpRequest) -> dict:
-    usuario_personificado = request.session.get("usuario_personificado", None)
     return {
-        "logged_user": logged_user(request),
+        "logged_user": get_active_user(request),
         "show_vlibras": settings.SHOW_VLIBRAS,
         "show_userway": settings.SHOW_USERWAY,
         "userway_account": settings.USERWAY_ACCOUNT,
-        "personificando": usuario_personificado is not None,
+        "personificando": is_impersonating(request),
         "last_startup": settings.LAST_STARTUP,
         "app_version": settings.APP_VERSION,
         "hostname": settings.HOSTNAME,

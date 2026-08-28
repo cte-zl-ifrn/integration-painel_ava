@@ -21,7 +21,7 @@
     {% if personificando %}
         <div class="admin-button-options">
             <div class="modal-button-option">
-                <a class="dropdown-item" href="{% url 'a4:despersonificar' %}">Voltar a ser {{ user.show_name }}</a>
+                <a class="dropdown-item" href="{% url 'suap_auth_impersonation:stop_impersonating' %}">Voltar a ser {{ user.show_name }}</a>
             </div>
         </div>
     {% else %}
@@ -61,6 +61,6 @@
         </div>
     </div>
     <div class="modal-button-option exit-button">
-        <a href="{% url 'a4:logout' %}">Sair</a>
+        <a href="{% url 'suap_auth:logout' %}">Sair</a>
     </div>
 </div>
