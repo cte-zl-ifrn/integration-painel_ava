@@ -15,30 +15,42 @@ Este documento estabelece o plano detalhado de desenvolvimento e testes para a v
 ------------------------------------------------
 * **Fonte da Verdade**: `https://suap.ifrn.edu.br/api/openapi.json`
 * **Endpoints Reais do SUAP Mapeados**:
+
   * **Autenticação**:
+
     * ``POST /api/token/pair`` (Emissão do token JWT do SUAP com ``username`` e ``password``)
     * ``POST /api/token/refresh`` (Renovação de token JWT do SUAP)
     * ``POST /api/token/verify`` (Validação de token JWT do SUAP)
+
   * **Informações de Servidores (RH)**:
+
     * ``GET /api/rh/meus-dados/`` (Dados pessoais, cargo, setor, foto)
     * ``GET /api/rh/meus-vinculos/`` (Lista de vínculos de servidor)
+
   * **Informações de Alunos (Ensino)**:
+
     * ``GET /api/ensino/meus-dados-aluno/`` (Dados do aluno, curso, matriz, IRA, foto)
     * ``GET /api/ensino/meus-diarios/`` (Diários e turmas do aluno)
+
 * **Servidor Mock do SUAP (``run_mock_suap``)**:
+
   * Emulará estritamente a especificação oficial do OpenAPI do SUAP.
 
 1.2. Evolução da API no Plugin Moodle ``tool_painelava`` (Com Autonomia e Retrocompatibilidade)
 ------------------------------------------------------------------------------------------------
 * **Repositório**: `/home/kelson/projetos/IFRN/sas/tool_painelava`
 * **Estratégia de Retrocompatibilidade**:
+
   * Manter a versão v1 (``admin/tool/painelava/api/index.php``) 100% funcional sem breaking changes.
   * Criar/Expandir suporte para a **API v2 no ``tool_painelava``** para atender aos novos requisitos de:
+
     * Notificações (sumário, listagem, leitura/não lida).
     * Conversas / Mensagens (sumário, conversas por AVA, histórico, leitura).
     * Salas e Cursos (favoritar, visibilidade, progresso percentual).
     * Revogação/Renovação de tokens em cascata no Moodle.
+
 * **Servidor Mock do Moodle (``run_mock_moodle``)**:
+
   * Emulará tanto a v1 quanto a nova v2 do plugin ``tool_painelava`` com estado persistente em memória e carga de dados em JSON.
 
 
@@ -60,14 +72,21 @@ Este documento estabelece o plano detalhado de desenvolvimento e testes para a v
 =================================================
 
 * **Roteamento**:
+
   * ``src/urls.py``: registro de ``path("api/v2/", api_v2.urls)``.
+
 * **Controladores e Schemas**:
+
   * ``src/painel/api_v2.py``: rotas NinjaAPI (22 endpoints).
   * ``src/painel/schemas_v2.py``: esquemas Pydantic para validação e serialização.
+
 * **Camada de Serviços BFF e Brokers**:
+
   * ``src/painel/services_v2.py``: orquestração entre SUAP e Moodle AVAs.
   * Corrigir `SuapBroker` em ``src/painel/brokers.py`` para consumir `/api/rh/meus-dados/` e `/api/ensino/meus-dados-aluno/` do SUAP oficial.
+
 * **Aplicação Raiz Django dos Mocks (`src/mocks/`)**:
+
   * `src/mocks/apps.py` (App Django independente configurado em `INSTALLED_APPS`)
   * `src/mocks/suap_server.py`
   * `src/mocks/moodle_server.py`
@@ -117,7 +136,7 @@ Este documento estabelece o plano detalhado de desenvolvimento e testes para a v
 
 
 5. Estratégia de Testes Automatizados e Cobertura (100%)
-======================================================
+========================================================
 
 * Criação de ``src/painel/tests_apiv2.py`` exercitando todos os 22 endpoints.
 * Integração completa com os mocks HTTP do SUAP (OpenAPI real) e Moodle (``tool_painelava`` v2).

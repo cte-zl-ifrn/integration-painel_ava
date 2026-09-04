@@ -19,5 +19,6 @@ Guia de Navegação
 
    instalacao-e-testes
    nova-api
+   plano-apiv2
    evolucao-do-design
    tipo-de-commits
