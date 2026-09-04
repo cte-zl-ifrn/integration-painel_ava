@@ -1,6 +1,6 @@
 [project]
 name = "integrador-ava"
-version = "1.1.040"
+version = "1.1.041"
 description = "É um middleware que conecta Sistemas de Gestão Acadêmica (SGA) ao Moodle."
 readme = "README.md"
 license = { file = "LICENSE.md" }
@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "avaintegration-metapackage==6.0.8.39",
+    "avaintegration-metapackage==6.0.8.40",
 ]
 
 [project.optional-dependencies]
